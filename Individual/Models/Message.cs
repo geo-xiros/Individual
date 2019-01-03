@@ -86,10 +86,7 @@ namespace Individual
             }) == 1;
 
         }
-        private static bool OthersMessages()
-        {
-            return Application.LoggedUser != Application.MessagesUser;
-        }
+
         private bool CurrentUserIsSender()
         {
             return Application.MessagesUser.UserId == SenderUserId;
