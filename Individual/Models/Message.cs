@@ -94,25 +94,16 @@ namespace Individual
         {
             return Application.MessagesUser.UserId == SenderUserId;
         }
-        private static bool LoggedUserCanEdit()
-        {
-            return Application.LoggedUser.Role == User.Roles.ViewEdit
-                || Application.LoggedUser.Role == User.Roles.ViewEditDelete;
-        }
-        private static bool LoggedUserCanDelete()
-        {
-            return Application.LoggedUser.Role == User.Roles.ViewEditDelete;
-        }
 
         public bool CanEditMessage()
         {
-            return (CurrentUserIsSender() && !OthersMessages())
-                || (LoggedUserCanEdit() && OthersMessages());
+            return (CurrentUserIsSender() && !Application.VieweingOthersMessage)
+                || (Application.LoggedUser.CanEdit && Application.VieweingOthersMessage);
         }
         public bool CanDeleteMessage()
         {
-            return (CurrentUserIsSender() && !OthersMessages())
-                || (LoggedUserCanDelete() && OthersMessages());
+            return (CurrentUserIsSender() && !Application.VieweingOthersMessage)
+                || (Application.LoggedUser.CanDelete && Application.VieweingOthersMessage);
         }
 
         public override string ToString()

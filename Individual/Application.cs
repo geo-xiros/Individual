@@ -10,6 +10,7 @@ namespace Individual
 
         public static User LoggedUser;
         public static User MessagesUser;
+        public static bool VieweingOthersMessage => LoggedUser != MessagesUser;
         public static User.Roles LoggedRole
         {
             get

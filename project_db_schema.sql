@@ -134,7 +134,7 @@ go
 --go
 
 
-create procedure InsertUser 
+alter procedure InsertUser 
 	  @userName varchar(50)
 	, @userPassword BINARY(64) 
 	, @firstName varchar(50)
@@ -149,7 +149,7 @@ begin
 	
 	insert into Users (userName, userPassword, salt , firstName, lastName,  userRole) 
 	values (@userName, HASHBYTES('SHA2_512', @saltedPassword), @salt , @firstName, @lastName,  @userRole)
-
+	select SCOPE_IDENTITY();
 end
 go
 
@@ -206,14 +206,14 @@ alter procedure InsertMessage
 	, @receiverUserId int
 	, @subject varchar(80)
 	, @body varchar(255) 
-	, @messageId int OUTPUT
+	--, @messageId int OUTPUT
 aS
 begin
 
 	INSERT INTO [messages] ([senderUserId], [receiverUserId], [subject], [body], [sendAt])
      VALUES (@senderUserId, @receiverUserId, @subject, @body, getdate())
 
-	SET @messageId = SCOPE_IDENTITY();
+	select SCOPE_IDENTITY();
 end
 go
 

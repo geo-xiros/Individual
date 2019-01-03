@@ -115,6 +115,8 @@ namespace Individual
         }
 
         public string FullName => $"{FirstName} {LastName}";
+        public bool CanEdit => (Role == User.Roles.ViewEdit) || (Role == User.Roles.ViewEditDelete);
+        public bool CanDelete => (Role == User.Roles.ViewEditDelete);
 
         public override string ToString()
         {
