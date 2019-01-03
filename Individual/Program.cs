@@ -7,7 +7,6 @@ namespace Individual
 {
     class Program
     {
-        public enum Test { Super, View };
         static void Main(string[] args)
         {
             Application.Run();
