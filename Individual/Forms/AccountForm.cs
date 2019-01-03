@@ -9,7 +9,7 @@ namespace Individual
         private User _user;
         public AccountForm(string title) : base(title)
         {
-            _user = new User("","","");
+            _user = new User(string.Empty, string.Empty, string.Empty);
             InitTextBoxes();
             OnFormFilled = AskAndInsert;
         }
@@ -89,9 +89,9 @@ namespace Individual
             UpdateUserFromTextBoxes();
 
             if (_user.Update())
-                Alert.Success("User Account Updated !!!");
+                Alerts.Success("User Account Updated !!!");
             else
-                Alert.Warning("Unable to Updated User Account !!!");
+                Alerts.Warning("Unable to Updated User Account !!!");
         }
 
         private void AskAndInsert()
@@ -102,13 +102,13 @@ namespace Individual
 
             if (_user.Insert())
             {
-                Alert.Success("Account Created !!!");
+                Alerts.Success("Account Created !!!");
 
                 OnFormSaved?.Invoke();
             }
             else
             {
-                Alert.Warning("Unable to Create Account !!!");
+                Alerts.Warning("Unable to Create Account !!!");
             }
         }
         private void AskAndDelete()
@@ -117,9 +117,9 @@ namespace Individual
                 return;
 
             if (_user.Delete())
-                Alert.Success("Account Successfully Deleted !!!");
+                Alerts.Success("Account Successfully Deleted !!!");
             else
-                Alert.Warning("Unable to delete Account !!!");
+                Alerts.Warning("Unable to delete Account !!!");
 
         }
 

@@ -30,7 +30,7 @@ namespace Individual
             UserName = username;
             FirstName = firstname;
             LastName = lastname;
-            Password = "";
+            Password = string.Empty;
             User.TryParseRole("Simple", out Role);
         }
         public static bool TryParseRole(string value, out Roles role)

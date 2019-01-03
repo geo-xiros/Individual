@@ -58,7 +58,7 @@ namespace Individual
                 return true;
             }
 
-            Alert.Warning("Wrong Username or Password!!!");
+            Alerts.Warning("Wrong Username or Password!!!");
             return false;
         }
         static public void Logoff(MenuChoice menuChoice)

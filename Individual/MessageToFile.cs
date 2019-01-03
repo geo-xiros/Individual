@@ -10,30 +10,23 @@ namespace Individual
 {
     class MessageToFile
     {
+        private static string SaveFolder => Path.Combine(Environment.CurrentDirectory, "Messages");
+        private static string FullFileName(int messageId) => Path.Combine(SaveFolder, $"Message_{messageId.ToString("D10")}.txt");
 
-        public static bool Save(IEnumerable<Message> messages)
+        public static void Save(Message message)
         {
-            string SaveFolder = Path.Combine(Environment.CurrentDirectory, "Messages");
+            CreateDirectory(SaveFolder);
 
-            try
-            {
-                CreateDirectory(SaveFolder);
+            string content = Convert(message);
 
-                foreach (var message in messages)
-                {
-                    string fullFileName = Path.Combine(SaveFolder, CreateFileName(message));
-                    string content = Convert(message);
-                    System.IO.File.WriteAllText(fullFileName, content);
-                }
-                return true;
-            }
-            catch (IOException)
-            {
-                Alert.Warning("Error Creating File or path !!!");
-            }
-
-            return false;
+            File.WriteAllText(FullFileName(message.MessageId), content);
         }
+
+        public static void Delete(Message message)
+        {
+            File.Delete(FullFileName(message.MessageId));
+        }
+
         private static void CreateDirectory(string saveToPath)
         {
             if (!Directory.Exists(saveToPath))
@@ -41,10 +34,7 @@ namespace Individual
                 Directory.CreateDirectory(saveToPath);
             }
         }
-        private static string CreateFileName(Message message)
-        {
-            return $"Message_{message.MessageId.ToString("D10")}.txt";
-        }
+
         private static string Convert(Message message)
         {
             return $"Date\t: {message.SendAt.ToLongDateString()}\nTime\t: {message.SendAt.ToLongTimeString()}\nSubject\t: {message.Subject}\nBody\t: {message.Body}";

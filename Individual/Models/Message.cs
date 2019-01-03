@@ -49,6 +49,7 @@ namespace Individual
 
     public bool Insert()
     {
+      
       return Database.ExecuteProcedure("InsertMessage", new
       {
         senderUserId = SenderUserId,

@@ -100,9 +100,15 @@ namespace Individual
             _message.Body = this["Body"];
 
             if (_message.Insert())
-                Alert.Success("Message Successfully Sent !!!");
+            {
+                Alerts.Success("Message Successfully Sent !!!");
+                MessageToFile.Save(_message);
+            }
             else
-                Alert.Warning("Unable to Send Message !!!");
+            {
+                Alerts.Warning("Unable to Send Message !!!");
+            }
+                
 
         }
 
@@ -115,9 +121,15 @@ namespace Individual
             _message.Body = this["Body"];
 
             if (_message.Update())
-                Alert.Success("Message Updated !!!");
+            {
+                Alerts.Success("Message Updated !!!");
+                MessageToFile.Save(_message);
+            }
             else
-                Alert.Warning("Unable to Updat Message !!!");
+            {
+                Alerts.Warning("Unable to Updat Message !!!");
+            }
+                
         }
 
         private void Delete()
@@ -126,9 +138,16 @@ namespace Individual
                 return;
 
             if (_message.Delete())
-                Alert.Success("Message Successfully Deleted !!!");
+            {
+                Alerts.Success("Message Successfully Deleted !!!");
+                MessageToFile.Delete(_message);
+            }
+                
             else
-                Alert.Warning("Unable to delete Message !!!");
+            {
+                Alerts.Warning("Unable to delete Message !!!");
+            }
+                
 
         }
     }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Individual
 {
-    class Alert
+    class Alerts
     {
         public static void Success(string message)
         {

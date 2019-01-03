@@ -23,19 +23,11 @@ namespace Individual
 
         public static int ExecuteProcedure(string procedure, object parameters)
         {
-            try
+            using (SqlConnection dbcon = new SqlConnection(ConnectionString))
             {
-                using (SqlConnection dbcon = new SqlConnection(ConnectionString))
-                {
-                    dbcon.Open();
-                    int affectedRows = dbcon.Execute(procedure, parameters, commandType: CommandType.StoredProcedure);
-                    return affectedRows;
-                }
-
-            }
-            catch (Exception e)
-            {
-                Alert.Warning(e.Message);
+                dbcon.Open();
+                int affectedRows = dbcon.Execute(procedure, parameters, commandType: CommandType.StoredProcedure);
+                return affectedRows;
             }
             return 0;
         }
