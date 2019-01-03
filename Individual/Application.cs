@@ -35,7 +35,7 @@ namespace Individual
                     menuChoice.LoadMenu = "Main Menu";
                 }
             };
-            loginForm.Run();
+            loginForm.Open();
         }
         static public void SignUp(MenuChoice menuChoice)
         {
@@ -48,7 +48,7 @@ namespace Individual
                 }
             };
 
-            signUpForm.Run();
+            signUpForm.Open();
         }
         static public bool Login(string username, string password)
         {
@@ -74,7 +74,7 @@ namespace Individual
         static public void CreateAccount(MenuChoice menuChoice)
         {
             AccountForm createAccountScreen = new AccountForm("Create Account");
-            createAccountScreen.Run();
+            createAccountScreen.Open();
         }
 
         static public void SelectUserAndEdit(MenuChoice menuChoice)
@@ -90,7 +90,7 @@ namespace Individual
               {
                   User user = User.GetUserBy(id);
                   AccountForm editAccount = new AccountForm("Edit Account", user);
-                  editAccount.Run();
+                  editAccount.Open();
               }
               , "Select User"
               , string.Format("\x2502A/A\x2502{0,-50}\x2502{1,-50}\x2502", "Lastname", "Firstname"));
@@ -98,7 +98,7 @@ namespace Individual
         static public void EditCurrentAccount(MenuChoice menuChoice)
         {
             AccountForm editAccount = new AccountForm("Edit Account", Application.LoggedUser);
-            editAccount.Run();
+            editAccount.Open();
         }
 
         #endregion
@@ -125,7 +125,7 @@ namespace Individual
             if (user == null) return;
 
             MessageForm viewMessageForm = new MessageForm(user);
-            viewMessageForm.Create();
+            viewMessageForm.Open();
         }
 
         public static void SentMessages(MenuChoice menuChoice)
@@ -143,7 +143,7 @@ namespace Individual
             {
                 Message message = Message.GetMessageById(id);
                 MessageForm viewMessageForm = new MessageForm(message);
-                viewMessageForm.View();
+                viewMessageForm.Open();
             }
             , "Select Message"
             , string.Format("\x2502A/A\x2502{0,-22}\x2502{1,-30}\x2502{2,-50}\x2502{3,-4}\x2502", "Date", "Sent To", "Subject", "Read"));
@@ -164,7 +164,7 @@ namespace Individual
             {
                 Message message = Message.GetMessageById(id);
                 MessageForm viewMessageForm = new MessageForm(message);
-                viewMessageForm.View();
+                viewMessageForm.Open();
             }
             , "Select Message"
             , string.Format("\x2502A/A\x2502{0,-22}\x2502{1,-30}\x2502{2,-50}\x2502{3,-4}\x2502", "Date", "Sent From", "Subject", "Read"));

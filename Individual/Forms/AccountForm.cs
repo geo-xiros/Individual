@@ -43,7 +43,7 @@ namespace Individual
 
 
         }
-        public override void Run()
+        public override void Open()
         {
             if (_user.UserId == 0 || _user.UserId == Application.LoggedUser.UserId)
             {
@@ -76,11 +76,6 @@ namespace Individual
             }
         }
 
-        private void FillForm()
-        {
-            ShowForm();
-            FillFormFields();
-        }
         private void AskAndUpdate()
         {
             if (MessageBox.Show("Update Selected User ? [y/n] ") == MessageBox.MessageBoxResult.No)
@@ -129,7 +124,7 @@ namespace Individual
             _user.FirstName = this["Firstname"];
             _user.LastName = this["Lastname"];
             _user.Password = this["Password"];
-            User.TryParseRole(this["Role"], out _user.Role);
+            _user.Role = User.ParseRole(this["Role"]);
         }
     }
 }

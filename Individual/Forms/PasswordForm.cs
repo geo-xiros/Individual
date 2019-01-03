@@ -6,20 +6,19 @@ using System.Threading.Tasks;
 
 namespace Individual
 {
-  class PasswordForm : Form
-  {
-    public PasswordForm(string passwordForAction) : base("Super User Password to " + passwordForAction)
+    class PasswordForm : Form
     {
-      TextBoxes = new Dictionary<string, TextBox>()
-      {
-        {"Password" , new TextBox("Password", 3, 3, 50,'*') }
-      };
+        public PasswordForm(string passwordForAction) : base("Super User Password to " + passwordForAction)
+        {
+            TextBoxes = new Dictionary<string, TextBox>()
+              {
+                {"Password" , new TextBox("Password", 3, 3, 50,'*') }
+              };
 
+        }
+        public override void Open()
+        {
+            FillForm();
+        }
     }
-    public override void Run()
-    {
-      ShowForm();
-      FillFormFields();      
-    }
-  }
 }

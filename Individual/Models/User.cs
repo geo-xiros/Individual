@@ -21,7 +21,7 @@ namespace Individual
         }
         public User(int userID, string userName, string firstName, string lastName, string userRole) : this(userName, firstName, lastName)
         {
-            User.TryParseRole(userRole, out Role);
+            Role = User.ParseRole(userRole);
             UserId = userID;
         }
 
@@ -31,30 +31,28 @@ namespace Individual
             FirstName = firstname;
             LastName = lastname;
             Password = string.Empty;
-            User.TryParseRole("Simple", out Role);
+
+            Role = User.ParseRole("Simple");
         }
-        public static bool TryParseRole(string value, out Roles role)
+        public static Roles ParseRole(string value)
         {
-            switch (value.ToLower())
+            Dictionary<string, Roles> Roles = new Dictionary<string, Roles>()
             {
-                case "super":
-                    role = Roles.Super;
-                    return true;
-                case "view":
-                    role = Roles.View;
-                    return true;
-                case "viewedit":
-                    role = Roles.ViewEdit;
-                    return true;
-                case "vieweditdelete":
-                    role = Roles.ViewEditDelete;
-                    return true;
-                case "simple":
-                    role = Roles.Simple;
-                    return true;
+                {"super",User.Roles.Super },
+                {"view",User.Roles.View },
+                {"viewedit",User.Roles.ViewEdit },
+                {"vieweditdelete",User.Roles.ViewEditDelete },
+                {"simple",User.Roles.Simple }
             };
-            role = Roles.None;
-            return false;
+
+            if (Roles.ContainsKey(value.ToLower()))
+            {
+                return Roles[value.ToLower()];
+            }
+            else
+            {
+                return User.Roles.None;
+            }
         }
 
         public static IEnumerable<User> GetUsers()
@@ -80,14 +78,15 @@ namespace Individual
 
         public bool Insert()
         {
-            return Database.ExecuteProcedure("InsertUser", new
+            UserId = Database.QueryFirst<int>("InsertUser", new
             {
                 userName = UserName,
                 firstName = FirstName,
                 lastName = LastName,
                 UserPassword = Database.GetPasswordCrypted(Password),
                 UserRole = Role.ToString()
-            }) == 1;
+            });
+            return true;
         }
 
         public bool Update()

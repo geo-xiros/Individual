@@ -201,19 +201,19 @@ end
 go
 
 
-create procedure InsertMessage
+alter procedure InsertMessage
 	  @senderUserId int
 	, @receiverUserId int
 	, @subject varchar(80)
 	, @body varchar(255) 
---	, @messageId int OUTPUT
+	, @messageId int OUTPUT
 aS
 begin
 
 	INSERT INTO [messages] ([senderUserId], [receiverUserId], [subject], [body], [sendAt])
      VALUES (@senderUserId, @receiverUserId, @subject, @body, getdate())
 
-	--SET @messageId = SCOPE_IDENTITY();
+	SET @messageId = SCOPE_IDENTITY();
 end
 go
 

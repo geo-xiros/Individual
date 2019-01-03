@@ -11,16 +11,15 @@ namespace Individual
         public LoginForm() : base("Login")
         {
             TextBoxes = new Dictionary<string, TextBox>()
-      {
-          {"UserName", new TextBox("Username", 3, 3, 30)}
-        , {"Password" , new TextBox("Password", 3, 5, 50,'*')}
-      };
+              {
+                  {"UserName", new TextBox("Username", 3, 3, 30)}
+                , {"Password" , new TextBox("Password", 3, 5, 50,'*')}
+              };
         }
 
-        public override void Run()
+        public override void Open()
         {
-            ShowForm();
-            FillFormFields();
+            FillForm();
         }
 
     }

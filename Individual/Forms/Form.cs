@@ -36,8 +36,10 @@ namespace Individual
         {
             return TextBoxes.Max(tb => tb.Value.Y) + 4;
         }
-        protected bool FillFormFields()
+        protected bool FillForm()
         {
+            ShowForm();
+
             foreach (var textbox in GetTextBoxesToFill())
             {
                 textbox.Focus();
@@ -72,7 +74,7 @@ namespace Individual
 
             return key.Key;
         }
-        public virtual void Run()
+        public virtual void Open()
         {
         }
 

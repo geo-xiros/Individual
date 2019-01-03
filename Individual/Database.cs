@@ -16,7 +16,7 @@ namespace Individual
         {
             if (!User.Exists("admin"))
             {
-                User user = new User("admin", "Super", "Admin", "1234", "Super");
+                User user = new User("admin", "Super", "Admin", "admin", "Super");
                 user.Insert();
             }
         }
@@ -26,8 +26,7 @@ namespace Individual
             using (SqlConnection dbcon = new SqlConnection(ConnectionString))
             {
                 dbcon.Open();
-                int affectedRows = dbcon.Execute(procedure, parameters, commandType: CommandType.StoredProcedure);
-                return affectedRows;
+                return dbcon.Execute(procedure, parameters, commandType: CommandType.StoredProcedure);
             }
            
         }
@@ -57,7 +56,7 @@ namespace Individual
             {
                 PasswordForm passwordForm = new PasswordForm(passwordForAction);
                 passwordForm.OnFormFilled = () => password = passwordForm["Password"];
-                passwordForm.Run();
+                passwordForm.Open();
             }
 
             returnPassword = password;
