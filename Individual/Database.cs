@@ -29,7 +29,7 @@ namespace Individual
                 int affectedRows = dbcon.Execute(procedure, parameters, commandType: CommandType.StoredProcedure);
                 return affectedRows;
             }
-            return 0;
+           
         }
         static public IEnumerable<T> Query<T>(string procedure, object parameters)
         {

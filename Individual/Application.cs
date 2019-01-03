@@ -7,6 +7,7 @@ namespace Individual
 {
     static class Application
     {
+
         public static User LoggedUser;
         public static User MessagesUser;
         public static User.Roles LoggedRole
