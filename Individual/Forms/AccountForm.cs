@@ -63,17 +63,14 @@ namespace Individual
 
             Console.CursorVisible = false;
 
-            ConsoleKey key = GetKey(new ConsoleKey[] { ConsoleKey.Escape, ConsoleKey.F1, ConsoleKey.F2 });
+            ReadKey<Action> readKey = new ReadKey<Action>(
+                new Dictionary<ConsoleKey, Action>() {
+                    { ConsoleKey.F1, FillForm},
+                    { ConsoleKey.F2, AskAndDelete},
+                    { ConsoleKey.Escape, ()=>{ } },
+                });
 
-            switch (key)
-            {
-                case ConsoleKey.F1:
-                    FillForm();
-                    break;
-                case ConsoleKey.F2:
-                    AskAndDelete();
-                    break;
-            }
+            readKey.Run()();
         }
 
         private void AskAndUpdate()

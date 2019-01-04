@@ -8,28 +8,23 @@ namespace Individual
 {
     static class MessageBox
     {
-        private static Dictionary<ConsoleKey, MessageBoxResult> _listOfChoices;
+        private static ReadKey<MessageBoxResult> _readKey;
         public enum MessageBoxResult { Yes, No };
         static MessageBox()
         {
-            _listOfChoices = new Dictionary<ConsoleKey, MessageBoxResult>() {
-                {ConsoleKey.Y, MessageBoxResult.Yes },
-                {ConsoleKey.N, MessageBoxResult.No },
-                {ConsoleKey.Escape, MessageBoxResult.No },
-            };
+            _readKey = new ReadKey<MessageBoxResult>(
+                new Dictionary<ConsoleKey, MessageBoxResult>() {
+                    {ConsoleKey.Y, MessageBoxResult.Yes },
+                    {ConsoleKey.N, MessageBoxResult.No },
+                    {ConsoleKey.Escape, MessageBoxResult.No }
+                });
         }
         static public MessageBoxResult Show(string message)
         {
             Console.CursorVisible = false;
             ShowMessageInBox(message);
-            ConsoleKey k;
 
-            do
-            {
-                k = Console.ReadKey(true).Key;
-            } while (!_listOfChoices.ContainsKey(k));
-
-            return _listOfChoices[k];
+            return _readKey.Run();
         }
 
         static private void ShowMessageInBox(string message)

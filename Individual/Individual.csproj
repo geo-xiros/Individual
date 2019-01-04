@@ -80,6 +80,7 @@
     <Compile Include="Database.cs" />
     <Compile Include="Forms\MessageBox.cs" />
     <Compile Include="Forms\MessageForm.cs" />
+    <Compile Include="Forms\ReadKey.cs" />
     <Compile Include="Forms\TextBoxValidation.cs" />
     <Compile Include="Menus\ApplicationMenus.cs" />
     <Compile Include="Menus\BackMenuChoice.cs" />

@@ -67,35 +67,28 @@ namespace Individual
 
         private void View()
         {
-            List<ConsoleKey> acceptedKeys = new List<ConsoleKey>() { ConsoleKey.Escape };
 
             ShowForm();
+            Console.CursorVisible = false;
 
+            Dictionary<ConsoleKey, Action> keyChoices = new Dictionary<ConsoleKey, Action>();
             if (_message.CanEditMessage())
             {
                 ColoredConsole.Write(" [F1] => Edit", 1, GetLastTextBoxY() + 2, ConsoleColor.DarkGray);
-                acceptedKeys.Add(ConsoleKey.F1);
+                keyChoices.Add(ConsoleKey.F1, FillForm);
             }
 
             if (_message.CanDeleteMessage())
             {
                 ColoredConsole.Write(" [F2] => Delete", 1, GetLastTextBoxY() + 3, ConsoleColor.DarkGray);
-                acceptedKeys.Add(ConsoleKey.F2);
+                keyChoices.Add(ConsoleKey.F2, AskAndDelete);
             }
 
-            Console.CursorVisible = false;
+            keyChoices.Add(ConsoleKey.Escape, () => { });
 
-            ConsoleKey key = GetKey(acceptedKeys.ToArray());
+            ReadKey<Action> readKey = new ReadKey<Action>(keyChoices);
 
-            switch (key)
-            {
-                case ConsoleKey.F1:
-                    FillForm();
-                    break;
-                case ConsoleKey.F2:
-                    AskAndDelete();
-                    break;
-            }
+            readKey.Run()();
         }
 
         private void AskAndUpdate()

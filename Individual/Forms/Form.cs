@@ -36,21 +36,21 @@ namespace Individual
         {
             return TextBoxes.Max(tb => tb.Value.Y) + 4;
         }
-        protected bool FillForm()
+        protected void FillForm()
         {
             ShowForm();
 
             foreach (var textbox in GetTextBoxesToFill())
             {
                 textbox.Focus();
-                if (textbox.EscapePressed) return false;
+                if (textbox.EscapePressed) return ;
             }
 
             Console.CursorVisible = false;
 
             OnFormFilled();
 
-            return true;
+            return ;
         }
 
         private IEnumerable<TextBox> GetTextBoxesToFill()
