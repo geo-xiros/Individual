@@ -43,14 +43,18 @@ namespace Individual
             foreach (var textbox in GetTextBoxesToFill())
             {
                 textbox.Focus();
-                if (textbox.EscapePressed) return ;
+                if (textbox.EscapePressed)
+                {
+                    OnFormExit();
+                    return;
+                }
             }
 
             Console.CursorVisible = false;
 
             OnFormFilled();
 
-            return ;
+            return;
         }
 
         private IEnumerable<TextBox> GetTextBoxesToFill()
@@ -63,23 +67,13 @@ namespace Individual
 
         public bool FormFilled => TextBoxes.Where(t => t.Value.EscapePressed).Count() == 0;
 
-
-        protected ConsoleKey GetKey(ConsoleKey[] acceptedKeys)
-        {
-            ConsoleKeyInfo key;
-            do
-            {
-                key = Console.ReadKey(true);
-            } while (!acceptedKeys.Contains(key.Key));
-
-            return key.Key;
-        }
         public virtual void Open()
         {
         }
 
         public Action OnFormFilled = () => { };
         public Action OnFormSaved = () => { };
+        public Action OnFormExit = () => { };
 
     }
 

@@ -12,10 +12,10 @@ namespace Individual
         {
             TextBoxes = new Dictionary<string, TextBox>()
               {
-                  {"Server", new TextBox("Sql Server", 3, 3, 50)}
-                , {"Database" , new TextBox("Sql Database", 3, 5, 50)}
-                , {"Username" , new TextBox("Username", 3, 7, 50)}
-                , {"Password" , new TextBox("Password", 3, 9, 50,'*')}
+                  {"Server", new TextBox("Sql Server", 5, 3, 50) { Text = Properties.Settings.Default.SqlServer} }
+                , {"Database" , new TextBox("Sql Database", 3, 5, 50) { Text = Properties.Settings.Default.Database}}
+                , {"Username" , new TextBox("Username", 7, 7, 50) { Text = Properties.Settings.Default.User}}
+                , {"Password" , new TextBox("Password", 7, 9, 50,'*'){ Text = Properties.Settings.Default.Pass}}
               };
 
             OnFormFilled = SaveSettings;
@@ -34,7 +34,6 @@ namespace Individual
             Properties.Settings.Default.User = this["Username"];
             Properties.Settings.Default.Pass = this["Password"];
             Properties.Settings.Default.Save();
-
         }
 
     }

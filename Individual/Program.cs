@@ -10,7 +10,11 @@ namespace Individual
     {
         static void Main(string[] args)
         {
-            Application.Run();
+            if (Database.Init())
+            {
+                Application.Run();
+            }
+            
 
             Console.WriteLine("Exit From Application.");
             System.Threading.Thread.Sleep(1000);

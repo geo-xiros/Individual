@@ -10,14 +10,18 @@ namespace Individual
 {
     static class Database
     {
-        static string ConnectionString = $"Server={Properties.Settings.Default.SqlServer};Database={Properties.Settings.Default.Database};User Id={Properties.Settings.Default.User};Password={Properties.Settings.Default.Pass}";
+        static string ConnectionString() => $"Server={Properties.Settings.Default.SqlServer};Database={Properties.Settings.Default.Database};User Id={Properties.Settings.Default.User};Password={Properties.Settings.Default.Pass}";
         static string LastErrorMessage;
-        static Database()
+
+        public static bool Init()
         {
+
             while (!CheckDatabaseConnection())
             {
                 Alerts.Warning(LastErrorMessage);
-                ConnectionForm connectionForm = new ConnectionForm();
+                ConnectionForm connectionForm = new ConnectionForm()
+                    { OnFormExit = () => Environment.Exit(0) };
+
                 connectionForm.Open();
             }
 
@@ -26,12 +30,14 @@ namespace Individual
                 User user = new User("admin", "Super", "Admin", "admin", "Super");
                 user.Insert();
             }
+
+            return true;
         }
         public static bool CheckDatabaseConnection()
         {
             try
             {
-                using (SqlConnection dbcon = new SqlConnection(ConnectionString))
+                using (SqlConnection dbcon = new SqlConnection(ConnectionString()))
                 {
                     dbcon.Open();
                 }
@@ -45,7 +51,7 @@ namespace Individual
         }
         public static int ExecuteProcedure(string procedure, object parameters)
         {
-            using (SqlConnection dbcon = new SqlConnection(ConnectionString))
+            using (SqlConnection dbcon = new SqlConnection(ConnectionString()))
             {
                 dbcon.Open();
                 return dbcon.Execute(procedure, parameters, commandType: CommandType.StoredProcedure);
@@ -54,7 +60,7 @@ namespace Individual
         }
         static public IEnumerable<T> Query<T>(string procedure, object parameters)
         {
-            using (SqlConnection dbcon = new SqlConnection(ConnectionString))
+            using (SqlConnection dbcon = new SqlConnection(ConnectionString()))
             {
                 dbcon.Open();
                 return dbcon.Query<T>(procedure, parameters, commandType: CommandType.StoredProcedure);
@@ -62,7 +68,7 @@ namespace Individual
         }
         static public T QueryFirst<T>(string procedure, object parameters)
         {
-            using (SqlConnection dbcon = new SqlConnection(ConnectionString))
+            using (SqlConnection dbcon = new SqlConnection(ConnectionString()))
             {
                 dbcon.Open();
                 return dbcon
