@@ -13,15 +13,17 @@ namespace Individual
         public string Subject { get; set; }
         public string Body { get; set; }
         public bool Unread { get; set; }
+        public string SenderUserName { get; set; }
+        public string ReceiverUserName { get; set; }
         public Message(int senderUserId, int receiverUserId, DateTime sendAt)
         {
             SenderUserId = senderUserId;
             ReceiverUserId = receiverUserId;
             SendAt = sendAt;
-            Subject = "";
-            Body = "";
+            Subject = string.Empty;
+            Body = string.Empty;
         }
-        public Message(int messageId, int senderUserId, int receiverUserId, DateTime sendAt, string subject, string body, bool unread)
+        public Message(int messageId, int senderUserId, int receiverUserId, DateTime sendAt, string subject, string body, bool unread,string senderUserName, string receiverUserName)
         {
             MessageId = messageId;
             SenderUserId = senderUserId;
@@ -30,6 +32,8 @@ namespace Individual
             Subject = subject;
             Body = body;
             Unread = unread;
+            SenderUserName = senderUserName;
+            ReceiverUserName = receiverUserName;
         }
         private string GetsubjectTrancated()
         {
@@ -108,8 +112,8 @@ namespace Individual
             string senderReceiverUsername;
 
             senderReceiverUsername = (SenderUserId == Application.MessagesUser.UserId)
-              ? User.GetUserBy(ReceiverUserId).UserName
-              : User.GetUserBy(SenderUserId).UserName;
+              ? ReceiverUserName
+              : SenderUserName;
 
             return String.Format("\x2502{0,-22}\x2502{1,-30}\x2502{2,-50}\x2502{3,-4}\x2502", SendAt, senderReceiverUsername, GetsubjectTrancated(), Unread ? "" : "Yes");
         }

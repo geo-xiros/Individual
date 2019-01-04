@@ -60,7 +60,7 @@ namespace Individual
                     {ConsoleKey.D9, ()=> Id= _menuChoices[8].Key }
 
                 });
-
+            
             Id = -1;
 
             while (Id == -1)

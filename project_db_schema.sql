@@ -134,7 +134,7 @@ go
 --go
 
 
-alter procedure InsertUser 
+create procedure InsertUser 
 	  @userName varchar(50)
 	, @userPassword BINARY(64) 
 	, @firstName varchar(50)
@@ -201,7 +201,7 @@ end
 go
 
 
-alter procedure InsertMessage
+create procedure InsertMessage
 	  @senderUserId int
 	, @receiverUserId int
 	, @subject varchar(80)
@@ -288,11 +288,19 @@ as
 begin
 	if @messageId<>0
 	begin
-		select * from messages where messageId=@messageId
+		select messages.*, sender.userName as senderUserName, receiver.userName as receiverUserName
+		from messages 
+			inner join users sender on messages.senderUserId = sender.userId 
+			inner join users receiver on messages.receiverUserId = receiver.userId 
+		where messageId=@messageId
 	end
 	else
 	begin
-		select * from messages where senderUserId=@userId or receiverUserId=@userId	
+		select messages.*, sender.userName as senderUserName, receiver.userName as receiverUserName
+		from messages 
+			inner join users sender on messages.senderUserId = sender.userId 
+			inner join users receiver on messages.receiverUserId = receiver.userId 
+		where senderUserId=@userId or receiverUserId=@userId	
 	end
 end
 go
