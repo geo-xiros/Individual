@@ -1,6 +1,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 
 namespace Individual
@@ -14,5 +15,6 @@ namespace Individual
             Console.WriteLine("Exit From Application.");
             System.Threading.Thread.Sleep(1000);
         }
+        
     }
 }

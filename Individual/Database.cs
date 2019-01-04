@@ -10,17 +10,44 @@ namespace Individual
 {
     static class Database
     {
-        static private readonly string ConnectionString = Properties.Settings.Default.ConnectionString;
-
+        static string ConnectionString = $"Server={Properties.Settings.Default.SqlServer};Database={Properties.Settings.Default.Database};User Id={Properties.Settings.Default.User};Password={Properties.Settings.Default.Pass}";
+        static string LastErrorMessage;
         static Database()
         {
+            while (!CheckDatabaseConnection())
+            {
+                Alerts.Warning(LastErrorMessage);
+
+                Console.Clear();
+                Console.Write("Sql Server: "); Properties.Settings.Default.SqlServer = Console.ReadLine();
+                Console.Write("Sql Database: "); Properties.Settings.Default.Database = Console.ReadLine();
+                Console.Write("Sql User Name : "); Properties.Settings.Default.User = Console.ReadLine();
+                Console.Write("Sql Password: "); Properties.Settings.Default.Pass = Console.ReadLine();
+                Properties.Settings.Default.Save();
+            }
+
             if (!User.Exists("admin"))
             {
                 User user = new User("admin", "Super", "Admin", "admin", "Super");
                 user.Insert();
             }
         }
-
+        public static bool CheckDatabaseConnection()
+        {
+            try
+            {
+                using (SqlConnection dbcon = new SqlConnection(ConnectionString))
+                {
+                    dbcon.Open();
+                }
+                return true;
+            }
+            catch (SqlException e)
+            {
+                LastErrorMessage = e.Message;
+            }
+            return false;
+        }
         public static int ExecuteProcedure(string procedure, object parameters)
         {
             using (SqlConnection dbcon = new SqlConnection(ConnectionString))
@@ -28,7 +55,7 @@ namespace Individual
                 dbcon.Open();
                 return dbcon.Execute(procedure, parameters, commandType: CommandType.StoredProcedure);
             }
-           
+
         }
         static public IEnumerable<T> Query<T>(string procedure, object parameters)
         {
