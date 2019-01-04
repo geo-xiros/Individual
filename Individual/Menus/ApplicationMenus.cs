@@ -54,7 +54,7 @@ namespace Individual
           {
               new BackMenuChoice("Back", (mc)=> Application.MessagesUser = null)
             , new MenuChoice("Send", Application.SendMessage)
-              { HasPermission = (loggedRole) => Application.LoggedUser==Application.MessagesUser }
+              { HasPermission = (loggedRole) => Application.LoggedUser == Application.MessagesUser }
             , new MenuChoice("Received", Application.ReceivedMessages)
             , new MenuChoice("Sent", Application.SentMessages)
           };
