@@ -16,7 +16,7 @@ namespace Individual
     public readonly string _title;
     public ActionsAfterRun ActionAfterRun;
     public Action<MenuChoice> Run;
-    public Func<User.Roles, bool> HasPermission;
+    public Func<User, bool> HasPermission;
     public ConsoleKey Key;
 
     public string Title

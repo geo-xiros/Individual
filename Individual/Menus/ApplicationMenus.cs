@@ -38,11 +38,9 @@ namespace Individual
           new MenuChoice("Logoff", Application.Logoff)
         , new MenuChoice("Messages", Application.MessagesMenu )
         , new MenuChoice("Messages (Other Users)", Application.OthersMessagesMenu)
-            { HasPermission = (loggedRole) => loggedRole == User.Roles.View
-                                            ||loggedRole == User.Roles.ViewEdit
-                                            ||loggedRole == User.Roles.ViewEditDelete }
+            { HasPermission = (user) => user.CanView || user.CanEdit || user.CanDelete}
         , new MenuChoice("Account Managment", (tb) => tb.LoadMenu="Account Menu")
-            { HasPermission = (loggedRole) => loggedRole == User.Roles.Super }
+            { HasPermission = (user) => user.IsAdmin}
         , new MenuChoice("Current Account Edit", Application.EditCurrentAccount)
       };
 
@@ -54,7 +52,7 @@ namespace Individual
           {
               new BackMenuChoice("Back", (mc)=> Application.MessagesUser = null)
             , new MenuChoice("Send", Application.SendMessage)
-              { HasPermission = (loggedRole) => Application.LoggedUser == Application.MessagesUser }
+              { HasPermission = (user) => user == Application.MessagesUser }
             , new MenuChoice("Received", Application.ReceivedMessages)
             , new MenuChoice("Sent", Application.SentMessages)
           };

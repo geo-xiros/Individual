@@ -111,9 +111,7 @@ namespace Individual
 
         public override string ToString()
         {
-            string senderReceiverUsername;
-
-            senderReceiverUsername = (SenderUserId == Application.MessagesUser.UserId)
+            string senderReceiverUsername = (SenderUserId == Application.MessagesUser.UserId)
               ? ReceiverUserName
               : SenderUserName;
 

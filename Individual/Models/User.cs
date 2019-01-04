@@ -116,6 +116,9 @@ namespace Individual
         }
 
         public string FullName => $"{FirstName} {LastName}";
+
+        public bool IsAdmin => (Role == User.Roles.Super);
+        public bool CanView => (Role == User.Roles.View);
         public bool CanEdit => (Role == User.Roles.ViewEdit) || (Role == User.Roles.ViewEditDelete);
         public bool CanDelete => (Role == User.Roles.ViewEditDelete);
 

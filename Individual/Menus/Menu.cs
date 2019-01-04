@@ -74,7 +74,7 @@ namespace Individual
       ColoredConsole.WriteLine(new string('\x2500', Console.WindowWidth), ConsoleColor.White);
 
       _menuChoices = _menuChoices
-          .Where(mc => mc.HasPermission == null || mc.HasPermission(Application.LoggedRole))
+          .Where(mc => mc.HasPermission == null || mc.HasPermission(Application.LoggedUser))
           .ToList();
 
       for (byte i = 1; i < _menuChoices.Count; i++)
