@@ -11,14 +11,7 @@ namespace Individual
         public static User LoggedUser;
         public static User MessagesUser;
         public static bool VieweingOthersMessage => LoggedUser != MessagesUser;
-        public static User.Roles LoggedRole
-        {
-            get
-            {
-                if (Application.LoggedUser == null) return User.Roles.None;
-                return LoggedUser.Role;
-            }
-        }
+
         static public void Run()
         {
             Menu menu = new Menu("Login Menu");

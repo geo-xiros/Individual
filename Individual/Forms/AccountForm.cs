@@ -35,7 +35,7 @@ namespace Individual
                 , {"Lastname" , new TextBox("Lastname", 3, 9, 50) {  Validate = TextBoxValidation.ValidLength } }
                 , {"Role" , new TextBox("Role", 7, 11, 30)
                     {   Text = _user.Role.ToString()
-                      , Locked = !(Application.LoggedRole == User.Roles.Super)
+                      , Locked = !(Application.LoggedUser.IsAdmin)
                       , Validate = TextBoxValidation.ValidRole
                     }
                   }
