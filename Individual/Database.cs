@@ -11,7 +11,7 @@ namespace Individual
     static class Database
     {
         static string ConnectionString() => $"Server={Properties.Settings.Default.SqlServer};Database={Properties.Settings.Default.Database};User Id={Properties.Settings.Default.User};Password={Properties.Settings.Default.Pass}";
-        static string LastErrorMessage;
+        static string LastErrorMessage;//4060 database error //18456 user error
 
         public static bool Init()
         {
@@ -45,7 +45,7 @@ namespace Individual
             }
             catch (SqlException e)
             {
-                LastErrorMessage = e.Message;
+                LastErrorMessage = e.Message.Substring(1,80);
             }
             return false;
         }
