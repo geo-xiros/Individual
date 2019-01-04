@@ -78,6 +78,7 @@
     <Compile Include="Application.cs" />
     <Compile Include="ColoredConsole.cs" />
     <Compile Include="Database.cs" />
+    <Compile Include="Forms\ConnectionForm.cs" />
     <Compile Include="Forms\MessageBox.cs" />
     <Compile Include="Forms\MessageForm.cs" />
     <Compile Include="Forms\ReadKey.cs" />

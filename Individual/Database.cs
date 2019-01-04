@@ -17,13 +17,8 @@ namespace Individual
             while (!CheckDatabaseConnection())
             {
                 Alerts.Warning(LastErrorMessage);
-
-                Console.Clear();
-                Console.Write("Sql Server: "); Properties.Settings.Default.SqlServer = Console.ReadLine();
-                Console.Write("Sql Database: "); Properties.Settings.Default.Database = Console.ReadLine();
-                Console.Write("Sql User Name : "); Properties.Settings.Default.User = Console.ReadLine();
-                Console.Write("Sql Password: "); Properties.Settings.Default.Pass = Console.ReadLine();
-                Properties.Settings.Default.Save();
+                ConnectionForm connectionForm = new ConnectionForm();
+                connectionForm.Open();
             }
 
             if (!User.Exists("admin"))

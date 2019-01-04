@@ -38,18 +38,18 @@ namespace Individual
         }
         static User()
         {
-            _roles = new Dictionary<string, Roles>()
+            _roles = new Dictionary<string, Roles>(StringComparer.OrdinalIgnoreCase)
             {
-                {"super",User.Roles.Super },
-                {"view",User.Roles.View },
-                {"viewedit",User.Roles.ViewEdit },
-                {"vieweditdelete",User.Roles.ViewEditDelete },
-                {"simple",User.Roles.Simple }
+                {"Super",User.Roles.Super },
+                {"View",User.Roles.View },
+                {"ViewEdit",User.Roles.ViewEdit },
+                {"ViewEditDelete",User.Roles.ViewEditDelete },
+                {"Simple",User.Roles.Simple }
             };
         }
         public static Roles ParseRole(string value)
         {
-            if (!_roles.TryGetValue(value.ToLower(), out Roles role))
+            if (!_roles.TryGetValue(value, out Roles role))
             {
                 role = User.Roles.None;
             }
