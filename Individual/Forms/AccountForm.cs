@@ -70,7 +70,7 @@ namespace Individual
                     { ConsoleKey.Escape, ()=>{ } },
                 });
 
-            readKey.Run()();
+            readKey.GetKey()();
         }
 
         private void AskAndUpdate()

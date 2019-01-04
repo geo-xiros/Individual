@@ -24,7 +24,7 @@ namespace Individual
             Console.CursorVisible = false;
             ShowMessageInBox(message);
 
-            return _readKey.Run();
+            return _readKey.GetKey();
         }
 
         static private void ShowMessageInBox(string message)

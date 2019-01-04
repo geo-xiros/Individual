@@ -14,7 +14,7 @@ namespace Individual
         {
             _keyChoices = keyChoices;
         }
-        public T Run()
+        public T GetKey()
         {
             ConsoleKey k;
 

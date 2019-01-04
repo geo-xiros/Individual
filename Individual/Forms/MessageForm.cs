@@ -88,7 +88,7 @@ namespace Individual
 
             ReadKey<Action> readKey = new ReadKey<Action>(keyChoices);
 
-            readKey.Run()();
+            readKey.GetKey()();
         }
 
         private void AskAndUpdate()
