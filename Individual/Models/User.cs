@@ -15,6 +15,8 @@ namespace Individual
         public string Password { get; set; }
 
         public Roles Role;
+        private static Dictionary<string, Roles> _roles;
+
         public User(string userName, string firstName, string lastName, string password, string userRole) : this(0, userName, firstName, lastName, userRole)
         {
             Password = password;
@@ -34,9 +36,9 @@ namespace Individual
 
             Role = User.ParseRole("Simple");
         }
-        public static Roles ParseRole(string value)
+        static User()
         {
-            Dictionary<string, Roles> Roles = new Dictionary<string, Roles>()
+            _roles = new Dictionary<string, Roles>()
             {
                 {"super",User.Roles.Super },
                 {"view",User.Roles.View },
@@ -44,15 +46,14 @@ namespace Individual
                 {"vieweditdelete",User.Roles.ViewEditDelete },
                 {"simple",User.Roles.Simple }
             };
-
-            if (Roles.ContainsKey(value.ToLower()))
+        }
+        public static Roles ParseRole(string value)
+        {
+            if (!_roles.TryGetValue(value.ToLower(), out Roles role))
             {
-                return Roles[value.ToLower()];
+                role = User.Roles.None;
             }
-            else
-            {
-                return User.Roles.None;
-            }
+            return role;
         }
 
         public static IEnumerable<User> GetUsers()

@@ -168,14 +168,5 @@ namespace Individual
                 return _ValidationError;
             }
         }
-        //private void ClearValidationError()
-        //{
-        //    int left = Console.CursorLeft;
-        //    int top = Console.CursorTop;
-        //    ColoredConsole.Write(new string(' ', _ValidationError.Length), _textX, _y + 1, ConsoleColor.White, ConsoleColor.Black);
-        //    _ValidationError = null;
-        //    Console.SetCursorPosition(left, top);
-
-        //}
     }
 }

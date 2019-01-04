@@ -40,12 +40,10 @@ namespace Individual
                     }
                   }
               };
-
-
         }
         public override void Open()
         {
-            if (_user.UserId == 0 || _user.UserId == Application.LoggedUser.UserId)
+            if (NewUserOrLoggedUserAccount)
             {
                 FillForm();
             }
@@ -54,6 +52,7 @@ namespace Individual
                 View();
             }
         }
+        private bool NewUserOrLoggedUserAccount => _user.UserId == 0 || _user.UserId == Application.LoggedUser.UserId;
 
         private void View()
         {
