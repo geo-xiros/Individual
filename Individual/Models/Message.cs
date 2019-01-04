@@ -15,10 +15,12 @@ namespace Individual
         public bool Unread { get; set; }
         public string SenderUserName { get; set; }
         public string ReceiverUserName { get; set; }
-        public Message(int senderUserId, int receiverUserId, DateTime sendAt)
+        public Message(User senderUser, User receiverUser, DateTime sendAt)
         {
-            SenderUserId = senderUserId;
-            ReceiverUserId = receiverUserId;
+            SenderUserId = senderUser.UserId;
+            SenderUserName = senderUser.UserName;
+            ReceiverUserId = receiverUser.UserId;
+            ReceiverUserName = receiverUser.UserName;
             SendAt = sendAt;
             Subject = string.Empty;
             Body = string.Empty;

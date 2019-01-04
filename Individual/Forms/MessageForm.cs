@@ -15,7 +15,7 @@ namespace Individual
         {
             
             _user = user;
-            _message = new Message(Application.LoggedUser.UserId, _user.UserId, DateTime.Today);
+            _message = new Message(Application.LoggedUser, _user, DateTime.Today);
             TextBoxes = new Dictionary<string, TextBox>()
               {
                   {"Date" , new TextBox("Date", 6, 5, 250) { Locked=true, Text = _message.SendAt.ToLongDateString() } }
