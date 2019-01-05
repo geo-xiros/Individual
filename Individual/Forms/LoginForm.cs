@@ -10,11 +10,7 @@ namespace Individual
     {
         public LoginForm() : base("Login")
         {
-            TextBoxes = new Dictionary<string, TextBox>()
-              {
-                  {User.FieldName.UserName, new TextBox(User.FieldName.UserName, 3, 3, User.FieldSize.UserName)}
-                , {User.FieldName.Password , new TextBox(User.FieldName.Password , 3, 5, User.FieldSize.Password,'*')}
-              };
+            AddTextBoxes(UserFields.Fields.Where(f => f.Name == "Password" || f.Name == "Username").ToList());
         }
 
         public override void Open()

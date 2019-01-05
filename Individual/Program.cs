@@ -18,6 +18,6 @@ namespace Individual
             Console.Clear();
             Console.WriteLine("Bye.");
         }
-        
+
     }
 }

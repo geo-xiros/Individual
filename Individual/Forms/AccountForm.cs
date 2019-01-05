@@ -99,34 +99,30 @@ namespace Individual
 
         private void InitTextBoxes()
         {
-            TextBoxes = new Dictionary<string, TextBox>()
-              {
-                  {User.FieldName.UserName, new TextBox(User.FieldName.UserName, 2, 3, User.FieldSize.UserName, TextBoxValidation.ValidUserName) }
-                , {User.FieldName.Password , new TextBox(User.FieldName.Password, 2, 5, User.FieldSize.Password, TextBoxValidation.ValidPassword, '*') }
-                , {User.FieldName.FirstName , new TextBox(User.FieldName.FirstName, 2, 7, User.FieldSize.FirstName, TextBoxValidation.ValidLength) }
-                , {User.FieldName.LastName , new TextBox(User.FieldName.LastName, 2, 9, User.FieldSize.LastName, TextBoxValidation.ValidLength) }
-                , {User.FieldName.Role , new TextBox(User.FieldName.Role, 2, 11, User.FieldSize.Role, TextBoxValidation.ValidRole)
-                    {   Text = _user.Role.ToString()
-                      , Locked = Application.LoggedUser == null ? true : !Application.LoggedUser.IsAdmin
-                    }
-                  }
-              };
+            AddTextBoxes(UserFields.Fields);
+            TextBoxes["Username"].Validate = TextBoxValidation.ValidUserName;
+            TextBoxes["Password"].Validate = TextBoxValidation.ValidPassword;
+            TextBoxes["Firstname"].Validate = TextBoxValidation.ValidLength;
+            TextBoxes["Lastname"].Validate = TextBoxValidation.ValidLength;
+            TextBoxes["Role"].Validate = TextBoxValidation.ValidRole;
+            TextBoxes["Role"].Locked = Application.LoggedUser == null ? true : !Application.LoggedUser.IsAdmin;
+            this["Role"] = _user.Role.ToString();
         }
 
         private void UpdateUserFromTextBoxes()
         {
-            _user.UserName = this[User.FieldName.UserName];
-            _user.FirstName = this[User.FieldName.FirstName];
-            _user.LastName = this[User.FieldName.LastName];
-            _user.Password = this[User.FieldName.Password];
-            _user.Role = Role.ParseRole(this[User.FieldName.Role]);
+            _user.UserName = this["Username"];
+            _user.FirstName = this["Firstname"];
+            _user.LastName = this["Lastname"];
+            _user.Password = this["Password"];
+            _user.Role = Role.ParseRole(this["Role"]);
         }
         private void UpdateTextBoxesFromUser()
         {
-            this[User.FieldName.UserName] = _user.UserName;
-            this[User.FieldName.Password] = _user.Password;
-            this[User.FieldName.FirstName] = _user.FirstName;
-            this[User.FieldName.LastName] = _user.LastName;
+            this["Username"] = _user.UserName;
+            this["Password"] = _user.Password;
+            this["Firstname"] = _user.FirstName;
+            this["Lastname"] = _user.LastName;
         }
     }
 }

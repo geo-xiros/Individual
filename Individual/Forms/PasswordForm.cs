@@ -10,12 +10,9 @@ namespace Individual
     {
         public PasswordForm(string passwordForAction) : base("Super User Password to " + passwordForAction)
         {
-            TextBoxes = new Dictionary<string, TextBox>()
-              {
-                {User.FieldName.Password , new TextBox(User.FieldName.Password , 3, 3, User.FieldSize.Password,'*') }
-              };
-
+            AddTextBoxes(UserFields.Fields.Where(uf => uf.Name == "Password").ToList());
         }
+
         public override void Open()
         {
             FillForm();

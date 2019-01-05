@@ -14,7 +14,7 @@ namespace Individual
         public bool EscapePressed { get; private set; }
         public int Y { get { return _y; } }
 
-        private int _labelX;
+        private readonly int _labelX;
         private int _y;
         private int _maxLength;
         private bool _pressedEnter;
@@ -51,7 +51,7 @@ namespace Individual
             ColoredConsole.Write($"{Label}:", _labelX, _y, ConsoleColor.White);
             ColoredConsole.Write(new string(' ', _maxLength), _textX, _y, consoleBackColor: backColor);
 
-            if (_passwordChar == 0 || _text == null)
+            if (_passwordChar == char.MinValue || _text == null)
                 ColoredConsole.Write(_text, _textX, _y, ConsoleColor.DarkGray, backColor);
             else
                 ColoredConsole.Write(new string(_passwordChar, _text.Length), _textX, _y, ConsoleColor.DarkGray, backColor);

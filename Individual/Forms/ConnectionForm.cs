@@ -10,13 +10,11 @@ namespace Individual
     {
         public ConnectionForm() : base("Connect to Database")
         {
-            TextBoxes = new Dictionary<string, TextBox>()
-              {
-                  {Database.FieldName.SqlServer, new TextBox(Database.FieldName.SqlServer, 3, 3, Database.FieldSize.SqlServer) { Text = Properties.Settings.Default.SqlServer} }
-                , {Database.FieldName.Database, new TextBox(Database.FieldName.Database, 3, 5, Database.FieldSize.Database) { Text = Properties.Settings.Default.Database}}
-                , {Database.FieldName.UserId, new TextBox(Database.FieldName.UserId, 3, 7, Database.FieldSize.UserId) { Text = Properties.Settings.Default.User}}
-                , {Database.FieldName.Password, new TextBox(Database.FieldName.Password, 3, 9, Database.FieldSize.Password,'*'){ Text = Properties.Settings.Default.Pass}}
-              };
+            AddTextBoxes(ConnectionFields.Fields);
+            this["Sql Server"] = Properties.Settings.Default.SqlServer;
+            this["Database Name"] = Properties.Settings.Default.Database;
+            this["User"] = Properties.Settings.Default.User;
+            this["Password"] = Properties.Settings.Default.Pass;
 
             OnFormFilled = SaveSettings;
         }
@@ -28,10 +26,10 @@ namespace Individual
 
         private void SaveSettings()
         {
-            Properties.Settings.Default.SqlServer = this[Database.FieldName.SqlServer];
-            Properties.Settings.Default.Database = this[Database.FieldName.Database];
-            Properties.Settings.Default.User = this[Database.FieldName.UserId];
-            Properties.Settings.Default.Pass = this[Database.FieldName.Password];
+            Properties.Settings.Default.SqlServer = this["Sql Server"];
+            Properties.Settings.Default.Database = this["Database Name"];
+            Properties.Settings.Default.User = this["User"];
+            Properties.Settings.Default.Pass = this["Password"];
             Properties.Settings.Default.Save();
         }
 

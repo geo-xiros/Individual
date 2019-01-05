@@ -12,7 +12,7 @@ namespace Individual
         private List<KeyValuePair<int, string>> _menuChoices;
         private List<KeyValuePair<int, string>> _allMenuChoices;
         private readonly string _menu;
-        public int Id;
+        public int Id { get; private set; }
         private string _titles;
         private int _menuSkip;
         private int menuSkip
@@ -96,13 +96,13 @@ namespace Individual
             for (int i = 0; i < _menuChoices.Count; i++)
             {
                 int choiceIndex = i;
-                keyChoices.Add(Keys1To9[i+1], () => Id = _menuChoices[choiceIndex].Key);
+                keyChoices.Add(Keys1To9[i + 1], () => Id = _menuChoices[choiceIndex].Key);
             }
 
             return keyChoices;
         }
 
-        public static Dictionary<int, ConsoleKey> Keys1To9 = new Dictionary<int, ConsoleKey>()
+        public static Dictionary<int, ConsoleKey> Keys1To9 { get; } = new Dictionary<int, ConsoleKey>()
         {
               { 1, ConsoleKey.D1 }
             , { 2, ConsoleKey.D2 }

@@ -24,7 +24,7 @@ namespace Individual
             LoginForm loginForm = new LoginForm();
             loginForm.OnFormFilled = () =>
             {
-                if (Application.Login(loginForm[User.FieldName.UserName], loginForm[User.FieldName.Password]))
+                if (Application.Login(loginForm["Username"], loginForm["Password"]))
                 {
                     menuChoice.LoadMenu = "Main Menu";
                 }
@@ -36,7 +36,7 @@ namespace Individual
             AccountForm signUpForm = new AccountForm("Sign Up");
             signUpForm.OnFormSaved = () =>
             {
-                if (Application.Login(signUpForm[User.FieldName.UserName], signUpForm[User.FieldName.Password]))
+                if (Application.Login(signUpForm["Username"], signUpForm["Password"]))
                 {
                     menuChoice.LoadMenu = "Main Menu";
                 }

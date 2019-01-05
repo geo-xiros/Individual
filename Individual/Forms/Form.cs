@@ -85,6 +85,18 @@ namespace Individual
         public Action OnFormSaved = () => { };
         public Action OnFormExit = () => { };
 
+        protected void AddTextBoxes(List<Fieldsize> fields)
+        {
+            int pos = 3;
+
+            TextBoxes = new Dictionary<string, TextBox>();
+
+            foreach (var field in fields)
+            {
+                TextBoxes.Add(field.Name, new TextBox(field.Name, 3, pos, field.Size, field.PasswordChar));
+                pos += 2;
+            }
+        }
     }
 
 }

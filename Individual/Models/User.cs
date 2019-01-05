@@ -6,7 +6,7 @@ namespace Individual
 {
     class User
     {
-        
+
         public int UserId { get; set; }
         public string UserName { get; set; }
         public string FirstName { get; set; }
@@ -107,21 +107,5 @@ namespace Individual
             return String.Format("\x2502{0,-50}\x2502{1,-50}\x2502", LastName, FirstName);
         }
 
-        static public class FieldSize
-        {
-            public const int UserName = 30;
-            public const int FirstName = 50;
-            public const int LastName = 50;
-            public const int Password = 30;
-            public const int Role = 30;
-        }
-        static public class FieldName
-        {
-            public const string UserName = "Username";
-            public const string FirstName = "Firstname";
-            public const string LastName = "Lastname";
-            public const string Password = "Password";
-            public const string Role = "Role";
-        }
-    }
+     }
 }

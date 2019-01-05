@@ -110,19 +110,19 @@ namespace Individual
             return shaM.ComputeHash(data);
         }
 
-        static public class FieldSize
-        {
-            public const int SqlServer = 80;
-            public const int Database = 80;
-            public const int UserId = 30;
-            public const int Password = 30;
-        }
-        static public class FieldName
-        {
-            public const string SqlServer = "Sql Server";
-            public const string Database = "Database Name";
-            public const string UserId = "User";
-            public const string Password = "Password";
-        }
+        //static public class FieldSize
+        //{
+        //    public const int SqlServer = 80;
+        //    public const int Database = 80;
+        //    public const int UserId = 30;
+        //    public const int Password = 30;
+        //}
+        //static public class FieldName
+        //{
+        //    public const string SqlServer = "Sql Server";
+        //    public const string Database = "Database Name";
+        //    public const string UserId = "User";
+        //    public const string Password = "Password";
+        //}
     }
 }
