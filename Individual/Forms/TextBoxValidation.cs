@@ -17,7 +17,7 @@ namespace Individual
 
         public static bool ValidRole(TextBox textBox)
         {
-            if (User.ParseRole(textBox.Text) == User.Roles.None)
+            if (Role.ParseRole(textBox.Text) == Role.Roles.None)
             {
                 textBox.ValidationError = $"Wrong Role Select from List (Simple, View, ViewEdit,ViewEditDelete, Super) !!!";
                 return false;

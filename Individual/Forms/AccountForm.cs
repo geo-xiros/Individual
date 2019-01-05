@@ -119,7 +119,7 @@ namespace Individual
             _user.FirstName = this[User.FieldName.FirstName];
             _user.LastName = this[User.FieldName.LastName];
             _user.Password = this[User.FieldName.Password];
-            _user.Role = User.ParseRole(this[User.FieldName.Role]);
+            _user.Role = Role.ParseRole(this[User.FieldName.Role]);
         }
         private void UpdateTextBoxesFromUser()
         {

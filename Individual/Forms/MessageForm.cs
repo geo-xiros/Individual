@@ -40,15 +40,12 @@ namespace Individual
 
             if (Application.MessagesUser.UserId == _message.ReceiverUserId)
             {
-                //Title = $"View Message {Application.Username} Received";
-                User senderUser = User.GetUserBy(_message.SenderUserId);
-                TextBoxes.Add("From", new TextBox("From", 6, 3, 80) { Locked = true, Text = senderUser.UserName });
+                TextBoxes.Add("From", new TextBox("From", 3, 3, 80) { Locked = true, Text = _message.SenderUserName });
             }
             else
             {
                 Title = $"View Message {Application.Username} Sent";
-                User receiverUser = User.GetUserBy(_message.ReceiverUserId);
-                TextBoxes.Add("To", new TextBox("To", 8, 3, 80) { Locked = true, Text = receiverUser.UserName });
+                TextBoxes.Add("To", new TextBox("To", 3, 3, 80) { Locked = true, Text = _message.ReceiverUserName});
             }
             OnFormFilled = AskAndUpdate;
         }
@@ -71,7 +68,11 @@ namespace Individual
             ShowForm();
             Console.CursorVisible = false;
 
-            Dictionary<ConsoleKey, Action> keyChoices = new Dictionary<ConsoleKey, Action>();
+            Dictionary<ConsoleKey, Action> keyChoices = new Dictionary<ConsoleKey, Action>()
+                {
+                    { ConsoleKey.Escape, () => { } }
+                };
+
             if (_message.CanEditMessage())
             {
                 ColoredConsole.Write(" [F1] => Edit", 1, LastTextBoxY + 2, ConsoleColor.DarkGray);
@@ -83,8 +84,6 @@ namespace Individual
                 ColoredConsole.Write(" [F2] => Delete", 1, LastTextBoxY + 3, ConsoleColor.DarkGray);
                 keyChoices.Add(ConsoleKey.F2, AskAndDelete);
             }
-
-            keyChoices.Add(ConsoleKey.Escape, () => { });
 
             ReadKey<Action> readKey = new ReadKey<Action>(keyChoices);
 

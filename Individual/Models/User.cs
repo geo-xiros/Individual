@@ -6,16 +6,14 @@ namespace Individual
 {
     class User
     {
-        public enum Roles { None, Simple, View, Super, ViewEdit, ViewEditDelete };
-
+        
         public int UserId { get; set; }
         public string UserName { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Password { get; set; }
 
-        public Roles Role;
-        private static Dictionary<string, Roles> _roles;
+        public Role.Roles Role;
 
         public User(string userName, string firstName, string lastName, string password, string userRole) : this(0, userName, firstName, lastName, userRole)
         {
@@ -23,7 +21,7 @@ namespace Individual
         }
         public User(int userID, string userName, string firstName, string lastName, string userRole) : this(userName, firstName, lastName)
         {
-            Role = User.ParseRole(userRole);
+            Role = Individual.Role.ParseRole(userRole);
             UserId = userID;
         }
 
@@ -34,27 +32,9 @@ namespace Individual
             LastName = lastname;
             Password = string.Empty;
 
-            Role = User.ParseRole("Simple");
+            Role = Individual.Role.ParseRole("Simple");
         }
-        static User()
-        {
-            _roles = new Dictionary<string, Roles>(StringComparer.OrdinalIgnoreCase)
-            {
-                {"Super",User.Roles.Super },
-                {"View",User.Roles.View },
-                {"ViewEdit",User.Roles.ViewEdit },
-                {"ViewEditDelete",User.Roles.ViewEditDelete },
-                {"Simple",User.Roles.Simple }
-            };
-        }
-        public static Roles ParseRole(string value)
-        {
-            if (!_roles.TryGetValue(value, out Roles role))
-            {
-                role = User.Roles.None;
-            }
-            return role;
-        }
+
 
         public static IEnumerable<User> GetUsers()
         {
@@ -117,10 +97,10 @@ namespace Individual
 
         public string FullName => $"{FirstName} {LastName}";
 
-        public bool IsAdmin => (Role == User.Roles.Super);
-        public bool CanView => (Role == User.Roles.View);
-        public bool CanEdit => (Role == User.Roles.ViewEdit) || (Role == User.Roles.ViewEditDelete);
-        public bool CanDelete => (Role == User.Roles.ViewEditDelete);
+        public bool IsAdmin => (Role == Individual.Role.Roles.Super);
+        public bool CanView => (Role == Individual.Role.Roles.View);
+        public bool CanEdit => (Role == Individual.Role.Roles.ViewEdit) || (Role == Individual.Role.Roles.ViewEditDelete);
+        public bool CanDelete => (Role == Individual.Role.Roles.ViewEditDelete);
 
         public override string ToString()
         {

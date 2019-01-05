@@ -25,7 +25,7 @@ namespace Individual
             Subject = string.Empty;
             Body = string.Empty;
         }
-        public Message(int messageId, int senderUserId, int receiverUserId, DateTime sendAt, string subject, string body, bool unread,string senderUserName, string receiverUserName)
+        public Message(int messageId, int senderUserId, int receiverUserId, DateTime sendAt, string subject, string body, bool unread, string senderUserName, string receiverUserName)
         {
             MessageId = messageId;
             SenderUserId = senderUserId;
@@ -39,10 +39,9 @@ namespace Individual
         }
         private string GetsubjectTrancated()
         {
-            if (Subject.Length < 50)
-                return Subject;
-            else
-                return Subject.Substring(0, 50);
+            return Subject.Length < 50
+                ? Subject
+                : Subject.Substring(0, 50);
         }
         public static Message GetMessageById(int messageId)
         {
@@ -93,19 +92,16 @@ namespace Individual
 
         }
 
-        private bool CurrentUserIsSender()
-        {
-            return Application.MessagesUser.UserId == SenderUserId;
-        }
+        private bool CurrentUserIsSender => Application.MessagesUser.UserId == SenderUserId;
 
         public bool CanEditMessage()
         {
-            return (CurrentUserIsSender() && !Application.VieweingOthersMessage)
+            return (CurrentUserIsSender && !Application.VieweingOthersMessage)
                 || (Application.LoggedUser.CanEdit && Application.VieweingOthersMessage);
         }
         public bool CanDeleteMessage()
         {
-            return (CurrentUserIsSender() && !Application.VieweingOthersMessage)
+            return (CurrentUserIsSender && !Application.VieweingOthersMessage)
                 || (Application.LoggedUser.CanDelete && Application.VieweingOthersMessage);
         }
 
