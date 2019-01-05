@@ -8,7 +8,7 @@ namespace Individual
 {
     class TextBox
     {
-        public readonly string Label;
+        public string Label;
 
         public Func<TextBox, bool> Validate;
         public bool EscapePressed { get; private set; }
@@ -18,11 +18,15 @@ namespace Individual
         private int _y;
         private int _maxLength;
         private bool _pressedEnter;
-        private int _textX;
+        private int _textX => _labelX + Label.Length + 2;
         private string _textOldvalue;
         private char _passwordChar;
         public bool Locked;
         public int Order { get { return _y; } }
+        public TextBox(string label, int x, int y, int maxLength, Func<TextBox, bool> validate) : this(label, x, y, maxLength)
+        {
+            Validate = validate;
+        }
         public TextBox(string label, int x, int y, int maxLength)
         {
             Label = label;
@@ -31,17 +35,20 @@ namespace Individual
             _labelX = x;
             _y = y;
             _maxLength = maxLength;
-            _textX = _labelX + Label.Length + 2;
         }
         public TextBox(string label, int x, int y, int maxLength, char passwordChar) : this(label, x, y, maxLength)
         {
             _passwordChar = passwordChar;
         }
+        public TextBox(string label, int x, int y, int maxLength, Func<TextBox, bool> validate, char passwordChar) : this(label, x, y, maxLength, passwordChar)
+        {
+            Validate = validate;
+        }
         public void Show(bool focused = false)
         {
             ConsoleColor backColor = focused ? ConsoleColor.Blue : ConsoleColor.Black;
 
-            ColoredConsole.Write($"{Label}: ", _labelX, _y, ConsoleColor.White);
+            ColoredConsole.Write($"{Label}:", _labelX, _y, ConsoleColor.White);
             ColoredConsole.Write(new string(' ', _maxLength), _textX, _y, consoleBackColor: backColor);
 
             if (_passwordChar == 0 || _text == null)

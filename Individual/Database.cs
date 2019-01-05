@@ -19,10 +19,15 @@ namespace Individual
             while (!CheckDatabaseConnection())
             {
                 Alerts.Warning(LastErrorMessage);
-                ConnectionForm connectionForm = new ConnectionForm()
-                    { OnFormExit = () => Environment.Exit(0) };
+
+                ConnectionForm connectionForm = new ConnectionForm();
 
                 connectionForm.Open();
+
+                if (connectionForm.EscapePressed)
+                {
+                    return false;
+                }
             }
 
             if (!User.Exists("admin"))
@@ -45,7 +50,13 @@ namespace Individual
             }
             catch (SqlException e)
             {
-                LastErrorMessage = e.Message.Substring(1,80);
+                LastErrorMessage = e.Message.Replace("\r\n","");
+
+                if (LastErrorMessage.Length > 80)
+                {
+                    LastErrorMessage = LastErrorMessage.Substring(1, 80) + "...";
+                }
+
             }
             return false;
         }
@@ -97,6 +108,21 @@ namespace Individual
             byte[] data = System.Text.Encoding.UTF8.GetBytes(password);
             SHA512 shaM = new SHA512Managed();
             return shaM.ComputeHash(data);
+        }
+
+        static public class FieldSize
+        {
+            public const int SqlServer = 80;
+            public const int Database = 80;
+            public const int UserId = 30;
+            public const int Password = 30;
+        }
+        static public class FieldName
+        {
+            public const string SqlServer = "Sql Server";
+            public const string Database = "Database Name";
+            public const string UserId = "User";
+            public const string Password = "Password";
         }
     }
 }

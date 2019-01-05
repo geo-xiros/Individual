@@ -12,8 +12,8 @@ namespace Individual
         {
             TextBoxes = new Dictionary<string, TextBox>()
               {
-                  {"UserName", new TextBox("Username", 3, 3, 30)}
-                , {"Password" , new TextBox("Password", 3, 5, 50,'*')}
+                  {User.FieldName.UserName, new TextBox(User.FieldName.UserName, 3, 3, User.FieldSize.UserName)}
+                , {User.FieldName.Password , new TextBox(User.FieldName.Password , 3, 5, User.FieldSize.Password,'*')}
               };
         }
 

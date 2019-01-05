@@ -14,10 +14,9 @@ namespace Individual
             {
                 Application.Run();
             }
-            
 
-            Console.WriteLine("Exit From Application.");
-            System.Threading.Thread.Sleep(1000);
+            Console.Clear();
+            Console.WriteLine("Bye.");
         }
         
     }

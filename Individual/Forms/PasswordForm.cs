@@ -12,7 +12,7 @@ namespace Individual
         {
             TextBoxes = new Dictionary<string, TextBox>()
               {
-                {"Password" , new TextBox("Password", 3, 3, 50,'*') }
+                {User.FieldName.Password , new TextBox(User.FieldName.Password , 3, 3, User.FieldSize.Password,'*') }
               };
 
         }

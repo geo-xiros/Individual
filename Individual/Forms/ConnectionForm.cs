@@ -12,14 +12,13 @@ namespace Individual
         {
             TextBoxes = new Dictionary<string, TextBox>()
               {
-                  {"Server", new TextBox("Sql Server", 5, 3, 50) { Text = Properties.Settings.Default.SqlServer} }
-                , {"Database" , new TextBox("Sql Database", 3, 5, 50) { Text = Properties.Settings.Default.Database}}
-                , {"Username" , new TextBox("Username", 7, 7, 50) { Text = Properties.Settings.Default.User}}
-                , {"Password" , new TextBox("Password", 7, 9, 50,'*'){ Text = Properties.Settings.Default.Pass}}
+                  {Database.FieldName.SqlServer, new TextBox(Database.FieldName.SqlServer, 3, 3, Database.FieldSize.SqlServer) { Text = Properties.Settings.Default.SqlServer} }
+                , {Database.FieldName.Database, new TextBox(Database.FieldName.Database, 3, 5, Database.FieldSize.Database) { Text = Properties.Settings.Default.Database}}
+                , {Database.FieldName.UserId, new TextBox(Database.FieldName.UserId, 3, 7, Database.FieldSize.UserId) { Text = Properties.Settings.Default.User}}
+                , {Database.FieldName.Password, new TextBox(Database.FieldName.Password, 3, 9, Database.FieldSize.Password,'*'){ Text = Properties.Settings.Default.Pass}}
               };
 
             OnFormFilled = SaveSettings;
-
         }
 
         public override void Open()
@@ -29,10 +28,10 @@ namespace Individual
 
         private void SaveSettings()
         {
-            Properties.Settings.Default.SqlServer = this["Server"];
-            Properties.Settings.Default.Database = this["Database"];
-            Properties.Settings.Default.User = this["Username"];
-            Properties.Settings.Default.Pass = this["Password"];
+            Properties.Settings.Default.SqlServer = this[Database.FieldName.SqlServer];
+            Properties.Settings.Default.Database = this[Database.FieldName.Database];
+            Properties.Settings.Default.User = this[Database.FieldName.UserId];
+            Properties.Settings.Default.Pass = this[Database.FieldName.Password];
             Properties.Settings.Default.Save();
         }
 

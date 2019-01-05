@@ -11,7 +11,18 @@ namespace Individual
     {
         protected string Title;
         protected Dictionary<string, TextBox> TextBoxes;
-        public string this[string value] => TextBoxes[value].Text;
+        public string this[string textBox]
+        {
+            get
+            {
+                return TextBoxes[textBox].Text;
+
+            }
+            set
+            {
+                TextBoxes[textBox].Text = value;
+            }
+        }
 
         public Form(string title)
         {
@@ -25,17 +36,18 @@ namespace Individual
             ColoredConsole.Write(new string('\x2500', Console.WindowWidth), 0, 1, ConsoleColor.White);
             Console.CursorVisible = true;
 
+            int maxLabelLength = TextBoxes.Max(t => t.Value.Label.Length);
+
             foreach (var textbox in TextBoxes.Values)
             {
+                textbox.Label = textbox.Label.PadLeft(maxLabelLength);
                 textbox.Show();
             }
-            ColoredConsole.Write(new string('\x2500', Console.WindowWidth), 0, GetLastTextBoxY(), ConsoleColor.White);
-            ColoredConsole.Write("[Esc] => Back", 1, GetLastTextBoxY() + 1, ConsoleColor.DarkGray);
+            ColoredConsole.Write(new string('\x2500', Console.WindowWidth), 0, LastTextBoxY, ConsoleColor.White);
+            ColoredConsole.Write("[Esc] => Back", 1, LastTextBoxY + 1, ConsoleColor.DarkGray);
         }
-        protected int GetLastTextBoxY()
-        {
-            return TextBoxes.Max(tb => tb.Value.Y) + 4;
-        }
+        protected int LastTextBoxY => TextBoxes.Max(tb => tb.Value.Y) + 4;
+
         protected void FillForm()
         {
             ShowForm();
@@ -65,11 +77,9 @@ namespace Individual
               .Select(tb => tb.Value);
         }
 
-        public bool FormFilled => TextBoxes.Where(t => t.Value.EscapePressed).Count() == 0;
+        public bool EscapePressed => TextBoxes.Where(t => t.Value.EscapePressed).Count() != 0;
 
-        public virtual void Open()
-        {
-        }
+        public virtual void Open() { }
 
         public Action OnFormFilled = () => { };
         public Action OnFormSaved = () => { };

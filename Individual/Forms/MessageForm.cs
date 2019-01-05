@@ -10,18 +10,18 @@ namespace Individual
     class MessageForm : Form
     {
         private Message _message;
-        private User _user;
+        private readonly User _user;
         public MessageForm(User user) : base($"Send Message to {user.UserName}")
         {
-            
+
             _user = user;
             _message = new Message(Application.LoggedUser, _user, DateTime.Today);
             TextBoxes = new Dictionary<string, TextBox>()
               {
-                  {"Date" , new TextBox("Date", 6, 5, 250) { Locked=true, Text = _message.SendAt.ToLongDateString() } }
-                , {"Time" , new TextBox("Time", 6, 7, 250) { Locked=true, Text = _message.SendAt.ToLongTimeString() } }
+                  {"Date" , new TextBox("Date", 3, 5, 250) { Locked=true, Text = _message.SendAt.ToLongDateString() } }
+                , {"Time" , new TextBox("Time", 3, 7, 250) { Locked=true, Text = _message.SendAt.ToLongTimeString() } }
                 , {"Subject", new TextBox("Subject", 3, 9, 80) {Validate = TextBoxValidation.ValidLength} }
-                , {"Body" , new TextBox("Body", 6, 11, 250) }
+                , {"Body" , new TextBox("Body", 3, 11, 250) }
               };
             OnFormFilled = AskAndInsert;
 
@@ -32,10 +32,10 @@ namespace Individual
             _message = message;
             TextBoxes = new Dictionary<string, TextBox>()
               {
-                  {"Date" , new TextBox("Date", 6, 5, 250) { Locked=true, Text = _message.SendAt.ToLongDateString() } }
-                , {"Time" , new TextBox("Time", 6, 7, 250) { Locked=true, Text = _message.SendAt.ToLongTimeString() } }
+                  {"Date" , new TextBox("Date", 3, 5, 250) { Locked=true, Text = _message.SendAt.ToLongDateString() } }
+                , {"Time" , new TextBox("Time", 3, 7, 250) { Locked=true, Text = _message.SendAt.ToLongTimeString() } }
                 , {"Subject", new TextBox("Subject", 3, 9, 80) {Text = _message.Subject} }
-                , {"Body" , new TextBox("Body", 6, 11, 250) { Text = _message.Body } }
+                , {"Body" , new TextBox("Body", 3, 11, 250) { Text = _message.Body } }
               };
 
             if (Application.MessagesUser.UserId == _message.ReceiverUserId)
@@ -74,13 +74,13 @@ namespace Individual
             Dictionary<ConsoleKey, Action> keyChoices = new Dictionary<ConsoleKey, Action>();
             if (_message.CanEditMessage())
             {
-                ColoredConsole.Write(" [F1] => Edit", 1, GetLastTextBoxY() + 2, ConsoleColor.DarkGray);
+                ColoredConsole.Write(" [F1] => Edit", 1, LastTextBoxY + 2, ConsoleColor.DarkGray);
                 keyChoices.Add(ConsoleKey.F1, FillForm);
             }
 
             if (_message.CanDeleteMessage())
             {
-                ColoredConsole.Write(" [F2] => Delete", 1, GetLastTextBoxY() + 3, ConsoleColor.DarkGray);
+                ColoredConsole.Write(" [F2] => Delete", 1, LastTextBoxY + 3, ConsoleColor.DarkGray);
                 keyChoices.Add(ConsoleKey.F2, AskAndDelete);
             }
 
@@ -144,7 +144,7 @@ namespace Individual
             {
                 Alerts.Warning("Unable to delete Message !!!");
             }
-            
+
         }
     }
 }
