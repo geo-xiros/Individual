@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-
+using System.Data.SqlClient;
 
 namespace Individual
 {
@@ -62,10 +62,10 @@ namespace Individual
 
             UpdateUserFromTextBoxes();
 
-            if (_user.Update())
-                Alerts.Success("User Account Updated !!!");
-            else
-                Alerts.Warning("Unable to Updated User Account !!!");
+            Application.TryToRunAction(_user.Update
+                , "Unable to Update Account try again [y/n]"
+                , "Account Updated successfully !!!"
+                , "Unable to Create Account !!!");
         }
 
         private void AskAndInsert()
@@ -74,29 +74,26 @@ namespace Individual
 
             UpdateUserFromTextBoxes();
 
-            if (_user.Insert())
+            if (Application.TryToRunAction(_user.Insert
+                , "Unable to Create Account try again [y/n]"
+                , "Account Created successfully !!!"
+                , "Unable to Create Account !!!"))
             {
-                Alerts.Success("Account Created !!!");
-
                 OnFormSaved?.Invoke();
             }
-            else
-            {
-                Alerts.Warning("Unable to Create Account !!!");
-            }
+
         }
         private void AskAndDelete()
         {
             if (MessageBox.Show("Delete Selected User ? [y/n] ") == MessageBox.MessageBoxResult.No)
                 return;
 
-            if (_user.Delete())
-                Alerts.Success("Account Successfully Deleted !!!");
-            else
-                Alerts.Warning("Unable to delete Account !!!");
+            Application.TryToRunAction(_user.Delete
+                , "Unable to Delete Account try again [y/n]"
+                , "Account Delete successfully !!!"
+                , "Unable to Delete Account !!!");
 
         }
-
         private void InitTextBoxes()
         {
             AddTextBoxes(UserFields.Fields);

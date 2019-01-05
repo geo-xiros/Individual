@@ -19,6 +19,8 @@ go
 create unique index ix_Users_Username on users (username)
 go
 
+
+
 create table messages (
 	  messageId int not null identity(1,1)
 	, senderUserId int not null 
@@ -113,26 +115,12 @@ create procedure Validate_User
 	, @userPassword BINARY(64)
 as
 begin
-		select userName, firstName, lastName
+		select count(*)
 		from users 
 		where  userPassword = HASHBYTES('SHA2_512', cast(@userPassword as nvarchar(200))+CAST(salt AS NVARCHAR(36)))
 		   and userName = @userName
 end
 go
-
---Create function Validate_User( @userName varchar(50), @userPassword BINARY(64)) 
---	returns bit as 
---begin
-
---	return iif( exists(
---		select *
---		from users 
---		where  userPassword = HASHBYTES('SHA2_512', cast(@userPassword as nvarchar(200))+CAST(salt AS NVARCHAR(36)))
---		and userName = @userName)
---		,1,0)
---end
---go
-
 
 create procedure InsertUser 
 	  @userName varchar(50)
@@ -142,7 +130,7 @@ create procedure InsertUser
 	, @userRole varchar(30) 
 aS
 begin
-	--set nocount on
+
 	declare @salt uniqueidentifier = newid()
 	declare @saltedPassword NVARCHAR(200)
 	set @saltedPassword = cast(@userPassword as nvarchar(200))+CAST(@salt AS NVARCHAR(36))
@@ -181,7 +169,7 @@ create procedure UpdateUser
 	, @userRole varchar(30) 
 as 
 begin
-	--set nocount on 
+	--when userPassword is empty then dont update userpassword
 	if (HASHBYTES('SHA2_512','') =  @userPassword)
 		update Users set 
 			  userName = @userName
@@ -206,7 +194,6 @@ create procedure InsertMessage
 	, @receiverUserId int
 	, @subject varchar(80)
 	, @body varchar(255) 
-	--, @messageId int OUTPUT
 aS
 begin
 
@@ -217,20 +204,6 @@ begin
 end
 go
 
---declare @okToDelete bit
---declare @deleteUserId int
---set @deleteUserId=661
-
---declare @superUserPassword binary(64)
---set @superUserPassword = HASHBYTES('SHA2_512','1234hQw')
-
---select @okToDelete = count(*)
---from users 
---where  userPassword = HASHBYTES('SHA2_512', cast(@superUserPassword as nvarchar(200))+CAST(salt AS NVARCHAR(36)))
---	and userId = 3 and userRole like'%Delete%'
-
---print @okToDelete
-
 create procedure DeleteMessage
 	  @deleteUserId int
 	, @deleteUserPassword BINARY(64) 
@@ -239,13 +212,16 @@ create procedure DeleteMessage
 as 
 begin
 	declare @okToDelete bit;
+	--ok to delete without delete permission only owned messages
 	select @okToDelete=count(*) from messages where messageId=@messageId and senderUserId=@deleteUserId
 
+
 	if @okToDelete=0
+		--allow deletion when user has delete permission
 		select @okToDelete = count(*)
 		from users 
 		where  userPassword = HASHBYTES('SHA2_512', cast(@deleteUserPassword as nvarchar(200))+CAST(salt AS NVARCHAR(36)))
-	  	    and userId = @deleteUserId and userRole like'%Delete%'
+	  	   and userId = @deleteUserId and userRole like'%Delete%'
 	
 	if @okToDelete=1
 		delete from messages where messageId=@messageId

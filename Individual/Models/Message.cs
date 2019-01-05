@@ -78,6 +78,14 @@ namespace Individual
                 body = Body
             }) == 1;
         }
+        public bool UpdateAsRead()
+        {
+            return Database.ExecuteProcedure("UpdateMessageAsRead", new
+            {
+                messageId = MessageId,
+                unread = Unread
+            }) == 1;
+        }
         public bool Delete()
         {
             if (!Database.GetPasswordIfNeeded(out string deletePassword, SenderUserId, "Delete Selected Message"))
@@ -111,7 +119,7 @@ namespace Individual
               ? ReceiverUserName
               : SenderUserName;
 
-            return String.Format("\x2502{0,-22}\x2502{1,-30}\x2502{2,-50}\x2502{3,-4}\x2502", SendAt, senderReceiverUsername, GetsubjectTrancated(), Unread ? "" : "Yes");
+            return String.Format("\x2502{0,-22}\x2502{1,-30}\x2502{2,-50}\x2502{3,-6}\x2502", SendAt, senderReceiverUsername, GetsubjectTrancated(), Unread ? "Yes" : "");
         }
 
     }

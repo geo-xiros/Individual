@@ -12,8 +12,7 @@ namespace Individual
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Password { get; set; }
-
-        public Role.Roles Role;
+        public Role.Roles Role { get; set; }
 
         public User(string userName, string firstName, string lastName, string password, string userRole) : this(0, userName, firstName, lastName, userRole)
         {
@@ -54,7 +53,7 @@ namespace Individual
         }
         public static bool ValidateUserPassword(string username, string password)
         {
-            return Database.QueryFirst<User>("Validate_User", new { userName = username, userPassword = Database.GetPasswordCrypted(password) }) != null;
+            return Database.QueryFirst<int>("Validate_User", new { userName = username, userPassword = Database.GetPasswordCrypted(password) }) == 1;
         }
 
         public bool Insert()
@@ -67,7 +66,7 @@ namespace Individual
                 UserPassword = Database.GetPasswordCrypted(Password),
                 UserRole = Role.ToString()
             });
-            return true;
+            return UserId != 0;
         }
 
         public bool Update()
@@ -107,5 +106,5 @@ namespace Individual
             return String.Format("\x2502{0,-50}\x2502{1,-50}\x2502", LastName, FirstName);
         }
 
-     }
+    }
 }

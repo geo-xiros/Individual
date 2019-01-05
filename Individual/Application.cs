@@ -140,7 +140,7 @@ namespace Individual
                 viewMessageForm.Open();
             }
             , "Select Message"
-            , string.Format("\x2502A/A\x2502{0,-22}\x2502{1,-30}\x2502{2,-50}\x2502{3,-4}\x2502", "Date", "Sent To", "Subject", "Read"));
+            , string.Format("\x2502A/A\x2502{0,-22}\x2502{1,-30}\x2502{2,-50}\x2502{3,-4}\x2502", "Date", "Sent To", "Subject", "Unread"));
 
         }
         public static void ReceivedMessages(MenuChoice menuChoice)
@@ -157,11 +157,20 @@ namespace Individual
             , (id) =>
             {
                 Message message = Message.GetMessageById(id);
+                
                 MessageForm viewMessageForm = new MessageForm(message);
                 viewMessageForm.Open();
+
+                message.Unread = false;
+
+                TryToRunAction(message.UpdateAsRead
+                    , "Unable to update message as read, try again [y/n] "
+                    , string.Empty
+                    , "Unable to update message as read !!!");
+
             }
             , "Select Message"
-            , string.Format("\x2502A/A\x2502{0,-22}\x2502{1,-30}\x2502{2,-50}\x2502{3,-4}\x2502", "Date", "Sent From", "Subject", "Read"));
+            , string.Format("\x2502A/A\x2502{0,-22}\x2502{1,-30}\x2502{2,-50}\x2502{3,-4}\x2502", "Date", "Sent From", "Subject", "Unread"));
         }
         #endregion
 
@@ -209,8 +218,38 @@ namespace Individual
 
         }
 
-        #endregion
+       
+        public static bool TryToRunAction(Func<bool> action, string questionMessage, string successMessage, string failMessage)
+        {
+            bool tryAgain = false;
+            do
+            {
+                try
+                {
+                    if (action())
+                    {
+                        Alerts.Success(successMessage);
+                        return true;
+                    }
+                    else
+                    {
+                        Alerts.Warning(failMessage);
+                        return false;
+                    }
 
+                }
+                catch (DatabaseException e)
+                {
+                    Alerts.Error(e.Message);
+                    Console.Clear();
+                    tryAgain = MessageBox.Show(questionMessage) == MessageBox.MessageBoxResult.Yes;
+                }
+
+            } while (tryAgain);
+
+            return false;
+        }
+        #endregion
 
     }
 }

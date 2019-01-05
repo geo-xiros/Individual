@@ -14,6 +14,8 @@ namespace Individual
             {
                 Application.Run();
             }
+            //Console.WriteLine(User.ValidateUserPassword("admin","admin"));
+            //Console.ReadKey();
 
             Console.Clear();
             Console.WriteLine("Bye.");

@@ -15,11 +15,22 @@ namespace Individual
         }
         public static void Warning(string message)
         {
+            AlertInBox(message, ConsoleColor.Red);
+            System.Threading.Thread.Sleep(1000);
+        }
+        public static void Error(string message)
+        {
             AlertInBox(message, ConsoleColor.DarkRed);
             System.Threading.Thread.Sleep(1000);
         }
         private static void AlertInBox(string message, ConsoleColor color)
         {
+            message=message.Replace("\r\n", "");
+
+            if (message.Length > 80)
+            {
+                message = message.Substring(0, 80) + "...";
+            }
             int x = Console.WindowWidth / 2 - message.Length / 2;
             int y = Console.WindowHeight / 3;
 
@@ -29,6 +40,7 @@ namespace Individual
             ColoredConsole.Write(new string(' ', message.Length + 4), x - 2, y, consoleBackColor: color);
             ColoredConsole.Write(new string(' ', message.Length + 4), x - 2, y + 1, consoleBackColor: color);
             ColoredConsole.Write(message, x, y, ConsoleColor.White);
+            Console.ResetColor();
         }
     }
 }
