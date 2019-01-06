@@ -1,23 +1,58 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using System.Threading;
 
 namespace Individual
 {
     static class Application
     {
-
+        static private int LastMessageId;
+        static private bool Join;
         public static User LoggedUser;
         public static User MessagesUser;
         public static bool VieweingOthersMessage => LoggedUser != MessagesUser;
 
         static public void Run()
         {
+            Thread t = new Thread(new ThreadStart(checkNewMessage));
+            t.Start();
+
             Menu menu = new Menu("Login Menu");
             menu.Run();
-        }
 
+            Join = true;
+            t.Join();
+        }
+        static void checkNewMessage()
+        {
+            while (!Join)
+            {
+                if (LoggedUser != null)
+                {
+                    var newMessages = Message.GetUserMessages(LoggedUser.UserId)
+                        .Where(m => m.MessageId > LastMessageId);
+                    int newMessagesCount = newMessages.Count();
+                    if (newMessagesCount > 0)
+                    {
+                        if (LastMessageId != 0)
+                        {
+                            if (newMessagesCount == 1)
+                            {
+                                Alerts.Footer($"You have new message from {newMessages.Select(m => m.SenderUserName).FirstOrDefault()} !!!");
+                            }
+                            else
+                            {
+                                Alerts.Footer($"You have {newMessagesCount} new message received !!!");
+                            }
+                        }
+                        LastMessageId = newMessages
+                            .Max(m => m.MessageId);
+                    }
+                }
+                Thread.Sleep(1000);
+            }
+        }
         #region Login/SignUp
         static public void Login(MenuChoice menuChoice)
         {
@@ -87,7 +122,7 @@ namespace Individual
                   editAccount.Open();
               }
               , "Select User"
-              , string.Format("\x2502A/A\x2502{0,-50}\x2502{1,-50}\x2502", "Lastname", "Firstname"));
+              , string.Format("A/A\x2502{0,-50}\x2502{1,-50}", "Lastname", "Firstname"));
         }
         static public void EditCurrentAccount(MenuChoice menuChoice)
         {
@@ -105,21 +140,44 @@ namespace Individual
         }
         public static void OthersMessagesMenu(MenuChoice menuChoice)
         {
-            MessagesUser = SelectUser(User.GetUsers()
-              .Where(u => u.UserId != LoggedUser.UserId));
-            if (MessagesUser == null) return;
+            var users = User.GetUsers()
+              .Where(u => u.UserId != LoggedUser.UserId)
+              .OrderBy(u => u.LastName)
+              .Select(u => new KeyValuePair<int, string>(u.UserId, u.ToString()))
+              .ToList();
 
-            menuChoice.LoadMenu = "Messages Menu";
+            ListMenu lm = new ListMenu("Select User", users, string.Format("A/A\x2502{0,-50}\x2502{1,-50}", "Lastname", "Firstname"));
+            lm.ChooseListItem();
+
+            if (lm.Id != 0)
+            {
+                MessagesUser = User.GetUserBy(lm.Id);
+                menuChoice.LoadMenu = "Messages Menu";
+            }
+            
         }
 
         public static void SendMessage(MenuChoice menuChoice)
         {
-            User user = SelectUser(User.GetUsers()
-              .Where(u => u.UserId != MessagesUser.UserId));
-            if (user == null) return;
+            SelectFromList(() =>
+            {
+                return User.GetUsers()
+                  .Where(u => u.UserId != MessagesUser.UserId)
+                  .OrderBy(u => u.LastName)
+                  .Select(u => new KeyValuePair<int, string>(u.UserId, u.ToString()))
+                  .ToList();
+            }
+            , (id) =>
+            {
+                User user = User.GetUserBy(id);
 
-            MessageForm viewMessageForm = new MessageForm(user);
-            viewMessageForm.Open();
+                MessageForm viewMessageForm = new MessageForm(user);
+                viewMessageForm.Open();
+
+            }
+            , "Select User"
+            , string.Format("A/A\x2502{0,-50}\x2502{1,-50}", "Lastname", "Firstname"));
+
         }
 
         public static void SentMessages(MenuChoice menuChoice)
@@ -140,7 +198,7 @@ namespace Individual
                 viewMessageForm.Open();
             }
             , "Select Message"
-            , string.Format("\x2502A/A\x2502{0,-22}\x2502{1,-30}\x2502{2,-50}\x2502{3,-4}\x2502", "Date", "Sent To", "Subject", "Unread"));
+            , string.Format("A/A\x2502{0,-22}\x2502{1,-30}\x2502{2,-50}\x2502{3,-4}", "Date", "Sent From", "Subject", "Unread"));
 
         }
         public static void ReceivedMessages(MenuChoice menuChoice)
@@ -157,7 +215,7 @@ namespace Individual
             , (id) =>
             {
                 Message message = Message.GetMessageById(id);
-                
+
                 MessageForm viewMessageForm = new MessageForm(message);
                 viewMessageForm.Open();
 
@@ -170,7 +228,7 @@ namespace Individual
 
             }
             , "Select Message"
-            , string.Format("\x2502A/A\x2502{0,-22}\x2502{1,-30}\x2502{2,-50}\x2502{3,-4}\x2502", "Date", "Sent From", "Subject", "Unread"));
+            , string.Format("A/A\x2502{0,-22}\x2502{1,-30}\x2502{2,-50}\x2502{3,-4}", "Date", "Sent From", "Subject", "Unread"));
         }
         #endregion
 
@@ -202,23 +260,8 @@ namespace Individual
 
         }
 
-        private static User SelectUser(IEnumerable<User> listOfUsers)
-        {
-            var users = listOfUsers
-              .OrderBy(u => u.LastName)
-              .Select(u => new KeyValuePair<int, string>(u.UserId, u.ToString()))
-              .ToList();
-            ListMenu lm = new ListMenu("Select User", users, string.Format("\x2502A/A\x2502{0,-50}\x2502{1,-50}\x2502", "Lastname", "Firstname"));
-            lm.ChooseListItem();
 
-            if (lm.Id == 0)
-                return null;
-            else
-                return User.GetUserBy(lm.Id);
 
-        }
-
-       
         public static bool TryToRunAction(Func<bool> action, string questionMessage, string successMessage, string failMessage)
         {
             bool tryAgain = false;

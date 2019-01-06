@@ -16,6 +16,7 @@ namespace Individual
             Name = name;
             Size = size;
         }
+
         public Fieldsize(string name, int size, char passwordChar) : this(name, size)
         {
             PasswordChar = passwordChar;

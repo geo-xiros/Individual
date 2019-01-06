@@ -103,7 +103,7 @@ namespace Individual
 
         public override string ToString()
         {
-            return String.Format("\x2502{0,-50}\x2502{1,-50}\x2502", LastName, FirstName);
+            return String.Format("\x2502{0,-50}\x2502{1,-50}", LastName, FirstName);
         }
 
     }

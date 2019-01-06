@@ -10,22 +10,27 @@ namespace Individual
     {
         public static void Success(string message)
         {
-            AlertInBox(message, ConsoleColor.DarkBlue);
-            System.Threading.Thread.Sleep(1000);
+            AlertInBox(message, ConsoleColor.DarkBlue, 1000);
         }
         public static void Warning(string message)
         {
-            AlertInBox(message, ConsoleColor.Red);
-            System.Threading.Thread.Sleep(1000);
+            AlertInBox(message, ConsoleColor.Red, 1000);
         }
         public static void Error(string message)
         {
-            AlertInBox(message, ConsoleColor.DarkRed);
-            System.Threading.Thread.Sleep(1000);
+            AlertInBox(message, ConsoleColor.DarkRed, 2000);
         }
-        private static void AlertInBox(string message, ConsoleColor color)
+        public static void Footer(string message)
         {
-            message=message.Replace("\r\n", "");
+            int x = Console.WindowWidth / 2 - message.Length / 2;
+            int y = Console.WindowHeight -1;
+            ColoredConsole.Write(message, x, y, ConsoleColor.Yellow);
+            Console.ResetColor();
+        }
+        private static void AlertInBox(string message, ConsoleColor color, int timeout)
+        {
+            if (message.Length == 0) return;
+            message = message.Replace("\r\n", "");
 
             if (message.Length > 80)
             {
@@ -40,7 +45,9 @@ namespace Individual
             ColoredConsole.Write(new string(' ', message.Length + 4), x - 2, y, consoleBackColor: color);
             ColoredConsole.Write(new string(' ', message.Length + 4), x - 2, y + 1, consoleBackColor: color);
             ColoredConsole.Write(message, x, y, ConsoleColor.White);
+
             Console.ResetColor();
+            System.Threading.Thread.Sleep(timeout);
         }
     }
 }

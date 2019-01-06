@@ -62,18 +62,19 @@ namespace Individual
             Console.CursorVisible = false;
             Console.ResetColor();
             Console.Clear();
-            ColoredConsole.WriteLine($"{_menu} {Application.Username}\n", ConsoleColor.Yellow);
-            ColoredConsole.WriteLine(new string('\x2500', _titles.Length), ConsoleColor.White);
+            ColoredConsole.Write(string.Format("{0," + (Console.WindowWidth-1) + "}\r", $"Total List Rows : {_allMenuChoices.Count()} "), ConsoleColor.Green);
+            ColoredConsole.WriteLine($"{_menu} {Application.Username}", ConsoleColor.Yellow);
+            ColoredConsole.Write(new string('\x2500', Console.WindowWidth), ConsoleColor.White);
             ColoredConsole.WriteLine(_titles, ConsoleColor.White);
-            ColoredConsole.WriteLine(new string('\x2500', _titles.Length), ConsoleColor.White);
+            ColoredConsole.Write(new string('\x2500', Console.WindowWidth), ConsoleColor.White);
 
-            for (byte i = 0; i < _menuChoices.Count; i++)
+            for (int i = 0; i < _menuChoices.Count; i++)
             {
                 string aa = (i + 1).ToString() + ' ';
-                Console.WriteLine($"\x2502{aa,3}{_menuChoices[i].Value}");
+                Console.WriteLine($"{aa,3}{_menuChoices[i].Value}");
             }
 
-            ColoredConsole.WriteLine(new string('\x2500', _titles.Length), ConsoleColor.White);
+            ColoredConsole.Write(new string('\x2500', Console.WindowWidth), ConsoleColor.White);
             ColoredConsole.WriteLine($"\n      [Esc] => Back\n  [Page Up] => Previous Set\n[Page Down] => Next Set", ConsoleColor.DarkGray);
 
         }

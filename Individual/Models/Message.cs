@@ -119,7 +119,7 @@ namespace Individual
               ? ReceiverUserName
               : SenderUserName;
 
-            return String.Format("\x2502{0,-22}\x2502{1,-30}\x2502{2,-50}\x2502{3,-6}\x2502", SendAt, senderReceiverUsername, GetsubjectTrancated(), Unread ? "Yes" : "");
+            return String.Format("\x2502{0,-22}\x2502{1,-30}\x2502{2,-50}\x2502{3,-6}", SendAt, senderReceiverUsername, GetsubjectTrancated(), Unread ? "Yes" : "");
         }
 
     }

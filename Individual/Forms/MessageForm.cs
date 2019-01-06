@@ -98,16 +98,13 @@ namespace Individual
             _message.Subject = this["Subject"];
             _message.Body = this["Body"];
 
-            if (_message.Update())
+            if (Application.TryToRunAction(_message.Update
+                , "Unable to Update Message try again [y/n]"
+                , "Message Updated successfully !!!"
+                , "Unable to Update Message !!!"))
             {
-                Alerts.Success("Message Updated !!!");
                 MessageToFile.Save(_message);
             }
-            else
-            {
-                Alerts.Warning("Unable to Updat Message !!!");
-            }
-
         }
         private void AskAndInsert()
         {
@@ -116,14 +113,12 @@ namespace Individual
             _message.Subject = this["Subject"];
             _message.Body = this["Body"];
 
-            if (_message.Insert())
+            if (Application.TryToRunAction(_message.Insert
+                , "Unable to Send Message try again [y/n]"
+                , "Message Sent successfully !!!"
+                , "Unable to Send Message !!!"))
             {
-                Alerts.Success("Message Successfully Sent !!!");
                 MessageToFile.Save(_message);
-            }
-            else
-            {
-                Alerts.Warning("Unable to Send Message !!!");
             }
 
         }
@@ -132,18 +127,13 @@ namespace Individual
         {
             if (MessageBox.Show("Delete Selected Message ? [y/n] ") == MessageBox.MessageBoxResult.No)
                 return;
-
-            if (_message.Delete())
+            if (Application.TryToRunAction(_message.Delete
+                , "Unable to delete Message try again [y/n]"
+                , "Message successfully Deleted !!!"
+                , "Unable to delete Message !!!"))
             {
-                Alerts.Success("Message Successfully Deleted !!!");
                 MessageToFile.Delete(_message);
             }
-
-            else
-            {
-                Alerts.Warning("Unable to delete Message !!!");
-            }
-
         }
     }
 }
