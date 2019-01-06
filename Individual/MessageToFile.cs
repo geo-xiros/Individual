@@ -37,7 +37,7 @@ namespace Individual
 
         private static string Convert(Message message)
         {
-            return $"From\t: {message.SenderUserName}\nTo\t: {message.ReceiverUserName}\nDate\t: {message.SendAt.ToLongDateString()}\nTime\t: {message.SendAt.ToLongTimeString()}\nSubject\t: {message.Subject}\nBody\t: {message.Body}";
+            return $"From\t: {message.SenderUserName}\r\nTo\t: {message.ReceiverUserName}\nDate\t: {message.SendAt.ToLongDateString()}\r\nTime\t: {message.SendAt.ToLongTimeString()}\r\nSubject\t: {message.Subject}\r\nBody\t: {message.Body}";
         }
     }
 }

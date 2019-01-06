@@ -15,7 +15,7 @@ namespace Individual
         public int Id { get; private set; }
         private string _titles;
         private int _menuSkip;
-        private int menuSkip
+        private int MenuSkip
         {
             get
             {
@@ -90,8 +90,8 @@ namespace Individual
             Dictionary<ConsoleKey, Action> keyChoices = new Dictionary<ConsoleKey, Action>()
                 {
                     {ConsoleKey.Escape, ()=> Id = 0 },
-                    {ConsoleKey.PageUp, ()=> menuSkip -= _MaxItemsPerPage },
-                    {ConsoleKey.PageDown, ()=> menuSkip += _MaxItemsPerPage }
+                    {ConsoleKey.PageUp, ()=> MenuSkip -= _MaxItemsPerPage },
+                    {ConsoleKey.PageDown, ()=> MenuSkip += _MaxItemsPerPage }
                 };
 
             for (int i = 0; i < _menuChoices.Count; i++)

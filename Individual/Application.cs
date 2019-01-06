@@ -15,7 +15,7 @@ namespace Individual
 
         static public void Run()
         {
-            Thread t = new Thread(new ThreadStart(checkNewMessage));
+            Thread t = new Thread(new ThreadStart(CheckNewMessage));
             t.Start();
 
             Menu menu = new Menu("Login Menu");
@@ -24,14 +24,14 @@ namespace Individual
             Join = true;
             t.Join();
         }
-        static void checkNewMessage()
+        static void CheckNewMessage()
         {
             while (!Join)
             {
                 if (LoggedUser != null)
                 {
                     var newMessages = Message.GetUserMessages(LoggedUser.UserId)
-                        .Where(m => m.MessageId > LastMessageId);
+                        .Where(m => m.MessageId > LastMessageId && m.ReceiverUserId==LoggedUser.UserId);
                     int newMessagesCount = newMessages.Count();
                     if (newMessagesCount > 0)
                     {
