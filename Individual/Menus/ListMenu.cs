@@ -13,7 +13,7 @@ namespace Individual
         private List<KeyValuePair<int, string>> _allMenuChoices;
         private readonly string _menu;
         public int Id { get; private set; }
-        private string _titles;
+        private readonly string _titles;
         private int _menuSkip;
         private int MenuSkip
         {

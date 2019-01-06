@@ -17,7 +17,6 @@ namespace Individual
                 Application.Run();
             }
 
-
             Console.Clear();
             Console.WriteLine("Bye.");
         }

@@ -6,18 +6,18 @@ using System.Threading.Tasks;
 
 namespace Individual
 {
-    public class Fieldsize
+    public class Field
     {
         public string Name { get; }
         public int Size { get; }
         public char PasswordChar { get; }
-        public Fieldsize(string name, int size)
+        public Field(string name, int size)
         {
             Name = name;
             Size = size;
         }
 
-        public Fieldsize(string name, int size, char passwordChar) : this(name, size)
+        public Field(string name, int size, char passwordChar) : this(name, size)
         {
             PasswordChar = passwordChar;
         }

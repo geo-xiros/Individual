@@ -7,9 +7,9 @@ namespace Individual
 {
     static class Application
     {
-        static private int LastMessageId;
+        static public int LastMessageId;
         static private bool Join;
-        public static User LoggedUser;
+        public static User LoggedUser { get; private set; }
         public static User MessagesUser;
         public static bool VieweingOthersMessage => LoggedUser != MessagesUser;
 
@@ -31,20 +31,17 @@ namespace Individual
                 if (LoggedUser != null)
                 {
                     var newMessages = Message.GetUserMessages(LoggedUser.UserId)
-                        .Where(m => m.MessageId > LastMessageId && m.ReceiverUserId==LoggedUser.UserId);
+                        .Where(m => m.MessageId > LastMessageId && m.ReceiverUserId == LoggedUser.UserId);
                     int newMessagesCount = newMessages.Count();
                     if (newMessagesCount > 0)
                     {
-                        if (LastMessageId != 0)
+                        if (newMessagesCount == 1)
                         {
-                            if (newMessagesCount == 1)
-                            {
-                                Alerts.Footer($"You have new message from {newMessages.Select(m => m.SenderUserName).FirstOrDefault()} !!!");
-                            }
-                            else
-                            {
-                                Alerts.Footer($"You have {newMessagesCount} new message received !!!");
-                            }
+                            Alerts.Footer($"You have new message from {newMessages.Select(m => m.SenderUserName).FirstOrDefault()} !!!");
+                        }
+                        else
+                        {
+                            Alerts.Footer($"You have {newMessagesCount} new message received !!!");
                         }
                         LastMessageId = newMessages
                             .Max(m => m.MessageId);
@@ -84,6 +81,13 @@ namespace Individual
             if (User.ValidateUserPassword(username, password))
             {
                 Application.LoggedUser = User.GetUserBy(username);
+
+                Message message = Message
+                    .GetUserMessages(LoggedUser.UserId)
+                    .Where(m => m.MessageId > LastMessageId && m.ReceiverUserId == LoggedUser.UserId)
+                    .OrderByDescending(m => m.MessageId)
+                    .FirstOrDefault();
+                LastMessageId = message == null ? 0 : message.MessageId;
 
                 return true;
             }
@@ -154,7 +158,7 @@ namespace Individual
                 MessagesUser = User.GetUserBy(lm.Id);
                 menuChoice.LoadMenu = "Messages Menu";
             }
-            
+
         }
 
         public static void SendMessage(MenuChoice menuChoice)
@@ -198,7 +202,7 @@ namespace Individual
                 viewMessageForm.Open();
             }
             , "Select Message"
-            , string.Format("A/A\x2502{0,-22}\x2502{1,-30}\x2502{2,-50}\x2502{3,-4}", "Date", "Sent From", "Subject", "Unread"));
+            , string.Format("A/A\x2502{0,-22}\x2502{1,-30}\x2502{2,-50}\x2502{3,-4}", "Date", "Sent To", "Subject", "Unread"));
 
         }
         public static void ReceivedMessages(MenuChoice menuChoice)
@@ -237,7 +241,7 @@ namespace Individual
         {
             get
             {
-                if (MessagesUser != null) return $"({MessagesUser.FullName})";
+                if (MessagesUser != null) return $"({LoggedUser.FullName} => {MessagesUser.FullName})";
                 if (LoggedUser != null) return $"({LoggedUser.FullName})";
                 return string.Empty;
             }

@@ -8,16 +8,16 @@ namespace Individual
 {
     public static class UserFields
     {
-        public static List<Fieldsize> Fields { get; }
+        public static List<Field> Fields { get; }
         static UserFields()
         {
-            Fields = new List<Fieldsize>()
+            Fields = new List<Field>()
                 {
-                    new Fieldsize("Username", 30 ),
-                    new Fieldsize("Password", 30, '*' ),
-                    new Fieldsize("Firstname", 30 ),
-                    new Fieldsize("Lastname", 50 ),
-                    new Fieldsize("Role", 30 )
+                    new Field("Username", 30 ),
+                    new Field("Password", 30, '*' ),
+                    new Field("Firstname", 30 ),
+                    new Field("Lastname", 50 ),
+                    new Field("Role", 30 )
                 };
         }
 

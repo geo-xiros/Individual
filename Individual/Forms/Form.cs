@@ -85,7 +85,7 @@ namespace Individual
         public Action OnFormSaved = () => { };
         public Action OnFormExit = () => { };
 
-        protected void AddTextBoxes(List<Fieldsize> fields)
+        protected void AddTextBoxes(List<Field> fields)
         {
             int pos = 3;
 

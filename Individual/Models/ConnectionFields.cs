@@ -8,15 +8,15 @@ namespace Individual
 {
     class ConnectionFields
     {
-        public static List<Fieldsize> Fields { get; }
+        public static List<Field> Fields { get; }
         static ConnectionFields()
         {
-            Fields = new List<Fieldsize>()
+            Fields = new List<Field>()
                 {
-                    new Fieldsize("Sql Server", 80 ),
-                    new Fieldsize("Database Name", 80 ),
-                    new Fieldsize("User", 30 ),
-                    new Fieldsize("Password", 30, '*' )
+                    new Field("Sql Server", 80 ),
+                    new Field("Database Name", 80 ),
+                    new Field("User", 30 ),
+                    new Field("Password", 30, '*' )
                 };
         }
 

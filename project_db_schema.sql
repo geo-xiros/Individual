@@ -235,7 +235,6 @@ create procedure UpdateMessage
 	, @messageId int
 	, @subject varchar(80)
 	, @body varchar(255) 
-
 as 
 begin
 	declare @okToDelete bit;
@@ -252,6 +251,17 @@ begin
 		  [subject] = @subject
 		, [body] = @body
 		where messageId=@messageId
+	
+end
+go
+
+create procedure UpdateMessageAsRead
+	  @messageId int
+	, @unread bit
+as 
+begin
+	update messages set [unread] = @unread
+	where messageId=@messageId
 	
 end
 go
@@ -302,3 +312,18 @@ end
 
 
 GO
+
+
+--CREATE TRIGGER [dbo].[T_users_DTrigxx] ON [dbo].[users] FOR DELETE AS
+--SET NOCOUNT ON
+--	rollback
+--GO
+
+--create unique index ix_Users_firstName on users (firstName)
+--go
+
+--drop trigger[dbo].[T_users_DTrigxx]
+--go
+
+--drop index users.ix_Users_firstName
+--go

@@ -92,7 +92,7 @@
     <Compile Include="Menus\Menu.cs" />
     <Compile Include="MessageToFile.cs" />
     <Compile Include="Models\ConnectionFields.cs" />
-    <Compile Include="Models\FieldSize.cs" />
+    <Compile Include="Models\Field.cs" />
     <Compile Include="Models\Message.cs" />
     <Compile Include="Models\Role.cs" />
     <Compile Include="Models\User.cs" />
