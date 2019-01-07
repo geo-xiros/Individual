@@ -222,13 +222,16 @@ namespace Individual
 
                 MessageForm viewMessageForm = new MessageForm(message);
                 viewMessageForm.Open();
+                if (message.ReceiverUserId == Application.LoggedUser.UserId)
+                {
+                    message.Unread = false;
 
-                message.Unread = false;
+                    TryToRunAction(message.UpdateAsRead
+                        , "Unable to update message as read, try again [y/n] "
+                        , string.Empty
+                        , "Unable to update message as read !!!");
 
-                TryToRunAction(message.UpdateAsRead
-                    , "Unable to update message as read, try again [y/n] "
-                    , string.Empty
-                    , "Unable to update message as read !!!");
+                }
 
             }
             , "Select Message"
@@ -241,7 +244,7 @@ namespace Individual
         {
             get
             {
-                if (MessagesUser != null) return $"({LoggedUser.FullName} => {MessagesUser.FullName})";
+                if ((MessagesUser != null) && (MessagesUser.UserId!=LoggedUser.UserId)) return $"({LoggedUser.FullName} => {MessagesUser.FullName})";
                 if (LoggedUser != null) return $"({LoggedUser.FullName})";
                 return string.Empty;
             }

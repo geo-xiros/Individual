@@ -9,7 +9,7 @@ namespace Individual
         {
             if (textBox.Text.Length == 0)
             {
-                textBox.ValidationError = $"{textBox.Label} can not be empty !!!";
+                textBox.ValidationError = $"{textBox.Label.Trim()} can not be empty !!!";
                 return false;
             }
             return true;

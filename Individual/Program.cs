@@ -18,7 +18,7 @@ namespace Individual
             }
 
             Console.Clear();
-            Console.WriteLine("Bye.");
+            //Console.WriteLine("Bye.");
         }
 
 
