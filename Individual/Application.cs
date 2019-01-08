@@ -7,8 +7,8 @@ namespace Individual
 {
     class Application
     {
-        static public int LastMessageId { get; set; }
-        static private bool Join;
+        public int LastMessageId { get; set; }
+        private bool Join;
         public User LoggedUser { get; private set; }
         public User MessagesUser { get; set; }
         public bool VieweingOthersMessage => LoggedUser != MessagesUser;
@@ -21,8 +21,6 @@ namespace Individual
         {
             if (!_database.ConnectWithDb())
             {
-                Console.Clear();
-                Console.WriteLine("Unable to connect with Database.");
                 return false;
             }
 
@@ -34,8 +32,6 @@ namespace Individual
                     string.Empty,
                     "Unable to insert Admin user Account try again [Y/N] "))
                 {
-                    Console.Clear();
-                    Console.WriteLine("Unable to insert Admin user Account.");
                     return false;
                 }
             }
