@@ -6,51 +6,39 @@ using System.Threading.Tasks;
 
 namespace Individual
 {
-  public enum ActionsAfterRun { None, Exit, GoBack, LoadMenu };
+    public enum ActionsAfterRun { None, Exit, GoBack, LoadMenu };
 
-  class MenuChoice
-  {
-
-    //public Func<string> TitleSuffixes;
-
-    public readonly string _title;
-    public ActionsAfterRun ActionAfterRun;
-    public Action<MenuChoice> Run;
-    public Func<User, bool> HasPermission;
-    public ConsoleKey Key;
-
-    public string Title
+    class MenuChoice
     {
-      get
-      {
-        //if (TitleSuffixes == null)
-        //  return _title;
-        return _title; //+ TitleSuffixes();
-      }
-    }
+        public ActionsAfterRun ActionAfterRun { get; set; }
+        public Action<MenuChoice> Run { get; set; }
+        public Func<User, bool> HasPermission { get; set; }
+        public ConsoleKey Key { get; set; }
 
-    protected string _loadMenu;
-    public string LoadMenu
-    {
-      get
-      {
-        ActionAfterRun = ActionsAfterRun.None;
-        return _loadMenu;
-      }
-      set
-      {
-        _loadMenu = value;
-        ActionAfterRun = ActionsAfterRun.LoadMenu;
-      }
-    }
-    public MenuChoice(string title)
-    {
-      _title = title;
-    }
-    public MenuChoice(string title, Action<MenuChoice> runOnChoice) : this(title)
-    {
-      Run += runOnChoice;
-    }
+        public string Title { get; private set; }
 
-  }
+        protected string _loadMenu;
+        public string LoadMenu
+        {
+            get
+            {
+                ActionAfterRun = ActionsAfterRun.None;
+                return _loadMenu;
+            }
+            set
+            {
+                _loadMenu = value;
+                ActionAfterRun = ActionsAfterRun.LoadMenu;
+            }
+        }
+        public MenuChoice(string title)
+        {
+            Title = title;
+        }
+        public MenuChoice(string title, Action<MenuChoice> runOnChoice) : this(title)
+        {
+            Run += runOnChoice;
+        }
+
+    }
 }

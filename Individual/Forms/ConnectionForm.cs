@@ -8,7 +8,8 @@ namespace Individual
 {
     class ConnectionForm : Form
     {
-        public ConnectionForm() : base("Connect to Database")
+
+        public ConnectionForm( ) : base("Connect to Database" )
         {
             AddTextBoxes(ConnectionFields.Fields);
             this["Sql Server"] = Properties.Settings.Default.SqlServer;

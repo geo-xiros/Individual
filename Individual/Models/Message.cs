@@ -43,79 +43,26 @@ namespace Individual
                 ? Subject
                 : Subject.Substring(0, 50);
         }
-        public static Message GetMessageById(int messageId)
+
+        private bool CurrentUserIsSender(User messagesUser)
         {
-            return Database.QueryFirst<Message>("GetMessages", new { messageId, userId = 0 });
-        }
-        public static IEnumerable<Message> GetUserMessages(int userId)
-        {
-            return Database.Query<Message>("GetMessages", new { messageId = 0, userId });
+            return messagesUser.UserId == SenderUserId;
         }
 
-        public bool Insert()
+        public bool CanEditMessage(User loggedUser, User messagesUser, bool VieweingOthersMessage)
         {
-            MessageId = Database.QueryFirst<int>("InsertMessage", new
-            {
-                senderUserId = SenderUserId,
-                receiverUserId = ReceiverUserId,
-                subject = Subject,
-                body = Body
-            });
-            return true;
+            return (CurrentUserIsSender(messagesUser) && !VieweingOthersMessage)
+                || (loggedUser.CanEdit && VieweingOthersMessage);
+        }
+        public bool CanDeleteMessage(User loggedUser, User messagesUser, bool VieweingOthersMessage)
+        {
+            return (CurrentUserIsSender(messagesUser) && !VieweingOthersMessage)
+                || (loggedUser.CanDelete && VieweingOthersMessage);
         }
 
-        public bool Update()
+        public string ToString(User messagesUser)
         {
-            if (!Database.GetPasswordIfNeeded(out string updatePassword, SenderUserId, "Update Selected Message"))
-                return false;
-
-            return Database.ExecuteProcedure("UpdateMessage", new
-            {
-                updateUserId = Application.LoggedUser.UserId,
-                updateUserPassword = Database.GetPasswordCrypted(updatePassword),
-                messageId = MessageId,
-                subject = Subject,
-                body = Body
-            }) == 1;
-        }
-        public bool UpdateAsRead()
-        {
-            return Database.ExecuteProcedure("UpdateMessageAsRead", new
-            {
-                messageId = MessageId,
-                unread = Unread
-            }) == 1;
-        }
-        public bool Delete()
-        {
-            if (!Database.GetPasswordIfNeeded(out string deletePassword, SenderUserId, "Delete Selected Message"))
-                return false;
-
-            return Database.ExecuteProcedure("DeleteMessage", new
-            {
-                deleteUserId = Application.LoggedUser.UserId,
-                deleteUserPassword = Database.GetPasswordCrypted(deletePassword),
-                messageId = MessageId
-            }) == 1;
-
-        }
-
-        private bool CurrentUserIsSender => Application.MessagesUser.UserId == SenderUserId;
-
-        public bool CanEditMessage()
-        {
-            return (CurrentUserIsSender && !Application.VieweingOthersMessage)
-                || (Application.LoggedUser.CanEdit && Application.VieweingOthersMessage);
-        }
-        public bool CanDeleteMessage()
-        {
-            return (CurrentUserIsSender && !Application.VieweingOthersMessage)
-                || (Application.LoggedUser.CanDelete && Application.VieweingOthersMessage);
-        }
-
-        public override string ToString()
-        {
-            string senderReceiverUsername = (SenderUserId == Application.MessagesUser.UserId)
+            string senderReceiverUsername = (SenderUserId == messagesUser.UserId)
               ? ReceiverUserName
               : SenderUserName;
 

@@ -15,6 +15,7 @@ namespace Individual
         public int Id { get; private set; }
         private readonly string _titles;
         private int _menuSkip;
+        private Application _application;
         private int MenuSkip
         {
             get
@@ -30,14 +31,18 @@ namespace Individual
             }
         }
 
-        public ListMenu(string menu, string titles)
+        public ListMenu(string menu, string titles, Application application)
         {
             _menu = menu;
             _titles = titles;
             _allMenuChoices = new List<KeyValuePair<int, string>>() { new KeyValuePair<int, string>(0, string.Empty) };
+            _application = application;
         }
 
-        public ListMenu(string menu, List<KeyValuePair<int, string>> listItems, string titles) : this(menu, titles) => _allMenuChoices = listItems;
+        public ListMenu(string menu, List<KeyValuePair<int, string>> listItems, string titles, Application application) : this(menu, titles, application)
+        {
+            _allMenuChoices = listItems;
+        }
 
         public void SetListItems(List<KeyValuePair<int, string>> listItems) => _allMenuChoices = listItems;
 
@@ -62,8 +67,8 @@ namespace Individual
             Console.CursorVisible = false;
             Console.ResetColor();
             Console.Clear();
-            ColoredConsole.Write(string.Format("{0," + (Console.WindowWidth-1) + "}\r", $"Total List Rows : {_allMenuChoices.Count()} "), ConsoleColor.Green);
-            ColoredConsole.WriteLine($"{_menu} {Application.Username}", ConsoleColor.Yellow);
+            ColoredConsole.Write(string.Format("{0," + (Console.WindowWidth - 1) + "}\r", $"Total List Rows : {_allMenuChoices.Count()} "), ConsoleColor.Green);
+            ColoredConsole.WriteLine($"{_menu} {_application.Username}", ConsoleColor.Yellow);
             ColoredConsole.Write(new string('\x2500', Console.WindowWidth), ConsoleColor.White);
             ColoredConsole.WriteLine(_titles, ConsoleColor.White);
             ColoredConsole.Write(new string('\x2500', Console.WindowWidth), ConsoleColor.White);

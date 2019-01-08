@@ -34,66 +34,6 @@ namespace Individual
             Role = Individual.Role.ParseRole("Simple");
         }
 
-
-        public static IEnumerable<User> GetUsers()
-        {
-            return Database.Query<User>("GetUsers", new { userId = 0, userName = "" });
-        }
-        public static User GetUserBy(int userId)
-        {
-            return Database.QueryFirst<User>("GetUsers", new { userId, userName = "" });
-        }
-        public static User GetUserBy(string userName)
-        {
-            return Database.QueryFirst<User>("GetUsers", new { userId = 0, userName });
-        }
-        public static bool Exists(string userName)
-        {
-            return GetUserBy(userName) != null;
-        }
-        public static bool ValidateUserPassword(string username, string password)
-        {
-            return Database.QueryFirst<int>("Validate_User", new { userName = username, userPassword = Database.GetPasswordCrypted(password) }) == 1;
-        }
-
-        public bool Insert()
-        {
-            UserId = Database.QueryFirst<int>("InsertUser", new
-            {
-                userName = UserName,
-                firstName = FirstName,
-                lastName = LastName,
-                UserPassword = Database.GetPasswordCrypted(Password),
-                UserRole = Role.ToString()
-            });
-            return UserId != 0;
-        }
-
-        public bool Update()
-        {
-            return Database.ExecuteProcedure("UpdateUser", new
-            {
-                userId = UserId,
-                userName = UserName,
-                firstName = FirstName,
-                lastName = LastName,
-                userPassword = Database.GetPasswordCrypted(Password),
-                userRole = Role.ToString()
-            }) == 1;
-        }
-        public bool Delete()
-        {
-            if (!Database.GetPasswordIfNeeded(out string deletePassword, UserId, "Delete Selected User"))
-                return false;
-
-            return Database.ExecuteProcedure("DeleteUser", new
-            {
-                superUserId = Application.LoggedUser.UserId,
-                superUserPassword = Database.GetPasswordCrypted(deletePassword),
-                userId = UserId
-            }) == 1;
-        }
-
         public string FullName => $"{FirstName} {LastName}";
 
         public bool IsAdmin => (Role == Individual.Role.Roles.Super);

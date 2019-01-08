@@ -11,6 +11,8 @@ namespace Individual
     {
         protected string Title;
         protected Dictionary<string, TextBox> TextBoxes;
+
+
         public string this[string textBox]
         {
             get

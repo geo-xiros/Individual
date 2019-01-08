@@ -2,9 +2,13 @@ using System.Linq;
 using System.Text.RegularExpressions;
 namespace Individual
 {
-    static class TextBoxValidation
+     class TextBoxValidation
     {
-
+        private Database _database;
+        public TextBoxValidation(Database database)
+        {
+            _database = database;
+        }
         public static bool ValidLength(TextBox textBox)
         {
             if (textBox.Text.Length == 0)
@@ -26,14 +30,14 @@ namespace Individual
             return true;
         }
 
-        public static bool ValidUserName(TextBox textBox)
+        public bool ValidUserName(TextBox textBox)
         {
             if (textBox.Text.Length == 0)
             {
                 textBox.ValidationError = $"{textBox.Label} can not be empty !!!";
                 return false;
             }
-            if (User.Exists(textBox.Text))
+            if (_database.Exists(textBox.Text))
             {
                 textBox.ValidationError = "Username Exists!!!";
                 return false;

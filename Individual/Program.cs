@@ -13,27 +13,16 @@ namespace Individual
 
         static void Main(string[] args)
         {
-            if (Database.Init())
+            Application application = new Application();
+
+            if (application.ConnectToDb())
             {
-                Application.Run();
+                application.Run();
             }
 
             Console.Clear();
 
-            //Console.WriteLine("Bye.");
-
         }
-        //static string GetFromResources(string resourceName)
-        //{
-        //    var assembly = Assembly.GetExecutingAssembly();
-        //    var resourceName = "Individual.DatabaseSchema.txt";
-
-        //    using (Stream stream = assembly.GetManifestResourceStream(resourceName))
-        //    using (StreamReader reader = new StreamReader(stream))
-        //    {
-        //        string result = reader.ReadToEnd();
-        //    }
-        //}
 
     }
 }

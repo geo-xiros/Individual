@@ -8,21 +8,21 @@ namespace Individual
 {
     class TextBox
     {
-        public string Label;
+        public string Label { get; set; }
 
-        public Func<TextBox, bool> Validate;
+        public Func<TextBox, bool> Validate { get; set; }
         public bool EscapePressed { get; private set; }
         public int Y { get { return _y; } }
+        public bool Locked { get; set; }
+        public int Order { get { return _y; } }
 
         private readonly int _labelX;
-        private int _y;
-        private int _maxLength;
+        private readonly int _y;
+        private readonly int _maxLength;
         private bool _pressedEnter;
         private int _textX => _labelX + Label.Length + 2;
         private string _textOldvalue;
-        private char _passwordChar;
-        public bool Locked;
-        public int Order { get { return _y; } }
+        private readonly char _passwordChar;
         public TextBox(string label, int x, int y, int maxLength, Func<TextBox, bool> validate) : this(label, x, y, maxLength)
         {
             Validate = validate;

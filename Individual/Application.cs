@@ -5,32 +5,63 @@ using System.Threading;
 
 namespace Individual
 {
-    static class Application
+    class Application
     {
-        static public int LastMessageId;
+        static public int LastMessageId { get; set; }
         static private bool Join;
-        public static User LoggedUser { get; private set; }
-        public static User MessagesUser;
-        public static bool VieweingOthersMessage => LoggedUser != MessagesUser;
-
-        static public void Run()
+        public User LoggedUser { get; private set; }
+        public User MessagesUser { get; set; }
+        public bool VieweingOthersMessage => LoggedUser != MessagesUser;
+        private readonly Database _database;
+        public Application()
         {
+            _database = new Database(this);
+        }
+        public bool ConnectToDb()
+        {
+            if (!_database.ConnectWithDb())
+            {
+                Console.Clear();
+                Console.WriteLine("Unable to connect with Database.");
+                return false;
+            }
+
+            if (!_database.Exists("admin"))
+            {
+                User user = new User("admin", "Super", "Admin", "admin", "Super");
+                if (!TryToRunAction<User>(user, _database.Insert,
+                    string.Empty,
+                    string.Empty,
+                    "Unable to insert Admin user Account try again [Y/N] "))
+                {
+                    Console.Clear();
+                    Console.WriteLine("Unable to insert Admin user Account.");
+                    return false;
+                }
+            }
+
+            return true;
+
+        }
+        public void Run()
+        {
+
             Thread t = new Thread(new ThreadStart(CheckNewMessage));
             t.Start();
 
-            Menu menu = new Menu("Login Menu");
+            Menu menu = new Menu("Login Menu", this);
             menu.Run();
 
             Join = true;
             t.Join();
         }
-        static void CheckNewMessage()
+        void CheckNewMessage()
         {
             while (!Join)
             {
                 if (LoggedUser != null)
                 {
-                    var newMessages = Message.GetUserMessages(LoggedUser.UserId)
+                    var newMessages = _database.GetUserMessages(LoggedUser.UserId)
                         .Where(m => m.MessageId > LastMessageId && m.ReceiverUserId == LoggedUser.UserId);
                     int newMessagesCount = newMessages.Count();
                     if (newMessagesCount > 0)
@@ -51,24 +82,24 @@ namespace Individual
             }
         }
         #region Login/SignUp
-        static public void Login(MenuChoice menuChoice)
+        public void Login(MenuChoice menuChoice)
         {
             LoginForm loginForm = new LoginForm();
             loginForm.OnFormFilled = () =>
             {
-                if (Application.Login(loginForm["Username"], loginForm["Password"]))
+                if (Login(loginForm["Username"], loginForm["Password"]))
                 {
                     menuChoice.LoadMenu = "Main Menu";
                 }
             };
             loginForm.Open();
         }
-        static public void SignUp(MenuChoice menuChoice)
+        public void SignUp(MenuChoice menuChoice)
         {
-            AccountForm signUpForm = new AccountForm("Sign Up");
+            AccountForm signUpForm = new AccountForm("Sign Up", this, _database);
             signUpForm.OnFormSaved = () =>
             {
-                if (Application.Login(signUpForm["Username"], signUpForm["Password"]))
+                if (Login(signUpForm["Username"], signUpForm["Password"]))
                 {
                     menuChoice.LoadMenu = "Main Menu";
                 }
@@ -76,13 +107,13 @@ namespace Individual
 
             signUpForm.Open();
         }
-        static public bool Login(string username, string password)
+        public bool Login(string username, string password)
         {
-            if (User.ValidateUserPassword(username, password))
+            if (_database.ValidateUserPassword(username, password))
             {
-                Application.LoggedUser = User.GetUserBy(username);
+                LoggedUser = _database.GetUserBy(username);
 
-                Message message = Message
+                Message message = _database
                     .GetUserMessages(LoggedUser.UserId)
                     .Where(m => m.MessageId > LastMessageId && m.ReceiverUserId == LoggedUser.UserId)
                     .OrderByDescending(m => m.MessageId)
@@ -95,77 +126,77 @@ namespace Individual
             Alerts.Warning("Wrong Username or Password!!!");
             return false;
         }
-        static public void Logoff(MenuChoice menuChoice)
+        public void Logoff(MenuChoice menuChoice)
         {
-            Application.LoggedUser = null;
+            LoggedUser = null;
 
             menuChoice.LoadMenu = "Login Menu";
         }
         #endregion
 
         #region Account Managment
-        static public void CreateAccount(MenuChoice menuChoice)
+        public void CreateAccount(MenuChoice menuChoice)
         {
-            AccountForm createAccountScreen = new AccountForm("Create Account");
+            AccountForm createAccountScreen = new AccountForm("Create Account", this, _database);
             createAccountScreen.Open();
         }
 
-        static public void SelectUserAndEdit(MenuChoice menuChoice)
+        public void SelectUserAndEdit(MenuChoice menuChoice)
         {
             SelectFromList(() =>
               {
-                  return User.GetUsers()
-                .Where(u => u.UserId != Application.LoggedUser.UserId)
+                  return _database.GetUsers()
+                .Where(u => u.UserId != LoggedUser.UserId)
                 .OrderBy(u => u.LastName)
                 .Select(u => new KeyValuePair<int, string>(u.UserId, u.ToString())).ToList();
               }
               , (id) =>
               {
-                  User user = User.GetUserBy(id);
-                  AccountForm editAccount = new AccountForm("Edit Account", user);
+                  User user = _database.GetUserBy(id);
+                  AccountForm editAccount = new AccountForm("Edit Account", user, this, _database);
                   editAccount.Open();
               }
               , "Select User"
               , string.Format("A/A\x2502{0,-50}\x2502{1,-50}", "Lastname", "Firstname"));
         }
-        static public void EditCurrentAccount(MenuChoice menuChoice)
+        public void EditCurrentAccount(MenuChoice menuChoice)
         {
-            AccountForm editAccount = new AccountForm("Edit Account", Application.LoggedUser);
+            AccountForm editAccount = new AccountForm("Edit Account", LoggedUser, this, _database);
             editAccount.Open();
         }
 
         #endregion
 
         #region Messages
-        public static void MessagesMenu(MenuChoice menuChoice)
+        public void MessagesMenu(MenuChoice menuChoice)
         {
             MessagesUser = LoggedUser;
             menuChoice.LoadMenu = "Messages Menu";
         }
-        public static void OthersMessagesMenu(MenuChoice menuChoice)
+        public void OthersMessagesMenu(MenuChoice menuChoice)
         {
-            var users = User.GetUsers()
+            var users = _database.GetUsers()
               .Where(u => u.UserId != LoggedUser.UserId)
               .OrderBy(u => u.LastName)
               .Select(u => new KeyValuePair<int, string>(u.UserId, u.ToString()))
               .ToList();
 
-            ListMenu lm = new ListMenu("Select User", users, string.Format("A/A\x2502{0,-50}\x2502{1,-50}", "Lastname", "Firstname"));
+            ListMenu lm = new ListMenu("Select User", users, string.Format("A/A\x2502{0,-50}\x2502{1,-50}", "Lastname", "Firstname"), this);
             lm.ChooseListItem();
 
             if (lm.Id != 0)
             {
-                MessagesUser = User.GetUserBy(lm.Id);
+                MessagesUser = _database.GetUserBy(lm.Id);
                 menuChoice.LoadMenu = "Messages Menu";
             }
 
         }
 
-        public static void SendMessage(MenuChoice menuChoice)
+        public void SendMessage(MenuChoice menuChoice)
         {
             SelectFromList(() =>
             {
-                return User.GetUsers()
+                return _database.GetUsers()
                   .Where(u => u.UserId != MessagesUser.UserId)
                   .OrderBy(u => u.LastName)
                   .Select(u => new KeyValuePair<int, string>(u.UserId, u.ToString()))
@@ -173,9 +204,9 @@ namespace Individual
             }
             , (id) =>
             {
-                User user = User.GetUserBy(id);
+                User user = _database.GetUserBy(id);
 
-                MessageForm viewMessageForm = new MessageForm(user);
+                MessageForm viewMessageForm = new MessageForm(user, this, _database);
                 viewMessageForm.Open();
 
             }
@@ -184,49 +215,49 @@ namespace Individual
 
         }
 
-        public static void SentMessages(MenuChoice menuChoice)
+        public void SentMessages(MenuChoice menuChoice)
         {
             SelectFromList(() =>
             {
-                return Message
+                return _database
                    .GetUserMessages(MessagesUser.UserId)
                    .Where(m => m.SenderUserId == MessagesUser.UserId)
                    .OrderByDescending(m => m.SendAt)
-                   .Select(m => new KeyValuePair<int, string>(m.MessageId, m.ToString()))
+                   .Select(m => new KeyValuePair<int, string>(m.MessageId, m.ToString(MessagesUser)))
                    .ToList();
             }
             , (id) =>
             {
-                Message message = Message.GetMessageById(id);
-                MessageForm viewMessageForm = new MessageForm(message);
+                Message message = _database.GetMessageById(id);
+                MessageForm viewMessageForm = new MessageForm(message, this, _database);
                 viewMessageForm.Open();
             }
             , "Select Message"
             , string.Format("A/A\x2502{0,-22}\x2502{1,-30}\x2502{2,-50}\x2502{3,-4}", "Date", "Sent To", "Subject", "Unread"));
 
         }
-        public static void ReceivedMessages(MenuChoice menuChoice)
+        public void ReceivedMessages(MenuChoice menuChoice)
         {
             SelectFromList(() =>
             {
-                return Message
+                return _database
                    .GetUserMessages(MessagesUser.UserId)
                    .Where(m => m.ReceiverUserId == MessagesUser.UserId)
                    .OrderByDescending(m => m.SendAt)
-                   .Select(m => new KeyValuePair<int, string>(m.MessageId, m.ToString()))
+                   .Select(m => new KeyValuePair<int, string>(m.MessageId, m.ToString(MessagesUser)))
                    .ToList();
             }
             , (id) =>
             {
-                Message message = Message.GetMessageById(id);
+                Message message = _database.GetMessageById(id);
 
-                MessageForm viewMessageForm = new MessageForm(message);
+                MessageForm viewMessageForm = new MessageForm(message, this, _database);
                 viewMessageForm.Open();
-                if (message.ReceiverUserId == Application.LoggedUser.UserId)
+                if (message.ReceiverUserId == LoggedUser.UserId)
                 {
                     message.Unread = false;
 
-                    TryToRunAction(message.UpdateAsRead
+                    TryToRunAction<Message>(message, UpdateAsRead
                         , "Unable to update message as read, try again [y/n] "
                         , string.Empty
                         , "Unable to update message as read !!!");
@@ -237,46 +268,14 @@ namespace Individual
             , "Select Message"
             , string.Format("A/A\x2502{0,-22}\x2502{1,-30}\x2502{2,-50}\x2502{3,-4}", "Date", "Sent From", "Subject", "Unread"));
         }
-        #endregion
-
-        #region General Routines
-        public static string Username
-        {
-            get
-            {
-                if ((MessagesUser != null) && (MessagesUser.UserId!=LoggedUser.UserId)) return $"({LoggedUser.FullName} => {MessagesUser.FullName})";
-                if (LoggedUser != null) return $"({LoggedUser.FullName})";
-                return string.Empty;
-            }
-        }
-
-        private static void SelectFromList(Func<List<KeyValuePair<int, string>>> listOfItems, Action<int> RunOnSelection, string listMenuTitle, string headers)
-        {
-            ListMenu lm = new ListMenu(listMenuTitle, headers);
-            do
-            {
-                lm.SetListItems(listOfItems());
-                lm.ChooseListItem();
-
-                if (lm.Id != 0)
-                {
-                    RunOnSelection(lm.Id);
-                }
-
-            } while (lm.Id != 0);
-
-        }
-
-
-
-        public static bool TryToRunAction(Func<bool> action, string questionMessage, string successMessage, string failMessage)
+        public bool TryToRunAction<T>(T onObject, Func<T, bool> action, string questionMessage, string successMessage, string failMessage)
         {
             bool tryAgain = false;
             do
             {
                 try
                 {
-                    if (action())
+                    if (action(onObject))
                     {
                         Alerts.Success(successMessage);
                         return true;
@@ -299,6 +298,48 @@ namespace Individual
 
             return false;
         }
+
+        #endregion
+        private bool UpdateAsRead(Message message)
+        {
+            return _database.ExecuteProcedure("UpdateMessageAsRead", new
+            {
+                messageId = message.MessageId,
+                unread = message.Unread
+            }) == 1;
+        }
+
+        #region General Routines
+        public string Username
+        {
+            get
+            {
+                if ((MessagesUser != null) && (MessagesUser.UserId != LoggedUser.UserId)) return $"({LoggedUser.FullName} => {MessagesUser.FullName})";
+                if (LoggedUser != null) return $"({LoggedUser.FullName})";
+                return string.Empty;
+            }
+        }
+
+        private void SelectFromList(Func<List<KeyValuePair<int, string>>> listOfItems, Action<int> RunOnSelection, string listMenuTitle, string headers)
+        {
+            ListMenu lm = new ListMenu(listMenuTitle, headers, this);
+            do
+            {
+                lm.SetListItems(listOfItems());
+                lm.ChooseListItem();
+
+                if (lm.Id != 0)
+                {
+                    RunOnSelection(lm.Id);
+                }
+
+            } while (lm.Id != 0);
+
+        }
+
+
+
+
         #endregion
 
     }

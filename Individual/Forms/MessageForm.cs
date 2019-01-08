@@ -9,13 +9,16 @@ namespace Individual
 {
     class MessageForm : Form
     {
+        protected Database _database;
+        protected Application _application;
         private Message _message;
         private readonly User _user;
-        public MessageForm(User user) : base($"Send Message to {user.UserName}")
+        public MessageForm(User user, Application application, Database database) : base($"Send Message to {user.UserName}")
         {
-
+            _application = application;
+            _database = database;
             _user = user;
-            _message = new Message(Application.LoggedUser, _user, DateTime.Today);
+            _message = new Message(_application.LoggedUser, _user, DateTime.Today);
             TextBoxes = new Dictionary<string, TextBox>()
               {
                   {"Date" , new TextBox("Date", 3, 5, 250) { Locked=true, Text = _message.SendAt.ToLongDateString() } }
@@ -27,8 +30,10 @@ namespace Individual
 
         }
 
-        public MessageForm(Message message) : base($"View Message {Application.Username} Received")
+        public MessageForm(Message message, Application application, Database database) : base($"View Message {application.Username} Received")
         {
+            _application = application;
+            _database = database;
             _message = message;
             TextBoxes = new Dictionary<string, TextBox>()
               {
@@ -38,14 +43,14 @@ namespace Individual
                 , {"Body" , new TextBox("Body", 3, 11, 250) { Text = _message.Body } }
               };
 
-            if (Application.MessagesUser.UserId == _message.ReceiverUserId)
+            if (_application.MessagesUser.UserId == _message.ReceiverUserId)
             {
                 TextBoxes.Add("From", new TextBox("From", 3, 3, 80) { Locked = true, Text = _message.SenderUserName });
             }
             else
             {
-                Title = $"View Message {Application.Username} Sent";
-                TextBoxes.Add("To", new TextBox("To", 3, 3, 80) { Locked = true, Text = _message.ReceiverUserName});
+                Title = $"View Message {_application.Username} Sent";
+                TextBoxes.Add("To", new TextBox("To", 3, 3, 80) { Locked = true, Text = _message.ReceiverUserName });
             }
             OnFormFilled = AskAndUpdate;
         }
@@ -73,13 +78,13 @@ namespace Individual
                     { ConsoleKey.Escape, () => { } }
                 };
 
-            if (_message.CanEditMessage())
+            if (_message.CanEditMessage(_application.LoggedUser, _application.MessagesUser, _application.VieweingOthersMessage))
             {
                 ColoredConsole.Write(" [F1] => Edit", 1, LastTextBoxY + 2, ConsoleColor.DarkGray);
                 keyChoices.Add(ConsoleKey.F1, FillForm);
             }
 
-            if (_message.CanDeleteMessage())
+            if (_message.CanDeleteMessage(_application.LoggedUser, _application.MessagesUser, _application.VieweingOthersMessage))
             {
                 ColoredConsole.Write(" [F2] => Delete", 1, LastTextBoxY + 3, ConsoleColor.DarkGray);
                 keyChoices.Add(ConsoleKey.F2, AskAndDelete);
@@ -98,7 +103,7 @@ namespace Individual
             _message.Subject = this["Subject"];
             _message.Body = this["Body"];
 
-            if (Application.TryToRunAction(_message.Update
+            if (_application.TryToRunAction<Message>(_message, _database.Update
                 , "Unable to Update Message try again [y/n]"
                 , "Message Updated successfully !!!"
                 , "Unable to Update Message !!!"))
@@ -113,7 +118,7 @@ namespace Individual
             _message.Subject = this["Subject"];
             _message.Body = this["Body"];
 
-            if (Application.TryToRunAction(_message.Insert
+            if (_application.TryToRunAction<Message>(_message, _database.Insert
                 , "Unable to Send Message try again [y/n]"
                 , "Message Sent successfully !!!"
                 , "Unable to Send Message !!!"))
@@ -127,7 +132,7 @@ namespace Individual
         {
             if (MessageBox.Show("Delete Selected Message ? [y/n] ") == MessageBox.MessageBoxResult.No)
                 return;
-            if (Application.TryToRunAction(_message.Delete
+            if (_application.TryToRunAction<Message>(_message, _database.Delete
                 , "Unable to delete Message try again [y/n]"
                 , "Message successfully Deleted !!!"
                 , "Unable to delete Message !!!"))
