@@ -21,7 +21,6 @@ namespace Individual
             }
 
             Console.Clear();
-
         }
 
     }

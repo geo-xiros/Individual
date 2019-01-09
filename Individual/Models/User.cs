@@ -36,10 +36,10 @@ namespace Individual
 
         public string FullName => $"{FirstName} {LastName}";
 
-        public bool IsAdmin => (Role == Individual.Role.Roles.Super);
-        public bool CanView => (Role == Individual.Role.Roles.View);
-        public bool CanEdit => (Role == Individual.Role.Roles.ViewEdit) || (Role == Individual.Role.Roles.ViewEditDelete);
-        public bool CanDelete => (Role == Individual.Role.Roles.ViewEditDelete);
+        public bool IsAdmin => (Role >= Individual.Role.Roles.Super);
+        public bool CanView => (Role >= Individual.Role.Roles.View);
+        public bool CanEdit => (Role >= Individual.Role.Roles.ViewEdit);
+        public bool CanDelete => (Role >= Individual.Role.Roles.ViewEditDelete);
 
         public override string ToString()
         {

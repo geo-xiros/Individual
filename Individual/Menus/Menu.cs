@@ -14,12 +14,12 @@ namespace Individual
         private int _keyPressed = 0;
         private ApplicationMenus _applicationMenus;
         private Application _application;
-        public Menu(string menu, Application application)
+        public Menu(string menu, Application application, Database database )
         {
             _menu = menu;
             _stackOfMenus = new Stack<string>();
             _stackOfMenus.Push(_menu);
-            _applicationMenus = new ApplicationMenus(application);
+            _applicationMenus = new ApplicationMenus(application, database);
             _application = application;
         }
         public void Run()

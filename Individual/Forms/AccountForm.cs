@@ -46,15 +46,15 @@ namespace Individual
         private void View()
         {
             ShowForm();
-            ColoredConsole.Write(" [F1] => Edit", 1, LastTextBoxY + 2, ConsoleColor.DarkGray);
-            ColoredConsole.Write(" [F2] => Delete", 1, LastTextBoxY + 3, ConsoleColor.DarkGray);
+            ColoredConsole.Write("  [Enter] => Edit", 1, LastTextBoxY + 2, ConsoleColor.DarkGray);
+            ColoredConsole.Write(" [Delete] => Delete", 1, LastTextBoxY + 3, ConsoleColor.DarkGray);
 
             Console.CursorVisible = false;
 
             ReadKey<Action> readKey = new ReadKey<Action>(
                 new Dictionary<ConsoleKey, Action>() {
-                    { ConsoleKey.F1, FillForm},
-                    { ConsoleKey.F2, AskAndDelete},
+                    { ConsoleKey.Enter, FillForm},
+                    { ConsoleKey.Delete, AskAndDelete},
                     { ConsoleKey.Escape, ()=>{ } },
                 });
 

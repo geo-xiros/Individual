@@ -111,20 +111,20 @@ SET NOCOUNT ON
 GO
 
 create procedure Validate_User
-	  @userName varchar(50)
-	, @userPassword BINARY(64)
+	  @userName varchar(30)
+	, @userPassword varchar(30)
 as
 begin
 		select count(*)
 		from users 
-		where  userPassword = HASHBYTES('SHA2_512', cast(@userPassword as nvarchar(200))+CAST(salt AS NVARCHAR(36)))
+		where  userPassword = HASHBYTES('SHA2_512', @userPassword+CAST(salt AS NVARCHAR(36)))
 		   and userName = @userName
 end
 go
 
 create procedure InsertUser 
-	  @userName varchar(50)
-	, @userPassword BINARY(64) 
+	  @userName varchar(30)
+	, @userPassword varchar(30) 
 	, @firstName varchar(50)
 	, @lastName varchar(50) 
 	, @userRole varchar(30) 
@@ -132,18 +132,16 @@ aS
 begin
 
 	declare @salt uniqueidentifier = newid()
-	declare @saltedPassword NVARCHAR(200)
-	set @saltedPassword = cast(@userPassword as nvarchar(200))+CAST(@salt AS NVARCHAR(36))
 	
 	insert into Users (userName, userPassword, salt , firstName, lastName,  userRole) 
-	values (@userName, HASHBYTES('SHA2_512', @saltedPassword), @salt , @firstName, @lastName,  @userRole)
+	values (@userName, HASHBYTES('SHA2_512', @userPassword+CAST(@salt AS NVARCHAR(36))), @salt , @firstName, @lastName,  @userRole)
 	select SCOPE_IDENTITY();
 end
 go
 
 create procedure DeleteUser
 	  @superUserId int
-	, @superUserPassword BINARY(64) 
+	, @superUserPassword varchar(30) 
 	, @userId int
 
 as 
@@ -151,7 +149,7 @@ begin
 	if ( exists(
 		select userId
 		from users 
-		where  userPassword = HASHBYTES('SHA2_512', cast(@superUserPassword as nvarchar(200))+CAST(salt AS NVARCHAR(36)))
+		where  userPassword = HASHBYTES('SHA2_512', @superUserPassword+CAST(salt AS NVARCHAR(36)))
 		   and userId = @superUserId and userRole='Super'))
 	begin
 		delete from users where userId = @userId
@@ -162,15 +160,15 @@ go
 
 create procedure UpdateUser 
 	  @userId int
-	, @userName varchar(50)
-	, @userPassword BINARY(64) 
+	, @userName varchar(30)
+	, @userPassword varchar(30) 
 	, @firstName varchar(50)
 	, @lastName varchar(50) 
 	, @userRole varchar(30) 
 as 
 begin
 	--when userPassword is empty then dont update userpassword
-	if (HASHBYTES('SHA2_512','') =  @userPassword)
+	if (@userPassword = '')
 		update Users set 
 			  userName = @userName
 			, firstName = @firstName 
@@ -180,7 +178,7 @@ begin
 	else
 		update Users set 
 			  userName = @userName
-			, userPassword = HASHBYTES('SHA2_512', cast(@userPassword as nvarchar(200))+CAST(salt AS NVARCHAR(36)))
+			, userPassword = HASHBYTES('SHA2_512', @userPassword+CAST(salt AS NVARCHAR(36)))
 			, firstName = @firstName 
 			, lastName = @lastName 
 			, userRole = @userRole
@@ -206,7 +204,7 @@ go
 
 create procedure DeleteMessage
 	  @deleteUserId int
-	, @deleteUserPassword BINARY(64) 
+	, @deleteUserPassword varchar(30) 
 	, @messageId int
 
 as 
@@ -220,8 +218,8 @@ begin
 		--allow deletion when user has delete permission
 		select @okToDelete = count(*)
 		from users 
-		where  userPassword = HASHBYTES('SHA2_512', cast(@deleteUserPassword as nvarchar(200))+CAST(salt AS NVARCHAR(36)))
-	  	   and userId = @deleteUserId and userRole like'%Delete%'
+		where  userPassword = HASHBYTES('SHA2_512', @deleteUserPassword+CAST(salt AS NVARCHAR(36)))
+	  	   and userId = @deleteUserId and userRole like'%Delete%' or userRole ='Super'
 	
 	if @okToDelete=1
 		delete from messages where messageId=@messageId
@@ -231,7 +229,7 @@ go
 
 create procedure UpdateMessage
 	  @updateUserId int
-	, @updateUserPassword BINARY(64) 
+	, @updateUserPassword varchar(30) 
 	, @messageId int
 	, @subject varchar(80)
 	, @body varchar(255) 
@@ -243,8 +241,8 @@ begin
 	if @okToDelete=0
 		select @okToDelete = count(*)
 		from users 
-		where  userPassword = HASHBYTES('SHA2_512', cast(@updateUserPassword as nvarchar(200))+CAST(salt AS NVARCHAR(36)))
-	  	    and userId = @updateUserId and userRole like'%Edit%'
+		where  userPassword = HASHBYTES('SHA2_512', @updateUserPassword+CAST(salt AS NVARCHAR(36)))
+	  	    and userId = @updateUserId and userRole like'%Edit%' or userRole ='Super'
 	
 	if @okToDelete=1
 		update messages set

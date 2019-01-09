@@ -80,14 +80,14 @@ namespace Individual
 
             if (_message.CanEditMessage(_application.LoggedUser, _application.MessagesUser, _application.VieweingOthersMessage))
             {
-                ColoredConsole.Write(" [F1] => Edit", 1, LastTextBoxY + 2, ConsoleColor.DarkGray);
-                keyChoices.Add(ConsoleKey.F1, FillForm);
+                ColoredConsole.Write("  [Enter] => Edit", 1, LastTextBoxY + 2, ConsoleColor.DarkGray);
+                keyChoices.Add(ConsoleKey.Enter, FillForm);
             }
 
             if (_message.CanDeleteMessage(_application.LoggedUser, _application.MessagesUser, _application.VieweingOthersMessage))
             {
-                ColoredConsole.Write(" [F2] => Delete", 1, LastTextBoxY + 3, ConsoleColor.DarkGray);
-                keyChoices.Add(ConsoleKey.F2, AskAndDelete);
+                ColoredConsole.Write(" [Delete] => Delete", 1, LastTextBoxY + 3, ConsoleColor.DarkGray);
+                keyChoices.Add(ConsoleKey.Delete, AskAndDelete);
             }
 
             ReadKey<Action> readKey = new ReadKey<Action>(keyChoices);

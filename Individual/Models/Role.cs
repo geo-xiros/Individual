@@ -8,7 +8,7 @@ namespace Individual
 {
     class Role
     {
-        public enum Roles { None, Simple, View, Super, ViewEdit, ViewEditDelete };
+        public enum Roles { None, Simple, View, ViewEdit, ViewEditDelete, Super };
 
         private static Dictionary<string, Roles> _roles;
         static Role()

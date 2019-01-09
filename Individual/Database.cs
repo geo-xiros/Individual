@@ -80,7 +80,7 @@ namespace Individual
         }
         public  bool ValidateUserPassword(string username, string password)
         {
-            return QueryFirst<int>("Validate_User", new { userName = username, userPassword = GetPasswordCrypted(password) }) == 1;
+            return QueryFirst<int>("Validate_User", new { userName = username, userPassword = password }) == 1;
         }
         #endregion
         #region Messages Functions
@@ -126,12 +126,6 @@ namespace Individual
             }
         }
 
-        private byte[] GetPasswordCrypted(string password)
-        {
-            byte[] data = System.Text.Encoding.UTF8.GetBytes(password);
-            SHA512 shaM = new SHA512Managed();
-            return shaM.ComputeHash(data);
-        }
         #region User  Insert Update Delete
         public bool Insert(User user)
         {
@@ -140,7 +134,7 @@ namespace Individual
                 userName = user.UserName,
                 firstName = user.FirstName,
                 lastName = user.LastName,
-                UserPassword = GetPasswordCrypted(user.Password),
+                UserPassword = user.Password,
                 UserRole = user.Role.ToString()
             });
             return user.UserId != 0;
@@ -154,7 +148,7 @@ namespace Individual
                 userName = user.UserName,
                 firstName = user.FirstName,
                 lastName = user.LastName,
-                userPassword = GetPasswordCrypted(user.Password),
+                userPassword = user.Password,
                 userRole = user.Role.ToString()
             }) == 1;
         }
@@ -166,7 +160,7 @@ namespace Individual
             return ExecuteProcedure("DeleteUser", new
             {
                 superUserId = _application.LoggedUser.UserId,
-                superUserPassword = GetPasswordCrypted(deletePassword),
+                superUserPassword = deletePassword,
                 userId = user.UserId
             }) == 1;
         }
@@ -193,7 +187,7 @@ namespace Individual
             return ExecuteProcedure("UpdateMessage", new
             {
                 updateUserId = _application.LoggedUser.UserId,
-                updateUserPassword = GetPasswordCrypted(updatePassword),
+                updateUserPassword = updatePassword,
                 messageId = message.MessageId,
                 subject = message.Subject,
                 body = message.Body
@@ -208,7 +202,7 @@ namespace Individual
             return ExecuteProcedure("DeleteMessage", new
             {
                 deleteUserId = _application.LoggedUser.UserId,
-                deleteUserPassword = GetPasswordCrypted(deletePassword),
+                deleteUserPassword = deletePassword,
                 messageId = message.MessageId
             }) == 1;
 

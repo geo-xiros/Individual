@@ -15,7 +15,7 @@ namespace Individual
                 {
                     new Field("Username", 30 ),
                     new Field("Password", 30, '*' ),
-                    new Field("Firstname", 30 ),
+                    new Field("Firstname", 50 ),
                     new Field("Lastname", 50 ),
                     new Field("Role", 30 )
                 };

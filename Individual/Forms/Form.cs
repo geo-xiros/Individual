@@ -46,7 +46,7 @@ namespace Individual
                 textbox.Show();
             }
             ColoredConsole.Write(new string('\x2500', Console.WindowWidth), 0, LastTextBoxY, ConsoleColor.White);
-            ColoredConsole.Write("[Esc] => Back", 1, LastTextBoxY + 1, ConsoleColor.DarkGray);
+            ColoredConsole.Write("    [Esc] => Back", 1, LastTextBoxY + 1, ConsoleColor.DarkGray);
         }
         protected int LastTextBoxY => TextBoxes.Max(tb => tb.Value.Y) + 4;
 
