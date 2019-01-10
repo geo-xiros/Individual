@@ -4,11 +4,7 @@ namespace Individual
 {
      class TextBoxValidation
     {
-        private Database _database;
-        public TextBoxValidation(Database database)
-        {
-            _database = database;
-        }
+
         public static bool ValidLength(TextBox textBox)
         {
             if (textBox.Text.Length == 0)
@@ -37,7 +33,7 @@ namespace Individual
                 textBox.ValidationError = $"{textBox.Label} can not be empty !!!";
                 return false;
             }
-            if (_database.Exists(textBox.Text))
+            if (Database.Exists(textBox.Text))
             {
                 textBox.ValidationError = "Username Exists!!!";
                 return false;

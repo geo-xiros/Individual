@@ -6,22 +6,19 @@ namespace Individual
 {
     class AccountForm : Form
     {
-        protected Database _database;
         protected Application _application;
         private User _user;
-        public AccountForm(string title, Application application, Database database) : base(title)
+        public AccountForm(string title, Application application) : base(title)
         {
             _application = application;
-            _database = database;
             _user = new User(string.Empty, string.Empty, string.Empty);
             InitTextBoxes();
             OnFormFilled = AskAndInsert;
         }
 
-        public AccountForm(string title, User user, Application application, Database database) : base(title)
+        public AccountForm(string title, User user, Application application  ) : base(title)
         {
             _application = application;
-            _database = database;
             _user = user;
 
             InitTextBoxes();
@@ -41,7 +38,7 @@ namespace Individual
                 View();
             }
         }
-        private bool NewUserOrLoggedUserAccount => _user.UserId == 0 || _user.UserId == _application.LoggedUser.UserId;
+        private bool NewUserOrLoggedUserAccount => _user.UserId == 0 || _user.UserId == Application.LoggedUser.UserId;
 
         private void View()
         {
@@ -68,7 +65,7 @@ namespace Individual
 
             UpdateUserFromTextBoxes();
 
-            _application.TryToRunAction<User>(_user, _database.Update
+            Application.TryToRunAction<User>(_user, Database.Update
                 , "Unable to Update Account try again [y/n]"
                 , "Account Updated successfully !!!"
                 , "Unable to Create Account !!!");
@@ -80,7 +77,7 @@ namespace Individual
 
             UpdateUserFromTextBoxes();
 
-            if (_application.TryToRunAction<User>(_user, _database.Insert
+            if (Application.TryToRunAction<User>(_user, Database.Insert
                 , "Unable to Create Account try again [y/n]"
                 , "Account Created successfully !!!"
                 , "Unable to Create Account !!!"))
@@ -94,7 +91,7 @@ namespace Individual
             if (MessageBox.Show("Delete Selected User ? [y/n] ") == MessageBox.MessageBoxResult.No)
                 return;
 
-            _application.TryToRunAction<User>(_user, _database.Delete
+            Application.TryToRunAction<User>(_user, Database.Delete
                 , "Unable to Delete Account try again [y/n]"
                 , "Account Delete successfully !!!"
                 , "Unable to Delete Account !!!");
@@ -102,14 +99,14 @@ namespace Individual
         }
         private void InitTextBoxes()
         {
-            TextBoxValidation textBoxValidation = new TextBoxValidation(_database);
+            TextBoxValidation textBoxValidation = new TextBoxValidation();
             AddTextBoxes(UserFields.Fields);
             TextBoxes["Username"].Validate = textBoxValidation.ValidUserName;
             TextBoxes["Password"].Validate = TextBoxValidation.ValidPassword;
             TextBoxes["Firstname"].Validate = TextBoxValidation.ValidLength;
             TextBoxes["Lastname"].Validate = TextBoxValidation.ValidLength;
             TextBoxes["Role"].Validate = TextBoxValidation.ValidRole;
-            TextBoxes["Role"].Locked = _application.LoggedUser == null ? true : !_application.LoggedUser.IsAdmin;
+            TextBoxes["Role"].Locked = Application.LoggedUser == null ? true : !Application.LoggedUser.IsAdmin;
             this["Role"] = _user.Role.ToString();
         }
 

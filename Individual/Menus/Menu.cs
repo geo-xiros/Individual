@@ -13,13 +13,13 @@ namespace Individual
         private string _menu;
         private int _keyPressed = 0;
         private ApplicationMenus _applicationMenus;
-        private Func<string> _menuTitle;
-        public Menu(string menu, Func<string> menuTitle, Dictionary<string, Action<MenuChoice>> menuActions, Dictionary<string, Func< bool>> permissionsChecks)
+        private readonly Func<string> _menuTitle;
+        public Menu(string menu, Func<string> menuTitle, ApplicationMenus applicationMenus)
         {
             _menu = menu;
             _stackOfMenus = new Stack<string>();
             _stackOfMenus.Push(_menu);
-            _applicationMenus = new ApplicationMenus( menuActions, permissionsChecks);
+            _applicationMenus = applicationMenus;
             _menuTitle = menuTitle;
         }
         public void Run()

@@ -11,12 +11,31 @@ namespace Individual
     class Database
     {
         static string ConnectionString() => $"Server={Properties.Settings.Default.SqlServer};Database={Properties.Settings.Default.Database};User Id={Properties.Settings.Default.User};Password={Properties.Settings.Default.Pass}";
-        private readonly Application _application;
-        public Database(Application application)
+
+        public static bool ConnectToDb()
         {
-            _application = application;
+            if (!ConnectWithDb())
+            {
+                return false;
+            }
+
+            if (!Exists("admin"))
+            {
+                User user = new User("admin", "Super", "Admin", "admin", "Super");
+                if (!Application.TryToRunAction<User>(user, Database.Insert,
+                    string.Empty,
+                    string.Empty,
+                    "Unable to insert Admin user Account try again [Y/N] "))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+
         }
-        public bool ConnectWithDb()
+
+        private static bool ConnectWithDb()
         {
             bool tryAgain = false;
             do
@@ -46,7 +65,7 @@ namespace Individual
 
         }
 
-        public int ExecuteProcedure(string procedure, object parameters)
+        public static int ExecuteProcedure(string procedure, object parameters)
         {
             try
             {
@@ -62,38 +81,38 @@ namespace Individual
             }
         }
         #region UserFunctions
-        public  IEnumerable<User> GetUsers()
+        public static IEnumerable<User> GetUsers()
         {
             return Query<User>("GetUsers", new { userId = 0, userName = "" });
         }
-        public  User GetUserBy(int userId)
+        public static User GetUserBy(int userId)
         {
             return QueryFirst<User>("GetUsers", new { userId, userName = "" });
         }
-        public  User GetUserBy(string userName)
+        public static User GetUserBy(string userName)
         {
             return QueryFirst<User>("GetUsers", new { userId = 0, userName });
         }
-        public  bool Exists(string userName)
+        public static bool Exists(string userName)
         {
             return GetUserBy(userName) != null;
         }
-        public  bool ValidateUserPassword(string username, string password)
+        public static bool ValidateUserPassword(string username, string password)
         {
             return QueryFirst<int>("Validate_User", new { userName = username, userPassword = password }) == 1;
         }
         #endregion
         #region Messages Functions
-        public  Message GetMessageById(int messageId)
+        public static Message GetMessageById(int messageId)
         {
             return QueryFirst<Message>("GetMessages", new { messageId, userId = 0 });
         }
-        public IEnumerable<Message> GetUserMessages(int userId)
+        public static IEnumerable<Message> GetUserMessages(int userId)
         {
             return Query<Message>("GetMessages", new { messageId = 0, userId });
         }
         #endregion
-        private IEnumerable<T> Query<T>(string procedure, object parameters)
+        private static IEnumerable<T> Query<T>(string procedure, object parameters)
         {
             try
             {
@@ -108,7 +127,7 @@ namespace Individual
                 throw new DatabaseException(e.Message, e);
             }
         }
-        private T QueryFirst<T>(string procedure, object parameters)
+        private static T QueryFirst<T>(string procedure, object parameters)
         {
             try
             {
@@ -127,7 +146,7 @@ namespace Individual
         }
 
         #region User  Insert Update Delete
-        public bool Insert(User user)
+        public static bool Insert(User user)
         {
             user.UserId = QueryFirst<int>("InsertUser", new
             {
@@ -140,7 +159,7 @@ namespace Individual
             return user.UserId != 0;
         }
 
-        public bool Update(User user)
+        public static bool Update(User user)
         {
             return ExecuteProcedure("UpdateUser", new
             {
@@ -152,14 +171,14 @@ namespace Individual
                 userRole = user.Role.ToString()
             }) == 1;
         }
-        public bool Delete(User user)
+        public static bool Delete(User user)
         {
             if (!GetPasswordIfNeeded(out string deletePassword, user.UserId, "Delete Selected User"))
                 return false;
 
             return ExecuteProcedure("DeleteUser", new
             {
-                superUserId = _application.LoggedUser.UserId,
+                superUserId = Application.LoggedUser.UserId,
                 superUserPassword = deletePassword,
                 userId = user.UserId
             }) == 1;
@@ -167,7 +186,7 @@ namespace Individual
         #endregion
 
         #region Message Insert Update Delete
-        public bool Insert(Message message)
+        public static bool Insert(Message message)
         {
             message.MessageId = QueryFirst<int>("InsertMessage", new
             {
@@ -179,14 +198,14 @@ namespace Individual
             return true;
         }
 
-        public bool Update(Message message)
+        public static bool Update(Message message)
         {
             if (!GetPasswordIfNeeded(out string updatePassword, message.SenderUserId, "Update Selected Message"))
                 return false;
 
             return ExecuteProcedure("UpdateMessage", new
             {
-                updateUserId = _application.LoggedUser.UserId,
+                updateUserId = Application.LoggedUser.UserId,
                 updateUserPassword = updatePassword,
                 messageId = message.MessageId,
                 subject = message.Subject,
@@ -194,14 +213,14 @@ namespace Individual
             }) == 1;
         }
 
-        public bool Delete(Message message)
+        public static bool Delete(Message message)
         {
             if (!GetPasswordIfNeeded(out string deletePassword, message.SenderUserId, "Delete Selected Message"))
                 return false;
 
             return ExecuteProcedure("DeleteMessage", new
             {
-                deleteUserId = _application.LoggedUser.UserId,
+                deleteUserId = Application.LoggedUser.UserId,
                 deleteUserPassword = deletePassword,
                 messageId = message.MessageId
             }) == 1;
@@ -209,11 +228,11 @@ namespace Individual
         }
         #endregion
 
-        public bool GetPasswordIfNeeded(out string returnPassword, int userId, string passwordForAction )
+        public static bool GetPasswordIfNeeded(out string returnPassword, int userId, string passwordForAction )
         {
             string password = "";
 
-            if (_application.LoggedUser.UserId != userId)
+            if (Application.LoggedUser.UserId != userId)
             {
                 PasswordForm passwordForm = new PasswordForm(passwordForAction);
                 passwordForm.OnFormFilled = () => password = passwordForm["Password"];
@@ -222,7 +241,7 @@ namespace Individual
 
             returnPassword = password;
 
-            return _application.LoggedUser.UserId == userId
+            return Application.LoggedUser.UserId == userId
                 || password.Length != 0;
         }
     }

@@ -13,10 +13,10 @@ namespace Individual
 
         static void Main(string[] args)
         {
-            Application application = new Application();
-
-            if (application.ConnectToDb())
+            
+            if (Database.ConnectToDb())
             {
+                Application application = new Application();
                 application.Run();
             }
 
