@@ -12,7 +12,7 @@ namespace Individual
     {
         public ActionsAfterRun ActionAfterRun { get; set; }
         public Action<MenuChoice> Run { get; set; }
-        public Func<User, bool> HasPermission { get; set; }
+        public Func< bool> HasPermission { get; set; }
         public ConsoleKey Key { get; set; }
 
         public string Title { get; private set; }

@@ -14,12 +14,12 @@ namespace Individual
         private int _keyPressed = 0;
         private ApplicationMenus _applicationMenus;
         private Application _application;
-        public Menu(string menu, Application application, Database database )
+        public Menu(string menu, Application application, Dictionary<string, Action<MenuChoice>> menuActions, Dictionary<string, Func< bool>> permissionsChecks)
         {
             _menu = menu;
             _stackOfMenus = new Stack<string>();
             _stackOfMenus.Push(_menu);
-            _applicationMenus = new ApplicationMenus(application, database);
+            _applicationMenus = new ApplicationMenus( menuActions, permissionsChecks);
             _application = application;
         }
         public void Run()
@@ -76,7 +76,7 @@ namespace Individual
             ColoredConsole.WriteLine(new string('\x2500', Console.WindowWidth), ConsoleColor.White);
 
             _menuChoices = _menuChoices
-                .Where(mc => mc.HasPermission == null || mc.HasPermission(_application.LoggedUser))
+                .Where(mc => mc.HasPermission == null || mc.HasPermission())
                 .ToList();
 
             for (byte i = 1; i < _menuChoices.Count; i++)
