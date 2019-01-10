@@ -103,7 +103,7 @@ namespace Individual
             _message.Subject = this["Subject"];
             _message.Body = this["Body"];
 
-            if (_application.TryToRunAction<Message>(_message, _database.Update
+            if (Application.TryToRunAction<Message>(_message, _database.Update
                 , "Unable to Update Message try again [y/n]"
                 , "Message Updated successfully !!!"
                 , "Unable to Update Message !!!"))
@@ -118,7 +118,7 @@ namespace Individual
             _message.Subject = this["Subject"];
             _message.Body = this["Body"];
 
-            if (_application.TryToRunAction<Message>(_message, _database.Insert
+            if (Application.TryToRunAction<Message>(_message, _database.Insert
                 , "Unable to Send Message try again [y/n]"
                 , "Message Sent successfully !!!"
                 , "Unable to Send Message !!!"))
@@ -132,7 +132,7 @@ namespace Individual
         {
             if (MessageBox.Show("Delete Selected Message ? [y/n] ") == MessageBox.MessageBoxResult.No)
                 return;
-            if (_application.TryToRunAction<Message>(_message, _database.Delete
+            if (Application.TryToRunAction<Message>(_message, _database.Delete
                 , "Unable to delete Message try again [y/n]"
                 , "Message successfully Deleted !!!"
                 , "Unable to delete Message !!!"))
