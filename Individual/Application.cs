@@ -8,7 +8,7 @@ namespace Individual
     class Application
     {
         public static User LoggedUser { get; private set; }
-        public static User MessagesUser { get; set; }
+        public static User MessagesUser { get; private set; }
         public static bool VieweingOthersMessage => LoggedUser != MessagesUser;
         public static string Username
         {
@@ -50,7 +50,7 @@ namespace Individual
             menu.Run();
         }
 
-        public bool Login(string username, string password)
+        private bool Login(string username, string password)
         {
             if (Database.ValidateUserPassword(username, password))
             {
@@ -61,43 +61,10 @@ namespace Individual
             Alerts.Warning("Wrong Username or Password!!!");
             return false;
         }
-        public void LoggOff()
+        private void LoggOff()
         {
             LoggedUser = null;
         }
-
-        public static bool TryToRunAction<T>(T onObject, Func<T, bool> action, string questionMessage, string successMessage, string failMessage)
-        {
-            bool tryAgain = false;
-            do
-            {
-                try
-                {
-                    if (action(onObject))
-                    {
-                        Alerts.Success(successMessage);
-                        return true;
-                    }
-                    else
-                    {
-                        Alerts.Warning(failMessage);
-                        return false;
-                    }
-
-                }
-                catch (DatabaseException e)
-                {
-                    Alerts.Error(e.Message);
-                    Console.Clear();
-                    tryAgain = MessageBox.Show(questionMessage) == MessageBox.MessageBoxResult.Yes;
-                }
-
-            } while (tryAgain);
-
-            return false;
-        }
-
-
 
         #region Menu Choices Functions
         private void Login(MenuChoice menuChoice)
@@ -290,9 +257,44 @@ namespace Individual
         }
 
         #endregion
+
+        #region Menu Extra Functions
+
         private bool CanViewOthers() => LoggedUser.CanView || LoggedUser.CanEdit || LoggedUser.CanDelete;
         private bool CanManageAccounts( ) => LoggedUser.IsAdmin;
         private bool OwnedMessages( ) => LoggedUser == MessagesUser;
         private string MenuTitle () => Username;
+        #endregion
+
+        public static bool TryToRunAction<T>(T onObject, Func<T, bool> action, string questionMessage, string successMessage, string failMessage)
+        {
+            bool tryAgain = false;
+            do
+            {
+                try
+                {
+                    if (action(onObject))
+                    {
+                        Alerts.Success(successMessage);
+                        return true;
+                    }
+                    else
+                    {
+                        Alerts.Warning(failMessage);
+                        return false;
+                    }
+
+                }
+                catch (DatabaseException e)
+                {
+                    Alerts.Error(e.Message);
+                    Console.Clear();
+                    tryAgain = MessageBox.Show(questionMessage) == MessageBox.MessageBoxResult.Yes;
+                }
+
+            } while (tryAgain);
+
+            return false;
+        }
     }
 }
