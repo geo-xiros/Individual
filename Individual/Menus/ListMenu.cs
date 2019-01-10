@@ -15,7 +15,8 @@ namespace Individual
         public int Id { get; private set; }
         private readonly string _titles;
         private int _menuSkip;
-        private Application _application;
+        private Func<string> _menuTitle;
+
         private int MenuSkip
         {
             get
@@ -31,15 +32,15 @@ namespace Individual
             }
         }
 
-        public ListMenu(string menu, string titles, Application application)
+        public ListMenu(string menu, string titles, Func<string> menuTitle)
         {
             _menu = menu;
             _titles = titles;
             _allMenuChoices = new List<KeyValuePair<int, string>>() { new KeyValuePair<int, string>(0, string.Empty) };
-            _application = application;
+            _menuTitle = menuTitle;
         }
 
-        public ListMenu(string menu, List<KeyValuePair<int, string>> listItems, string titles, Application application) : this(menu, titles, application)
+        public ListMenu(string menu, List<KeyValuePair<int, string>> listItems, string titles, Func<string> menuTitle) : this(menu, titles, menuTitle)
         {
             _allMenuChoices = listItems;
         }
@@ -68,7 +69,7 @@ namespace Individual
             Console.ResetColor();
             Console.Clear();
             ColoredConsole.Write(string.Format("{0," + (Console.WindowWidth - 1) + "}\r", $"Total List Rows : {_allMenuChoices.Count()} "), ConsoleColor.Green);
-            ColoredConsole.WriteLine($"{_menu} {_application.Username}", ConsoleColor.Yellow);
+            ColoredConsole.WriteLine($"{_menu} {_menuTitle()}", ConsoleColor.Yellow);
             ColoredConsole.Write(new string('\x2500', Console.WindowWidth), ConsoleColor.White);
             ColoredConsole.WriteLine(_titles, ConsoleColor.White);
             ColoredConsole.Write(new string('\x2500', Console.WindowWidth), ConsoleColor.White);

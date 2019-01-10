@@ -206,7 +206,7 @@ namespace Individual
               .Select(u => new KeyValuePair<int, string>(u.UserId, u.ToString()))
               .ToList();
 
-            ListMenu lm = new ListMenu("Select User", users, string.Format("A/A\x2502{0,-50}\x2502{1,-50}", "Lastname", "Firstname"), this);
+            ListMenu lm = new ListMenu("Select User", users, string.Format("A/A\x2502{0,-50}\x2502{1,-50}", "Lastname", "Firstname"), MenuTitle);
             lm.ChooseListItem();
 
             if (lm.Id != 0)
@@ -296,7 +296,7 @@ namespace Individual
 
         private void SelectFromList(Func<List<KeyValuePair<int, string>>> listOfItems, Action<int> RunOnSelection, string listMenuTitle, string headers)
         {
-            ListMenu lm = new ListMenu(listMenuTitle, headers, this);
+            ListMenu lm = new ListMenu(listMenuTitle, headers, MenuTitle);
             do
             {
                 lm.SetListItems(listOfItems());
