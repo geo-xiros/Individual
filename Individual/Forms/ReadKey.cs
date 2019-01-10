@@ -8,12 +8,11 @@ namespace Individual
 {
     class ReadKey<T>
     {
-        private Dictionary<ConsoleKey, T> _keyChoices;
         public enum MessageBoxResult { Yes, No };
-        public ReadKey(Dictionary<ConsoleKey, T> keyChoices)
-        {
-            _keyChoices = keyChoices;
-        }
+
+        private Dictionary<ConsoleKey, T> _keyChoices;
+        public ReadKey(Dictionary<ConsoleKey, T> keyChoices) => _keyChoices = keyChoices;
+
         public T GetKey()
         {
             ConsoleKey k;
