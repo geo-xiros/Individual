@@ -62,7 +62,7 @@ namespace Individual
                 {"OwnedMessages", OwnedMessages }
             };
 
-            Menu menu = new Menu("Login Menu", this, menuActions, permissionsChecks);
+            Menu menu = new Menu("Login Menu", MenuTitle, menuActions, permissionsChecks);
             menu.Run();
         }
 
@@ -323,5 +323,6 @@ namespace Individual
         private bool CanViewOthers() => LoggedUser.CanView || LoggedUser.CanEdit || LoggedUser.CanDelete;
         private bool CanManageAccounts( ) => LoggedUser.IsAdmin;
         private bool OwnedMessages( ) => LoggedUser == MessagesUser;
+        private string MenuTitle () => Username;
     }
 }

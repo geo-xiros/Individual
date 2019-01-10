@@ -13,14 +13,14 @@ namespace Individual
         private string _menu;
         private int _keyPressed = 0;
         private ApplicationMenus _applicationMenus;
-        private Application _application;
-        public Menu(string menu, Application application, Dictionary<string, Action<MenuChoice>> menuActions, Dictionary<string, Func< bool>> permissionsChecks)
+        private Func<string> _menuTitle;
+        public Menu(string menu, Func<string> menuTitle, Dictionary<string, Action<MenuChoice>> menuActions, Dictionary<string, Func< bool>> permissionsChecks)
         {
             _menu = menu;
             _stackOfMenus = new Stack<string>();
             _stackOfMenus.Push(_menu);
             _applicationMenus = new ApplicationMenus( menuActions, permissionsChecks);
-            _application = application;
+            _menuTitle = menuTitle;
         }
         public void Run()
         {
@@ -72,7 +72,7 @@ namespace Individual
         {
             Console.CursorVisible = false;
             Console.Clear();
-            ColoredConsole.WriteLine($"{_menu} {_application.Username}", ConsoleColor.Yellow);
+            ColoredConsole.WriteLine($"{_menu} {_menuTitle()}", ConsoleColor.Yellow);
             ColoredConsole.WriteLine(new string('\x2500', Console.WindowWidth), ConsoleColor.White);
 
             _menuChoices = _menuChoices
