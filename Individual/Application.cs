@@ -82,12 +82,6 @@ namespace Individual
             LoggedUser = null;
         }
 
-
-        public void SetLoggedUserAsMessagesUser()
-        {
-            MessagesUser = LoggedUser;
-        }
-
         public bool TryToRunAction<T>(T onObject, Func<T, bool> action, string questionMessage, string successMessage, string failMessage)
         {
             bool tryAgain = false;
@@ -195,7 +189,7 @@ namespace Individual
 
         private void MessagesMenu(MenuChoice menuChoice)
         {
-            SetLoggedUserAsMessagesUser();
+            MessagesUser = LoggedUser;
             menuChoice.LoadMenu = "Messages Menu";
         }
         private void OthersMessagesMenu(MenuChoice menuChoice)
