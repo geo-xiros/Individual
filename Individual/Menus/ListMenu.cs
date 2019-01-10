@@ -15,7 +15,7 @@ namespace Individual
         public int Id { get; private set; }
         private readonly string _titles;
         private int _menuSkip;
-        private Func<string> _menuTitle;
+        private readonly Func<string> _menuTitle;
 
         private int MenuSkip
         {
@@ -100,26 +100,18 @@ namespace Individual
                     {ConsoleKey.PageDown, ()=> MenuSkip += _MaxItemsPerPage }
                 };
 
+            ConsoleKey[] Keys1To9 = {
+                ConsoleKey.D1, ConsoleKey.D2, ConsoleKey.D3, ConsoleKey.D4, ConsoleKey.D5
+              , ConsoleKey.D6, ConsoleKey.D7, ConsoleKey.D8, ConsoleKey.D9 };
+
             for (int i = 0; i < _menuChoices.Count; i++)
             {
                 int choiceIndex = i;
-                keyChoices.Add(Keys1To9[i + 1], () => Id = _menuChoices[choiceIndex].Key);
+                keyChoices.Add(Keys1To9[i], () => Id = _menuChoices[choiceIndex].Key);
             }
 
             return keyChoices;
         }
 
-        public static Dictionary<int, ConsoleKey> Keys1To9 { get; } = new Dictionary<int, ConsoleKey>()
-        {
-              { 1, ConsoleKey.D1 }
-            , { 2, ConsoleKey.D2 }
-            , { 3, ConsoleKey.D3 }
-            , { 4, ConsoleKey.D4 }
-            , { 5, ConsoleKey.D5 }
-            , { 6, ConsoleKey.D6 }
-            , { 7, ConsoleKey.D7 }
-            , { 8, ConsoleKey.D8 }
-            , { 9, ConsoleKey.D9 }
-        };
     }
 }
