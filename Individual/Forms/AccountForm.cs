@@ -6,19 +6,16 @@ namespace Individual
 {
     class AccountForm : Form
     {
-        protected Application _application;
         private User _user;
-        public AccountForm(string title, Application application) : base(title)
+        public AccountForm(string title) : base(title)
         {
-            _application = application;
             _user = new User(string.Empty, string.Empty, string.Empty);
             InitTextBoxes();
             OnFormFilled = AskAndInsert;
         }
 
-        public AccountForm(string title, User user, Application application  ) : base(title)
+        public AccountForm(string title, User user ) : base(title)
         {
-            _application = application;
             _user = user;
 
             InitTextBoxes();
