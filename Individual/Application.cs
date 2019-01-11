@@ -81,7 +81,7 @@ namespace Individual
         }
         private void SignUp(MenuChoice menuChoice)
         {
-            AccountForm signUpForm = new AccountForm("Sign Up", this);
+            AccountForm signUpForm = new AccountForm("Sign Up");
             signUpForm.OnFormSaved = () =>
             {
                 if (Login(signUpForm["Username"], signUpForm["Password"]))
@@ -103,33 +103,29 @@ namespace Individual
         }
         private void CreateAccount(MenuChoice menuChoice)
         {
-            AccountForm createAccountScreen = new AccountForm("Create Account", this);
+            AccountForm createAccountScreen = new AccountForm("Create Account");
             createAccountScreen.Open();
         }
         private void SelectUserAndEdit(MenuChoice menuChoice)
         {
-            SelectFromList(() =>
-            {
-                return Database.GetUsers()
-              .Where(u => u.UserId != LoggedUser.UserId)
-              .OrderBy(u => u.LastName)
-              .Select(u => new KeyValuePair<int, string>(u.UserId, u.ToString())).ToList();
-            }
-              , (id) =>
-              {
-                  User user = Database.GetUserBy(id);
-                  AccountForm editAccount = new AccountForm("Edit Account", user, this);
-                  editAccount.Open();
-              }
+            SelectFromList( 
+                () => Database.GetUsers()
+                    .Where(u => u.UserId != LoggedUser.UserId)
+                    .OrderBy(u => u.LastName)
+                    .Select(u => new KeyValuePair<int, string>(u.UserId, u.ToString())).ToList()
+              , (id) => EditAccount(Database.GetUserBy(id))
               , "Select User"
               , string.Format("A/A\x2502{0,-50}\x2502{1,-50}", "Lastname", "Firstname"));
         }
         private void EditCurrentAccount(MenuChoice menuChoice)
         {
-            AccountForm editAccount = new AccountForm("Edit Account", LoggedUser, this);
+            EditAccount(LoggedUser);
+        }
+        private void EditAccount(User user)
+        {
+            AccountForm editAccount = new AccountForm("Edit Account", user);
             editAccount.Open();
         }
-
         private void MessagesMenu(MenuChoice menuChoice)
         {
             MessagesUser = LoggedUser;
@@ -156,22 +152,13 @@ namespace Individual
 
         private void SendMessage(MenuChoice menuChoice)
         {
-            SelectFromList(() =>
-            {
-                return Database.GetUsers()
-                  .Where(u => u.UserId != MessagesUser.UserId)
-                  .OrderBy(u => u.LastName)
-                  .Select(u => new KeyValuePair<int, string>(u.UserId, u.ToString()))
-                  .ToList();
-            }
-            , (id) =>
-            {
-                User user = Database.GetUserBy(id);
-
-                MessageForm viewMessageForm = new MessageForm(user);
-                viewMessageForm.Open();
-
-            }
+            SelectFromList(
+              () => Database.GetUsers()
+                .Where(u => u.UserId != MessagesUser.UserId)
+                .OrderBy(u => u.LastName)
+                .Select(u => new KeyValuePair<int, string>(u.UserId, u.ToString()))
+                .ToList()
+            , (id) => ViewMessage(Database.GetUserBy(id))
             , "Select User"
             , string.Format("A/A\x2502{0,-50}\x2502{1,-50}", "Lastname", "Firstname"));
 
@@ -179,24 +166,27 @@ namespace Individual
 
         private void SentMessages(MenuChoice menuChoice)
         {
-            SelectFromList(() =>
-            {
-                return Database
-                   .GetUserMessages(MessagesUser.UserId)
-                   .Where(m => m.SenderUserId == MessagesUser.UserId)
-                   .OrderByDescending(m => m.SendAt)
-                   .Select(m => new KeyValuePair<int, string>(m.MessageId, m.ToString(MessagesUser)))
-                   .ToList();
-            }
-            , (id) =>
-            {
-                Message message = Database.GetMessageById(id);
-                MessageForm viewMessageForm = new MessageForm(message);
-                viewMessageForm.Open();
-            }
+            SelectFromList(
+              () => Database
+                .GetUserMessages(MessagesUser.UserId)
+                .Where(m => m.SenderUserId == MessagesUser.UserId)
+                .OrderByDescending(m => m.SendAt)
+                .Select(m => new KeyValuePair<int, string>(m.MessageId, m.ToString(MessagesUser)))
+                .ToList()
+            , (id) => ViewMessage(Database.GetMessageById(id))
             , "Select Message"
             , string.Format("A/A\x2502{0,-22}\x2502{1,-30}\x2502{2,-50}\x2502{3,-4}", "Date", "Sent To", "Subject", "Unread"));
 
+        }
+        private void ViewMessage(Message message)
+        {
+            MessageForm viewMessageForm = new MessageForm(message);
+            viewMessageForm.Open();
+        }
+        private void ViewMessage(User user)
+        {
+            MessageForm viewMessageForm = new MessageForm(user);
+            viewMessageForm.Open();
         }
         private void ReceivedMessages(MenuChoice menuChoice)
         {
