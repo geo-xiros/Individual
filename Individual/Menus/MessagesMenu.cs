@@ -6,24 +6,36 @@ using System.Threading.Tasks;
 
 namespace Individual.Menus
 {
-    class MessagesMenu : AbstractMenu
+    class MessagesMenu : Menu
     {
         private User _loggedUser;
-        public MessagesMenu(string title, User loggedUser, AbstractMenu previousMenu) : base(title, previousMenu)
+        protected User _realLoggedUser;
+        public MessagesMenu(string title, User loggedUser, Menu previousMenu) : base(title, previousMenu)
         {
             _loggedUser = loggedUser;
-            _menuItems = new List<MenuItem>(){
-                 new MenuItem() { Title = "1. Send", Key = ConsoleKey.D1, Action = SendMessage },
-                 new MenuItem() { Title = "2. Received", Key = ConsoleKey.D2, Action = ReceivedMessages },
-                 new MenuItem() { Title = "3. Sent", Key = ConsoleKey.D3, Action = SentMessages },
-                 new MenuItem() { Title = "[Esc] => Exit", Key = ConsoleKey.Escape, Action = GoBack }
+            _realLoggedUser = loggedUser;
+            _menuItems = new Dictionary<ConsoleKey, MenuItem>() {
+                { ConsoleKey.D1, new MenuItem("1. Send", SendMessage) },
+                { ConsoleKey.D2, new MenuItem("2. Received", ViewReceivedMessages) },
+                { ConsoleKey.D3, new MenuItem("3. Sent", ViewSentMessages) },
+                { ConsoleKey.Escape, new MenuItem("[Esc] => Back", MenuChoiceEscape) }
+            };
+        }
+        public MessagesMenu(string title, User loggedUser, User realLoggedUser, Menu previousMenu) : base(title, previousMenu)
+        {
+            _loggedUser = loggedUser;
+            _realLoggedUser = realLoggedUser;
+            _menuItems = new Dictionary<ConsoleKey, MenuItem>() {
+                { ConsoleKey.D1, new MenuItem("1. Received", ViewReceivedMessages) },
+                { ConsoleKey.D2, new MenuItem("2. Sent", ViewSentMessages) },
+                { ConsoleKey.Escape, new MenuItem("[Esc] => Back", MenuChoiceEscape) }
             };
         }
 
         #region menu choices
-        private void SendMessage()
+        public virtual void SendMessage()
         {
-            SelectFromList(
+            GlobalFunctions.SelectFromList(
               () => Database.GetUsers()
                 .Where(u => u.UserId != _loggedUser.UserId)
                 .OrderBy(u => u.LastName)
@@ -33,25 +45,23 @@ namespace Individual.Menus
             , "Select User"
             , string.Format("A/A\x2502{0,-50}\x2502{1,-50}", "Lastname", "Firstname"));
         }
-        private void SentMessages()
+        public virtual void ViewReceivedMessages()
         {
-            SelectFromList(
-                () => ListOfMessages(m=> m.SenderUserId == _loggedUser.UserId)
-                , OnMessageSelection
-                , "Select Message to View"
-                , string.Format("A/A\x2502{0,-22}\x2502{1,-30}\x2502{2,-50}\x2502{3,-4}", "Date", "Sent To", "Subject", "Unread"));
-
-        }
-
-        private void ReceivedMessages()
-        {
-            SelectFromList(
+            GlobalFunctions.SelectFromList(
                 () => ListOfMessages(m => m.ReceiverUserId == _loggedUser.UserId)
                 , OnMessageSelection
                 , "Select Message to View"
                 , string.Format("A/A\x2502{0,-22}\x2502{1,-30}\x2502{2,-50}\x2502{3,-4}", "Date", "Sent From", "Subject", "Unread"));
         }
+        public virtual void ViewSentMessages()
+        {
+            GlobalFunctions.SelectFromList(
+                () => ListOfMessages(m => m.SenderUserId == _loggedUser.UserId)
+                , OnMessageSelection
+                , "Select Message to View"
+                , string.Format("A/A\x2502{0,-22}\x2502{1,-30}\x2502{2,-50}\x2502{3,-4}", "Date", "Sent To", "Subject", "Unread"));
 
+        }
         #endregion
 
         #region help functions
@@ -67,24 +77,9 @@ namespace Individual.Menus
         private void OnMessageSelection(int messageId)
         {
             Database.GetMessageById(messageId)
-                .View(_loggedUser);
+                .View(_loggedUser, _realLoggedUser);
         }
-        private void SelectFromList(Func<List<KeyValuePair<int, string>>> listOfItems, Action<int> RunOnSelection, string listMenuTitle, string headers)
-        {
-            ListMenu lm = new ListMenu(listMenuTitle, headers, () => string.Empty);
-            do
-            {
-                lm.SetListItems(listOfItems());
-                lm.ChooseListItem();
 
-                if (lm.Id != 0)
-                {
-                    RunOnSelection(lm.Id);
-                }
-
-            } while (lm.Id != 0);
-
-        }
         #endregion
     }
 }

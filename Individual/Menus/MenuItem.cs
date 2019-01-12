@@ -8,8 +8,13 @@ namespace Individual.Menus
 {
     class MenuItem
     {
-        public ConsoleKey Key { get; set; }
         public string Title { get; set; }
         public Action Action { get; set; }
+
+        public MenuItem(string title,Action action)
+        {
+            Title = title;
+            Action = action;
+        }
     }
 }

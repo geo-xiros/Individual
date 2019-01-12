@@ -15,17 +15,48 @@ namespace Individual
         static void Main(string[] args)
         {
 
-            if (Database.ConnectToDb())
+            while (!ConnectToDatabase())
             {
-                Run();
+                ConnectionForm connectionForm = new ConnectionForm();
+                connectionForm.Open();
+                if (!connectionForm.EscapePressed)
+                {
+                    Environment.Exit(0);
+                }
             }
+
+            if (!AddAdminUser())
+            {
+                Environment.Exit(0);
+            }
+
+            RunApplication();
 
             ClearOnExit();
 
         }
-        private static void Run()
+        private static bool ConnectToDatabase()
         {
-            AbstractMenu menu = new LoginMenu("Login");
+            return !Database.OpenConnection((dbConnection) =>
+            {
+                dbConnection.Open();
+            });
+        }
+        private static bool AddAdminUser()
+        {
+            if (Database.Exists("admin"))
+            {
+                return true;
+            }
+            else
+            {
+                User user = new User("admin", "Super", "Admin", "admin", "Super");
+                return user.Insert();
+            }
+        }
+        private static void RunApplication()
+        {
+            Menu menu = new LoginMenu("Login");
 
             while (menu != null)
             {

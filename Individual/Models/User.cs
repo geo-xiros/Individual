@@ -36,31 +36,89 @@ namespace Individual
 
         public string FullName => $"{FirstName} {LastName}";
 
-        public bool IsAdmin => (Role >= Individual.Role.Roles.Super);
-        public bool CanView => (Role >= Individual.Role.Roles.View);
-        public bool CanEdit => (Role >= Individual.Role.Roles.ViewEdit);
-        public bool CanDelete => (Role >= Individual.Role.Roles.ViewEditDelete);
+        public bool IsAdmin() => (Role >= Individual.Role.Roles.Super);
+        public bool CanView() => (Role >= Individual.Role.Roles.View);
+        public bool CanEdit() => (Role >= Individual.Role.Roles.ViewEdit);
+        public bool CanDelete() => (Role >= Individual.Role.Roles.ViewEditDelete);
 
         public override string ToString()
         {
             return String.Format("\x2502{0,-50}\x2502{1,-50}", LastName, FirstName);
         }
-
-        public AbstractMenu GetMainMenu(AbstractMenu previousMenu)
+        #region User  Insert Update Delete
+        public bool Insert()
         {
-            if (Role >= Individual.Role.Roles.Super)
+            UserId = Database.QueryFirst<int>("InsertUser", new
             {
-                return new SuperUserMainMenu($"Main Menu ({FullName})", this, previousMenu);
+                userName = UserName,
+                firstName = FirstName,
+                lastName = LastName,
+                UserPassword = Password,
+                UserRole = Role.ToString()
+            });
+            return UserId != 0;
+        }
+
+        public bool Update()
+        {
+            return Database.ExecuteProcedure("UpdateUser", new
+            {
+                userId = UserId,
+                userName = UserName,
+                firstName = FirstName,
+                lastName = LastName,
+                userPassword = Password,
+                userRole = Role.ToString()
+            }) == 1;
+        }
+        public bool Delete(int superUserId)
+        {
+            if (!Database.GetPasswordIfNeeded(out string deletePassword, UserId, superUserId, "Delete Selected User"))
+                return false;
+
+            return Database.ExecuteProcedure("DeleteUser", new
+            {
+                superUserId, //Application.LoggedUser.UserId,
+                superUserPassword = deletePassword,
+                userId = UserId
+            }) == 1;
+        }
+        #endregion
+
+        public Menu GetMainMenu(Menu previousMenu)
+        {
+            MainMenu mainMenu = new MainMenu($"Main Menu ({FullName})", this, previousMenu);
+
+            if (IsAdmin())
+            {
+                mainMenu.LoadMenus(new Dictionary<ConsoleKey, MenuItem>() {
+                    { ConsoleKey.D1, new MenuItem("1. Messages", mainMenu.MessagesMenu) },
+                    { ConsoleKey.D2, new MenuItem("2. Messages (Other Users)", mainMenu.OthersMessagesMenu) },
+                    { ConsoleKey.D3, new MenuItem("3. Accounts Managment", mainMenu.AccountManagmentMenu) },
+                    { ConsoleKey.D4, new MenuItem("4. Current Account Edit", mainMenu.EditUser) },
+                    { ConsoleKey.Escape, new MenuItem("[Esc] => Logout", mainMenu.MenuChoiceEscape) }
+                });
             }
-            else if (Role >= Individual.Role.Roles.View)
+            else if (CanView())
             {
-                return new OthersMessagesMainMenu($"Main Menu ({FullName})", this, previousMenu);
+                mainMenu.LoadMenus(new Dictionary<ConsoleKey, MenuItem>() {
+                    { ConsoleKey.D1, new MenuItem("1. Messages", mainMenu.MessagesMenu) },
+                    { ConsoleKey.D2, new MenuItem("2. Messages (Other Users)", mainMenu.OthersMessagesMenu) },
+                    { ConsoleKey.D3, new MenuItem("3. Current Account Edit", mainMenu.EditUser) },
+                    { ConsoleKey.Escape, new MenuItem("[Esc] => Logout", mainMenu.MenuChoiceEscape) }
+                });
             }
             else
             {
-                return new SimpleUserMainMenu($"Main Menu ({FullName})", this, previousMenu);
+                mainMenu.LoadMenus(new Dictionary<ConsoleKey, MenuItem>() {
+                    { ConsoleKey.D1, new MenuItem("1. Messages", mainMenu.MessagesMenu) },
+                    { ConsoleKey.D2, new MenuItem("2. Current Account Edit", mainMenu.EditUser) },
+                    { ConsoleKey.Escape, new MenuItem("[Esc] => Logout", mainMenu.MenuChoiceEscape) }
+                });
             }
-                
+            return mainMenu;
+
+
         }
         public void SendMessage(User toUser)
         {

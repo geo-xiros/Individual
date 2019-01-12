@@ -44,22 +44,49 @@ namespace Individual
                 : Subject.Substring(0, 50);
         }
 
-        //private bool CurrentUserIsSender;
-        //(User messagesUser)
-        //{
-        //    return messagesUser.UserId == SenderUserId;
-        //}
+        #region Message Insert Update Delete
+        public bool Insert()
+        {
+            MessageId = Database.QueryFirst<int>("InsertMessage", new
+            {
+                senderUserId = SenderUserId,
+                receiverUserId = ReceiverUserId,
+                subject = Subject,
+                body = Body
+            });
+            return true;
+        }
 
-        public bool CanEditMessage(bool CurrentUserIsSender, User loggedUser, User messagesUser, bool VieweingOthersMessage)
+        public bool Update(int loggedUserId)
         {
-            return (CurrentUserIsSender && !VieweingOthersMessage)
-                || (loggedUser.CanEdit && VieweingOthersMessage);
+            if (!Database.GetPasswordIfNeeded(out string updatePassword, SenderUserId, loggedUserId, "Update Selected Message"))
+                return false;
+
+            return Database.ExecuteProcedure("UpdateMessage", new
+            {
+                updateUserId = loggedUserId,
+                updateUserPassword = updatePassword,
+                messageId = MessageId,
+                subject = Subject,
+                body = Body
+            }) == 1;
         }
-        public bool CanDeleteMessage(bool CurrentUserIsSender,User loggedUser, User messagesUser, bool VieweingOthersMessage)
+
+        public bool Delete(int loggedUserId)
         {
-            return (CurrentUserIsSender && !VieweingOthersMessage)
-                || (loggedUser.CanDelete && VieweingOthersMessage);
+            if (!Database.GetPasswordIfNeeded(out string deletePassword, SenderUserId, loggedUserId, "Delete Selected Message"))
+                return false;
+
+            return Database.ExecuteProcedure("DeleteMessage", new
+            {
+                deleteUserId = loggedUserId,
+                deleteUserPassword = deletePassword,
+                messageId = MessageId
+            }) == 1;
+
         }
+        #endregion
+
 
         public string ToString(User messagesUser)
         {
@@ -70,24 +97,22 @@ namespace Individual
             return String.Format("\x2502{0,-22}\x2502{1,-30}\x2502{2,-50}\x2502{3,-6}", SendAt, senderReceiverUsername, GetsubjectTrancated(), Unread ? "Yes" : "");
         }
 
-        public void View(User loggedUser)
+        public void View(User loggedUser, User realLoggedUser)
         {
-            MessageForm viewMessageForm = new MessageForm(this, loggedUser);//, Database.GetUserBy(SenderUserId));
+            MessageForm viewMessageForm = new MessageForm(this, loggedUser, realLoggedUser);
             viewMessageForm.Open();
 
-            if (ReceiverUserId == loggedUser.UserId)
+            if (ReceiverUserId == realLoggedUser.UserId)
             {
-                Unread = false;
-
                 Application.TryToRunAction<Message>(this, UpdateAsRead
                     , "Unable to update message as read, try again [y/n] "
                     , string.Empty
                     , "Unable to update message as read !!!");
-
             }
         }
         private bool UpdateAsRead(Message message)
         {
+            Unread = false;
             return Database.ExecuteProcedure("UpdateMessageAsRead", new
             {
                 messageId = message.MessageId,

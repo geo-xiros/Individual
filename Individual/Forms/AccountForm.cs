@@ -7,6 +7,7 @@ namespace Individual
     class AccountForm : Form
     {
         private User _user;
+        private User _loggedUser;
         public AccountForm(string title,bool canEditRole = false) : base(title)
         {
             _user = new User(string.Empty, string.Empty, string.Empty);
@@ -14,11 +15,11 @@ namespace Individual
             OnFormFilled = AskAndInsert;
         }
 
-        public AccountForm(string title, User user, bool canEditRole = false) : base(title)
+        public AccountForm(string title, User user, User loggedUser) : base(title)
         {
             _user = user;
-
-            InitTextBoxes(canEditRole);
+            _loggedUser = loggedUser;
+            InitTextBoxes(loggedUser.IsAdmin());
             UpdateTextBoxesFromUser();
 
             OnFormFilled = AskAndUpdate;
@@ -39,7 +40,6 @@ namespace Individual
         {
             FillForm();
         }
-        //private bool NewUserOrLoggedUserAccount => _user.UserId == 0 || _user.UserId == Application.LoggedUser.UserId;
 
         private void View()
         {
@@ -66,10 +66,19 @@ namespace Individual
 
             UpdateUserFromTextBoxes();
 
-            Application.TryToRunAction<User>(_user, Database.Update
-                , "Unable to Update Account try again [y/n]"
-                , "Account Updated successfully !!!"
-                , "Unable to Create Account !!!");
+            if (_user.Update())
+            {
+                Alerts.Success("Account Updated successfully !!!");
+                OnFormSaved?.Invoke();
+            }
+            else
+            {
+                Alerts.Warning("Unable to Update Account !!!");
+            }
+            //Application.TryToRunAction<User>(_user, Database.Update
+            //    , "Unable to Update Account try again [y/n]"
+            //    , "Account Updated successfully !!!"
+            //    , "Unable to Create Account !!!");
         }
 
         private void AskAndInsert()
@@ -78,13 +87,22 @@ namespace Individual
 
             UpdateUserFromTextBoxes();
 
-            if (Application.TryToRunAction<User>(_user, Database.Insert
-                , "Unable to Create Account try again [y/n]"
-                , "Account Created successfully !!!"
-                , "Unable to Create Account !!!"))
+            if (_user.Insert())
             {
+                Alerts.Success("Account Created successfully !!!");
                 OnFormSaved?.Invoke();
             }
+            else
+            {
+                Alerts.Warning("Unable to Create Account !!!");
+            }
+            //if (Application.TryToRunAction<User>(_user, Database.Insert
+            //    , "Unable to Create Account try again [y/n]"
+            //    , "Account Created successfully !!!"
+            //    , "Unable to Create Account !!!"))
+            //{
+            //    OnFormSaved?.Invoke();
+            //}
 
         }
         private void AskAndDelete()
@@ -92,10 +110,19 @@ namespace Individual
             if (MessageBox.Show("Delete Selected User ? [y/n] ") == MessageBox.MessageBoxResult.No)
                 return;
 
-            Application.TryToRunAction<User>(_user, Database.Delete
-                , "Unable to Delete Account try again [y/n]"
-                , "Account Delete successfully !!!"
-                , "Unable to Delete Account !!!");
+            if (_user.Delete(_loggedUser.UserId))
+            {
+                Alerts.Success("Account Deleted successfully !!!");
+                OnFormSaved?.Invoke();
+            }
+            else
+            {
+                Alerts.Warning("Unable to Delete Account !!!");
+            }
+            //Application.TryToRunAction<User>(_user, Database.Delete
+            //    , "Unable to Delete Account try again [y/n]"
+            //    , "Account Delete successfully !!!"
+            //    , "Unable to Delete Account !!!");
 
         }
         private void InitTextBoxes(bool canEditRole)
@@ -107,7 +134,7 @@ namespace Individual
             TextBoxes["Firstname"].Validate = TextBoxValidation.ValidLength;
             TextBoxes["Lastname"].Validate = TextBoxValidation.ValidLength;
             TextBoxes["Role"].Validate = TextBoxValidation.ValidRole;
-            TextBoxes["Role"].Locked = !canEditRole;// Application.LoggedUser == null ? true : !Application.LoggedUser.IsAdmin;
+            TextBoxes["Role"].Locked = !canEditRole;
             this["Role"] = _user.Role.ToString();
         }
 

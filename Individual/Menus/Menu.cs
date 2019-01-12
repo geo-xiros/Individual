@@ -1,93 +1,84 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Individual
+namespace Individual.Menus
 {
-    class Menu
+    abstract class Menu
     {
-        private List<MenuChoice> _menuChoices;
-        private Stack<string> _stackOfMenus;
-        private string _menu;
-        private int _keyPressed = 0;
-        private ApplicationMenus _applicationMenus;
-        private readonly Func<string> _menuTitle;
-        public Menu(string menu, Func<string> menuTitle, ApplicationMenus applicationMenus)
-        {
-            _menu = menu;
-            _stackOfMenus = new Stack<string>();
-            _stackOfMenus.Push(_menu);
-            _applicationMenus = applicationMenus;
-            _menuTitle = menuTitle;
-        }
-        public void Run()
-        {
+        private static string Line => new string('\x2500', Console.WindowWidth);
+        private readonly string _title;
 
-            MenuChoice menuChoice;
+        protected bool _exit;
+        protected Menu _previousMenu;
+        protected Menu _loadMenu;
+        protected Dictionary<ConsoleKey, MenuItem> _menuItems;
+
+        public Menu(string title)
+        {
+            _title = title;
+        }
+
+        public Menu(string title, Menu previousMenu) : this(title)
+        {
+            _previousMenu = previousMenu;
+        }
+
+        public virtual void MenuChoiceEscape()
+        {
+            if (_previousMenu == null)
+            {
+                _exit = true;
+            }
+            else
+            {
+                _loadMenu = _previousMenu;
+            }
+        }
+
+
+        public Menu Run()
+        {
+            _loadMenu = null;
+            _exit = false;
 
             do
             {
-                _menuChoices = _applicationMenus.Menu[_menu];
+                Display();
 
-                menuChoice = ChooseMenuItem();
+                ReadKey<MenuItem> readKey = new ReadKey<MenuItem>(_menuItems);
 
-                menuChoice.Run(menuChoice);
+                readKey.GetKey().Action();
 
-                switch (menuChoice.ActionAfterRun)
-                {
-                    case ActionsAfterRun.Exit:
-                        return;
+            } while (!_exit && _loadMenu == null);
 
-                    case ActionsAfterRun.GoBack:
-                        _menu = _stackOfMenus.Pop();
-                        break;
-
-                    case ActionsAfterRun.LoadMenu:
-                        _stackOfMenus.Push(_menu);
-                        _menu = menuChoice.LoadMenu;
-                        break;
-                }
-
-            } while (menuChoice.ActionAfterRun != ActionsAfterRun.Exit);
+            return _loadMenu;
         }
-        public MenuChoice ChooseMenuItem()
+
+        public void Display()
         {
             Console.ResetColor();
-            Show();
-            _keyPressed = 0;
-            ConsoleKeyInfo k;
-            do
-            {
-                k = Console.ReadKey(true);
-                int.TryParse(k.KeyChar.ToString(), out _keyPressed);
-
-            } while ((_keyPressed <= 0 || _keyPressed >= _menuChoices.Count)
-                  && (k.Key != ConsoleKey.Escape));
-
-            return _menuChoices[_keyPressed];
-        }
-        private void Show()
-        {
-            Console.CursorVisible = false;
             Console.Clear();
-            ColoredConsole.WriteLine($"{_menu} {_menuTitle()}", ConsoleColor.Yellow);
-            ColoredConsole.WriteLine(new string('\x2500', Console.WindowWidth), ConsoleColor.White);
+            Console.CursorVisible = false;
+            ColoredConsole.WriteLine(_title, ConsoleColor.Yellow);
+            ColoredConsole.WriteLine(Line, ConsoleColor.White);
 
-            _menuChoices = _menuChoices
-                .Where(mc => mc.HasPermission == null || mc.HasPermission())
-                .ToList();
-
-            for (byte i = 1; i < _menuChoices.Count; i++)
+            foreach (var item in _menuItems)
             {
-                Console.WriteLine($"{i}. {_menuChoices[i].Title}");
+                if (item.Key == ConsoleKey.Escape)
+                {
+                    Console.WriteLine();
+                    ColoredConsole.WriteLine(Line, ConsoleColor.White);
+                    ColoredConsole.WriteLine($"{item.Value.Title}", ConsoleColor.DarkGray);
+                }
+                else
+                {
+                    Console.WriteLine($"{item.Value.Title}");
+                }
             }
-
-            Console.WriteLine();
-            ColoredConsole.Write(new string('\x2500', Console.WindowWidth), ConsoleColor.White);
-            ColoredConsole.WriteLine($"[Esc] => {_menuChoices[0].Title}", ConsoleColor.DarkGray);
-
         }
+
     }
 }

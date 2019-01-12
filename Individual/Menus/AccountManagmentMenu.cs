@@ -6,28 +6,28 @@ using System.Threading.Tasks;
 
 namespace Individual.Menus
 {
-    class AccountManagmentMenu : AbstractMenu
+    class AccountManagmentMenu : Menu
     {
         private User _loggedUser;
-        public AccountManagmentMenu(string title, User loggedUser, AbstractMenu previousMenu) : base(title, previousMenu)
+        public AccountManagmentMenu(string title, User loggedUser, Menu previousMenu) : base(title, previousMenu)
         {
             _loggedUser = loggedUser;
-            _menuItems = new List<MenuItem>(){
-                 new MenuItem() { Title = "1. Create", Key = ConsoleKey.D1, Action = CreateAccount },
-                 new MenuItem() { Title = "2. View/Edit/Delete", Key = ConsoleKey.D2, Action = SelectUserAndEdit },
-                 new MenuItem() { Title = "[Esc] => Exit", Key = ConsoleKey.Escape, Action = GoBack }
+            _menuItems = new Dictionary<ConsoleKey, MenuItem>() {
+                { ConsoleKey.D1, new MenuItem("1. Create", CreateUser) },
+                { ConsoleKey.D2, new MenuItem("2. View/Edit/Delete", ViewEditDeleteMenu) },
+                { ConsoleKey.Escape, new MenuItem("[Esc] => Back", MenuChoiceEscape) }
             };
         }
+
         #region menu choices
-        private void CreateAccount()
+        public void CreateUser()
         {
             AccountForm createAccountScreen = new AccountForm("Create Account", true);
             createAccountScreen.Open();
         }
-
-        private void SelectUserAndEdit()
+        public void ViewEditDeleteMenu()
         {
-            SelectFromList(
+            GlobalFunctions.SelectFromList(
                 () => ListOfUsers(u => u.UserId != _loggedUser.UserId)
               , OnUserSelection
               , "Select User"
@@ -35,11 +35,10 @@ namespace Individual.Menus
         }
         #endregion
 
-
         #region help functions
         private void EditAccount(User user)
         {
-            AccountForm editAccount = new AccountForm("Edit Account", user, true);
+            AccountForm editAccount = new AccountForm("Edit Account", user, _loggedUser);
             editAccount.Open();
         }
 
@@ -56,22 +55,7 @@ namespace Individual.Menus
             EditAccount(Database.GetUserBy(userId));
         }
 
-        private void SelectFromList(Func<List<KeyValuePair<int, string>>> listOfItems, Action<int> RunOnSelection, string listMenuTitle, string headers)
-        {
-            ListMenu lm = new ListMenu(listMenuTitle, headers, () => string.Empty);
-            do
-            {
-                lm.SetListItems(listOfItems());
-                lm.ChooseListItem();
 
-                if (lm.Id != 0)
-                {
-                    RunOnSelection(lm.Id);
-                }
-
-            } while (lm.Id != 0);
-
-        }
         #endregion
     }
 }

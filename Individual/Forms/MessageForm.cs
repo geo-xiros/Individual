@@ -11,12 +11,15 @@ namespace Individual
     {
         private Message _message;
         private readonly User _loggedUser;
+        private readonly User _realLoggedUser;
         private readonly User _user;
-        private bool LoggedUserIsSender => _loggedUser.UserId == _message.ReceiverUserId;
+        private bool IsLoggedUserReceiver => _loggedUser.UserId == _message.ReceiverUserId;
+        private bool VieweingOthersMessage => _realLoggedUser != _loggedUser;
 
         public MessageForm(User LoggedUser, User user = null) : base($"Send Message to {user.UserName}")
         {
             _user = user;
+            _realLoggedUser = _user;
             _message = new Message(LoggedUser, _user, DateTime.Today);
             TextBoxes = new Dictionary<string, TextBox>()
               {
@@ -28,10 +31,11 @@ namespace Individual
             OnFormFilled = AskAndInsert;
 
         }
-        
-        public MessageForm(Message message, User loggedUser = null) : base("View Message")// : base($"View Message {LoggedUser.FullName} Received")
+
+        public MessageForm(Message message, User loggedUser = null, User realLoggedUser = null) : base("View Message")// : base($"View Message {LoggedUser.FullName} Received")
         {
             _loggedUser = loggedUser;
+            _realLoggedUser = realLoggedUser;
             _message = message;
             TextBoxes = new Dictionary<string, TextBox>()
               {
@@ -65,7 +69,7 @@ namespace Individual
             }
         }
 
-        
+
         private void View()
         {
 
@@ -77,13 +81,13 @@ namespace Individual
                     { ConsoleKey.Escape, () => { } }
                 };
 
-            if (_message.CanEditMessage(LoggedUserIsSender, _loggedUser, _loggedUser, false))
+            if (HasPermissionTo(_realLoggedUser.CanEdit))
             {
                 ColoredConsole.Write("  [Enter] => Edit", 1, LastTextBoxY + 2, ConsoleColor.DarkGray);
                 keyChoices.Add(ConsoleKey.Enter, FillForm);
             }
 
-            if (_message.CanDeleteMessage(LoggedUserIsSender, _loggedUser, _loggedUser, false))
+            if (HasPermissionTo(_realLoggedUser.CanDelete))
             {
                 ColoredConsole.Write(" [Delete] => Delete", 1, LastTextBoxY + 3, ConsoleColor.DarkGray);
                 keyChoices.Add(ConsoleKey.Delete, AskAndDelete);
@@ -94,6 +98,18 @@ namespace Individual
             readKey.GetKey()();
         }
 
+        private bool HasPermissionTo(Func<bool> permission)
+        {
+            if (VieweingOthersMessage)
+            {
+                return permission();
+            }
+            else
+            {
+                return IsLoggedUserReceiver;
+            }
+        }
+        
         private void AskAndUpdate()
         {
             if (MessageBox.Show("Edit Selected Message ? [y/n] ") == MessageBox.MessageBoxResult.No)
@@ -102,13 +118,21 @@ namespace Individual
             _message.Subject = this["Subject"];
             _message.Body = this["Body"];
 
-            if (Application.TryToRunAction<Message>(_message, Database.Update
-                , "Unable to Update Message try again [y/n]"
-                , "Message Updated successfully !!!"
-                , "Unable to Update Message !!!"))
+            if (_message.Update(_realLoggedUser.UserId ))
             {
-                MessageToFile.Save(_message);
+                Alerts.Success("Message Updated successfully !!!");
             }
+            else
+            {
+                Alerts.Warning("Unable to Update Message !!!");
+            }
+            //if (Application.TryToRunAction<Message>(_message, Database.Update
+            //    , "Unable to Update Message try again [y/n]"
+            //    , "Message Updated successfully !!!"
+            //    , "Unable to Update Message !!!"))
+            //{
+            //    MessageToFile.Save(_message);
+            //}
         }
         private void AskAndInsert()
         {
@@ -117,13 +141,22 @@ namespace Individual
             _message.Subject = this["Subject"];
             _message.Body = this["Body"];
 
-            if (Application.TryToRunAction<Message>(_message, Database.Insert
-                , "Unable to Send Message try again [y/n]"
-                , "Message Sent successfully !!!"
-                , "Unable to Send Message !!!"))
+            if (_message.Insert())
             {
-                MessageToFile.Save(_message);
+                Alerts.Success("Message Sent successfully !!!");
             }
+            else
+            {
+                Alerts.Warning("Unable to Send Message !!!");
+            }
+
+            //if (Application.TryToRunAction<Message>(_message, Database.Insert
+            //    , "Unable to Send Message try again [y/n]"
+            //    , "Message Sent successfully !!!"
+            //    , "Unable to Send Message !!!"))
+            //{
+            //    MessageToFile.Save(_message);
+            //}
 
         }
 
@@ -131,13 +164,22 @@ namespace Individual
         {
             if (MessageBox.Show("Delete Selected Message ? [y/n] ") == MessageBox.MessageBoxResult.No)
                 return;
-            if (Application.TryToRunAction<Message>(_message, Database.Delete
-                , "Unable to delete Message try again [y/n]"
-                , "Message successfully Deleted !!!"
-                , "Unable to delete Message !!!"))
+
+            if (_message.Delete(_realLoggedUser.UserId))
             {
-                MessageToFile.Delete(_message);
+                Alerts.Success("Message deleted successfully !!!");
             }
+            else
+            {
+                Alerts.Warning("Unable to delete Message !!!");
+            }
+            //if (Application.TryToRunAction<Message>(_message, Database.Delete
+            //    , "Unable to delete Message try again [y/n]"
+            //    , "Message successfully Deleted !!!"
+            //    , "Unable to delete Message !!!"))
+            //{
+            //    MessageToFile.Delete(_message);
+            //}
         }
     }
 }

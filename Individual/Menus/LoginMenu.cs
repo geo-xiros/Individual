@@ -6,20 +6,22 @@ using System.Threading.Tasks;
 
 namespace Individual.Menus
 {
-    class LoginMenu : AbstractMenu
+    class LoginMenu : Menu
     {
-        
+
 
         public LoginMenu(string title) : base(title)
         {
-            _menuItems = new List<MenuItem>(){
-                 new MenuItem() { Title = "1. Login", Key = ConsoleKey.D1, Action = Login },
-                 new MenuItem() { Title = "2. Sign Up", Key = ConsoleKey.D2, Action = Signup },
-                 new MenuItem() { Title = "[Esc] => Exit", Key = ConsoleKey.Escape, Action = ExitApplication }
+            _menuItems = new Dictionary<ConsoleKey, MenuItem>() {
+                { ConsoleKey.D1, new MenuItem("1. Login", Login) },
+                { ConsoleKey.D2, new MenuItem("2. Sign Up", SignUp) },
+                { ConsoleKey.Escape, new MenuItem("[Esc] => Exit", MenuChoiceEscape) }
             };
+
         }
 
-        private void Login()
+        #region menu choices
+        public void Login()
         {
             LoginForm loginForm = new LoginForm();
             loginForm.OnFormFilled = () =>
@@ -29,7 +31,7 @@ namespace Individual.Menus
             loginForm.Open();
         }
 
-        private void Signup()
+        public void SignUp()
         {
             AccountForm signUpForm = new AccountForm("Sign Up");
             signUpForm.OnFormSaved = () =>
@@ -38,21 +40,23 @@ namespace Individual.Menus
             };
             signUpForm.Open();
         }
+        #endregion
 
+        #region help functions
         private void Login(string username, string password)
         {
             if (Database.ValidateUserPassword(username, password))
             {
                 User loggedUser = Database.GetUserBy(username);
 
-                _loadMenu = loggedUser.GetMainMenu(this); 
+                _loadMenu = loggedUser.GetMainMenu(this);
             }
             else
             {
                 Alerts.Warning("Wrong Username or Password!!!");
             }
         }
-
+        #endregion
 
     }
 }
