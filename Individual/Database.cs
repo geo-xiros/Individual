@@ -81,14 +81,21 @@ namespace Individual
             }
         }
         #region UserFunctions
-        public static IEnumerable<User> GetUsers()
+        public static IEnumerable<User> GetUsers() 
         {
-            return Query<User>("GetUsers", new { userId = 0, userName = "" });
+            using (SqlConnection dbcon = new SqlConnection(ConnectionString()))
+            {
+                dbcon.Open();
+                return dbcon.Query<User>("Select * From Get_Users");
+            }
+            //return Query<User>("Get_Users").Where(filterPredicate);//, new { userId = 0, userName = "" });
         }
+
         public static User GetUserBy(int userId)
         {
             return QueryFirst<User>("GetUsers", new { userId, userName = "" });
         }
+
         public static User GetUserBy(string userName)
         {
             return QueryFirst<User>("GetUsers", new { userId = 0, userName });

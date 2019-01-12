@@ -44,19 +44,20 @@ namespace Individual
                 : Subject.Substring(0, 50);
         }
 
-        private bool CurrentUserIsSender(User messagesUser)
-        {
-            return messagesUser.UserId == SenderUserId;
-        }
+        //private bool CurrentUserIsSender;
+        //(User messagesUser)
+        //{
+        //    return messagesUser.UserId == SenderUserId;
+        //}
 
-        public bool CanEditMessage(User loggedUser, User messagesUser, bool VieweingOthersMessage)
+        public bool CanEditMessage(bool CurrentUserIsSender, User loggedUser, User messagesUser, bool VieweingOthersMessage)
         {
-            return (CurrentUserIsSender(messagesUser) && !VieweingOthersMessage)
+            return (CurrentUserIsSender && !VieweingOthersMessage)
                 || (loggedUser.CanEdit && VieweingOthersMessage);
         }
-        public bool CanDeleteMessage(User loggedUser, User messagesUser, bool VieweingOthersMessage)
+        public bool CanDeleteMessage(bool CurrentUserIsSender,User loggedUser, User messagesUser, bool VieweingOthersMessage)
         {
-            return (CurrentUserIsSender(messagesUser) && !VieweingOthersMessage)
+            return (CurrentUserIsSender && !VieweingOthersMessage)
                 || (loggedUser.CanDelete && VieweingOthersMessage);
         }
 
@@ -69,5 +70,29 @@ namespace Individual
             return String.Format("\x2502{0,-22}\x2502{1,-30}\x2502{2,-50}\x2502{3,-6}", SendAt, senderReceiverUsername, GetsubjectTrancated(), Unread ? "Yes" : "");
         }
 
+        public void View(User loggedUser)
+        {
+            MessageForm viewMessageForm = new MessageForm(this, loggedUser);//, Database.GetUserBy(SenderUserId));
+            viewMessageForm.Open();
+
+            if (ReceiverUserId == loggedUser.UserId)
+            {
+                Unread = false;
+
+                Application.TryToRunAction<Message>(this, UpdateAsRead
+                    , "Unable to update message as read, try again [y/n] "
+                    , string.Empty
+                    , "Unable to update message as read !!!");
+
+            }
+        }
+        private bool UpdateAsRead(Message message)
+        {
+            return Database.ExecuteProcedure("UpdateMessageAsRead", new
+            {
+                messageId = message.MessageId,
+                unread = message.Unread
+            }) == 1;
+        }
     }
 }

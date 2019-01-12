@@ -10,11 +10,14 @@ namespace Individual
     class MessageForm : Form
     {
         private Message _message;
+        private readonly User _loggedUser;
         private readonly User _user;
-        public MessageForm(User user) : base($"Send Message to {user.UserName}")
+        private bool LoggedUserIsSender => _loggedUser.UserId == _message.ReceiverUserId;
+
+        public MessageForm(User LoggedUser, User user = null) : base($"Send Message to {user.UserName}")
         {
             _user = user;
-            _message = new Message(Application.LoggedUser, _user, DateTime.Today);
+            _message = new Message(LoggedUser, _user, DateTime.Today);
             TextBoxes = new Dictionary<string, TextBox>()
               {
                   {"Date" , new TextBox("Date", 3, 5, 250) { Locked=true, Text = _message.SendAt.ToLongDateString() } }
@@ -25,9 +28,10 @@ namespace Individual
             OnFormFilled = AskAndInsert;
 
         }
-
-        public MessageForm(Message message) : base($"View Message {Application.Username} Received")
+        
+        public MessageForm(Message message, User loggedUser = null) : base("View Message")// : base($"View Message {LoggedUser.FullName} Received")
         {
+            _loggedUser = loggedUser;
             _message = message;
             TextBoxes = new Dictionary<string, TextBox>()
               {
@@ -37,13 +41,14 @@ namespace Individual
                 , {"Body" , new TextBox("Body", 3, 11, 250) { Text = _message.Body } }
               };
 
-            if (Application.MessagesUser.UserId == _message.ReceiverUserId)
+            if (loggedUser.UserId == _message.ReceiverUserId)
             {
+                Title = $"View Message {loggedUser.FullName} Received";
                 TextBoxes.Add("From", new TextBox("From", 3, 3, 80) { Locked = true, Text = _message.SenderUserName });
             }
             else
             {
-                Title = $"View Message {Application.Username} Sent";
+                Title = $"View Message {loggedUser.FullName} Sent";
                 TextBoxes.Add("To", new TextBox("To", 3, 3, 80) { Locked = true, Text = _message.ReceiverUserName });
             }
             OnFormFilled = AskAndUpdate;
@@ -60,7 +65,7 @@ namespace Individual
             }
         }
 
-
+        
         private void View()
         {
 
@@ -72,13 +77,13 @@ namespace Individual
                     { ConsoleKey.Escape, () => { } }
                 };
 
-            if (_message.CanEditMessage(Application.LoggedUser, Application.MessagesUser, Application.VieweingOthersMessage))
+            if (_message.CanEditMessage(LoggedUserIsSender, _loggedUser, _loggedUser, false))
             {
                 ColoredConsole.Write("  [Enter] => Edit", 1, LastTextBoxY + 2, ConsoleColor.DarkGray);
                 keyChoices.Add(ConsoleKey.Enter, FillForm);
             }
 
-            if (_message.CanDeleteMessage(Application.LoggedUser, Application.MessagesUser, Application.VieweingOthersMessage))
+            if (_message.CanDeleteMessage(LoggedUserIsSender, _loggedUser, _loggedUser, false))
             {
                 ColoredConsole.Write(" [Delete] => Delete", 1, LastTextBoxY + 3, ConsoleColor.DarkGray);
                 keyChoices.Add(ConsoleKey.Delete, AskAndDelete);

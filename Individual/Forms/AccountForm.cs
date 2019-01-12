@@ -7,18 +7,18 @@ namespace Individual
     class AccountForm : Form
     {
         private User _user;
-        public AccountForm(string title) : base(title)
+        public AccountForm(string title,bool canEditRole = false) : base(title)
         {
             _user = new User(string.Empty, string.Empty, string.Empty);
-            InitTextBoxes();
+            InitTextBoxes(canEditRole);
             OnFormFilled = AskAndInsert;
         }
 
-        public AccountForm(string title, User user ) : base(title)
+        public AccountForm(string title, User user, bool canEditRole = false) : base(title)
         {
             _user = user;
 
-            InitTextBoxes();
+            InitTextBoxes(canEditRole);
             UpdateTextBoxesFromUser();
 
             OnFormFilled = AskAndUpdate;
@@ -26,7 +26,7 @@ namespace Individual
 
         public override void Open()
         {
-            if (NewUserOrLoggedUserAccount)
+            if (_user.UserId == 0)
             {
                 FillForm();
             }
@@ -35,7 +35,11 @@ namespace Individual
                 View();
             }
         }
-        private bool NewUserOrLoggedUserAccount => _user.UserId == 0 || _user.UserId == Application.LoggedUser.UserId;
+        public void Edit()
+        {
+            FillForm();
+        }
+        //private bool NewUserOrLoggedUserAccount => _user.UserId == 0 || _user.UserId == Application.LoggedUser.UserId;
 
         private void View()
         {
@@ -94,7 +98,7 @@ namespace Individual
                 , "Unable to Delete Account !!!");
 
         }
-        private void InitTextBoxes()
+        private void InitTextBoxes(bool canEditRole)
         {
             TextBoxValidation textBoxValidation = new TextBoxValidation();
             AddTextBoxes(UserFields.Fields);
@@ -103,7 +107,7 @@ namespace Individual
             TextBoxes["Firstname"].Validate = TextBoxValidation.ValidLength;
             TextBoxes["Lastname"].Validate = TextBoxValidation.ValidLength;
             TextBoxes["Role"].Validate = TextBoxValidation.ValidRole;
-            TextBoxes["Role"].Locked = Application.LoggedUser == null ? true : !Application.LoggedUser.IsAdmin;
+            TextBoxes["Role"].Locked = !canEditRole;// Application.LoggedUser == null ? true : !Application.LoggedUser.IsAdmin;
             this["Role"] = _user.Role.ToString();
         }
 

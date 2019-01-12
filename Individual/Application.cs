@@ -22,7 +22,7 @@ namespace Individual
 
         public void Run()
         {
-            
+
             Dictionary<string, Action<MenuChoice>> menuActions = new Dictionary<string, Action<MenuChoice>>()
             {
                 {"Login", Login },
@@ -39,7 +39,7 @@ namespace Individual
                 {"CreateAccount", CreateAccount},
                 {"SelectUserAndEdit", SelectUserAndEdit}
             };
-            Dictionary<string, Func< bool>> permissionsChecks = new Dictionary<string, Func< bool>>()
+            Dictionary<string, Func<bool>> permissionsChecks = new Dictionary<string, Func<bool>>()
             {
                 {"CanViewOthers", CanViewOthers },
                 {"CanManageAccounts", CanManageAccounts },
@@ -108,12 +108,12 @@ namespace Individual
         }
         private void SelectUserAndEdit(MenuChoice menuChoice)
         {
-            SelectFromList( 
+            SelectFromList(
                 () => Database.GetUsers()
                     .Where(u => u.UserId != LoggedUser.UserId)
                     .OrderBy(u => u.LastName)
                     .Select(u => new KeyValuePair<int, string>(u.UserId, u.ToString())).ToList()
-              , (id) => EditAccount(Database.GetUserBy(id))
+              , (id) => EditAccount(Database.GetUsers().Where(u => u.UserId == id).First())
               , "Select User"
               , string.Format("A/A\x2502{0,-50}\x2502{1,-50}", "Lastname", "Firstname"));
         }
@@ -144,7 +144,7 @@ namespace Individual
 
             if (lm.Id != 0)
             {
-                MessagesUser = Database.GetUserBy(lm.Id);
+                MessagesUser = Database.GetUsers().Where(u => u.UserId == lm.Id).First();
                 menuChoice.LoadMenu = "Messages Menu";
             }
 
@@ -158,7 +158,7 @@ namespace Individual
                 .OrderBy(u => u.LastName)
                 .Select(u => new KeyValuePair<int, string>(u.UserId, u.ToString()))
                 .ToList()
-            , (id) => ViewMessage(Database.GetUserBy(id))
+            , (id) => ViewMessage(Database.GetUsers().Where(u => u.UserId == id).First())
             , "Select User"
             , string.Format("A/A\x2502{0,-50}\x2502{1,-50}", "Lastname", "Firstname"));
 
@@ -251,9 +251,9 @@ namespace Individual
         #region Menu Extra Functions
 
         private bool CanViewOthers() => LoggedUser.CanView || LoggedUser.CanEdit || LoggedUser.CanDelete;
-        private bool CanManageAccounts( ) => LoggedUser.IsAdmin;
-        private bool OwnedMessages( ) => LoggedUser == MessagesUser;
-        private string MenuTitle () => Username;
+        private bool CanManageAccounts() => LoggedUser.IsAdmin;
+        private bool OwnedMessages() => LoggedUser == MessagesUser;
+        private string MenuTitle() => Username;
         #endregion
 
         public static bool TryToRunAction<T>(T onObject, Func<T, bool> action, string questionMessage, string successMessage, string failMessage)

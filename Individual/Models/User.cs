@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-
+using Individual.Menus;
 
 namespace Individual
 {
@@ -46,5 +46,26 @@ namespace Individual
             return String.Format("\x2502{0,-50}\x2502{1,-50}", LastName, FirstName);
         }
 
+        public AbstractMenu GetMainMenu(AbstractMenu previousMenu)
+        {
+            if (Role >= Individual.Role.Roles.Super)
+            {
+                return new SuperUserMainMenu($"Main Menu ({FullName})", this, previousMenu);
+            }
+            else if (Role >= Individual.Role.Roles.View)
+            {
+                return new OthersMessagesMainMenu($"Main Menu ({FullName})", this, previousMenu);
+            }
+            else
+            {
+                return new SimpleUserMainMenu($"Main Menu ({FullName})", this, previousMenu);
+            }
+                
+        }
+        public void SendMessage(User toUser)
+        {
+            MessageForm viewMessageForm = new MessageForm(this, toUser);
+            viewMessageForm.Open();
+        }
     }
 }
