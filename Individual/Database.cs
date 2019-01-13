@@ -13,40 +13,41 @@ namespace Individual
         static string ConnectionString() => $"Server={Properties.Settings.Default.SqlServer};Database={Properties.Settings.Default.Database};User Id={Properties.Settings.Default.User};Password={Properties.Settings.Default.Pass}";
         public static bool DatabaseError { get; private set; }
 
-        public static bool OpenConnection(Action<SqlConnection> execute)
-        {
-            DatabaseError = false;
-            try
-            {
-                using (SqlConnection dbcon = new SqlConnection(ConnectionString()))
-                {
-                    execute(dbcon);
-                    return true;
-                }
-            }
-            catch (SqlException e)
-            {
-                DatabaseError = true;
-                Alerts.Error(e.Message);
-            }
-
-            return false;
-        }
-
         #region UserFunctions
         public static IEnumerable<User> GetUsers()
         {
-            return Query<User>("GetUsers", new { userId = 0, userName = "" });
+            IEnumerable<User> users = null;
+
+            Database.TryToRun((dbcon) =>
+            {
+                users = Query<User>(dbcon, "GetUsers", new { userId = 0, userName = "" });
+            }, "Do you want to try get message again ? [y/n] ");
+
+            return users;
         }
 
         public static User GetUserBy(int userId)
         {
-            return QueryFirst<User>("GetUsers", new { userId, userName = "" });
+            User user = null;
+
+            Database.TryToRun((dbcon) =>
+            {
+                user = QueryFirst<User>(dbcon, "GetUsers", new { userId, userName = "" });
+            }, "Do you want to try again ? [y/n] ");
+
+            return user;
         }
 
         public static User GetUserBy(string userName)
         {
-            return QueryFirst<User>("GetUsers", new { userId = 0, userName });
+            User user = null;
+
+            Database.TryToRun((dbcon) =>
+            {
+                user = QueryFirst<User>(dbcon, "GetUsers", new { userId = 0, userName });
+            }, "Do you want to try again ? [y/n] ");
+
+            return user;
         }
         public static bool Exists(string userName)
         {
@@ -54,70 +55,82 @@ namespace Individual
         }
         public static bool ValidateUserPassword(string username, string password)
         {
-            return QueryFirst<int>("Validate_User", new { userName = username, userPassword = password }) == 1;
+            bool validUserPassword = false;
+
+            Database.TryToRun((dbcon) =>
+            {
+                validUserPassword = QueryFirst<int>(dbcon, "Validate_User", new { userName = username, userPassword = password }) == 1;
+            }, "Do you want to try validating user/password again ? [y/n] ");
+
+            return validUserPassword;
         }
         #endregion
 
         #region Messages Functions
         public static Message GetMessageById(int messageId)
         {
-            return QueryFirst<Message>("GetMessages", new { messageId, userId = 0 });
+            Message message = null;
+
+            Database.TryToRun((dbcon) =>
+            {
+                message = QueryFirst<Message>(dbcon, "GetMessages", new { messageId, userId = 0 });
+            }, "Do you want to try get message again ? [y/n] ");
+
+            return message;
         }
         public static IEnumerable<Message> GetUserMessages(int userId)
         {
-            return Query<Message>("GetMessages", new { messageId = 0, userId });
+            IEnumerable<Message> messages = null;
+
+            Database.TryToRun((dbcon) =>
+            {
+                messages = Query<Message>(dbcon, "GetMessages", new { messageId = 0, userId });
+            }, "Do you want to try get message again ? [y/n] ");
+
+            return messages;
+
+
         }
         #endregion
 
-        public static int ExecuteProcedure(string procedure, object parameters)
+        public static bool TryToRun(Action<SqlConnection> execute, string onFailMessage)
         {
-            try
+            do
             {
-                using (SqlConnection dbcon = new SqlConnection(ConnectionString()))
+                try
                 {
-                    dbcon.Open();
-                    return dbcon.Execute(procedure, parameters, commandType: CommandType.StoredProcedure);
+                    using (SqlConnection dbcon = new SqlConnection(ConnectionString()))
+                    {
+                        dbcon.Open();
+                        execute(dbcon);
+                        return true;
+                    }
                 }
-            }
-            catch (SqlException e)
-            {
-                throw new DatabaseException(e.Message, e);
-            }
+                catch (SqlException e)
+                {
+                    Alerts.Error(e.Message);
+                    Console.Clear();
+                }
+
+            } while (MessageBox.Show(onFailMessage) == MessageBox.MessageBoxResult.Yes);
+
+            return false;
+        }
+        public static int ExecuteProcedure(SqlConnection sqlConnection, string procedure, object parameters)
+        {
+            return sqlConnection.Execute(procedure, parameters, commandType: CommandType.StoredProcedure);
         }
 
-        private static IEnumerable<T> Query<T>(string procedure, object parameters)
+        private static IEnumerable<T> Query<T>(SqlConnection sqlConnection, string procedure, object parameters)
         {
-
-            try
-            {
-                using (SqlConnection dbcon = new SqlConnection(ConnectionString()))
-                {
-                    dbcon.Open();
-                    return dbcon
-                        .Query<T>(procedure, parameters, commandType: CommandType.StoredProcedure);
-                }
-            }
-            catch (SqlException e)
-            {
-                throw new DatabaseException(e.Message, e);
-            }
+            return sqlConnection
+                .Query<T>(procedure, parameters, commandType: CommandType.StoredProcedure);
         }
-        public static T QueryFirst<T>(string procedure, object parameters)
+        public static T QueryFirst<T>(SqlConnection sqlConnection, string procedure, object parameters)
         {
-            try
-            {
-                using (SqlConnection dbcon = new SqlConnection(ConnectionString()))
-                {
-                    dbcon.Open();
-                    return dbcon
-                      .Query<T>(procedure, parameters, commandType: CommandType.StoredProcedure)
-                      .FirstOrDefault();
-                }
-            }
-            catch (SqlException e)
-            {
-                throw new DatabaseException(e.Message, e);
-            }
+            return sqlConnection
+              .Query<T>(procedure, parameters, commandType: CommandType.StoredProcedure)
+              .FirstOrDefault();
         }
 
     }

@@ -36,10 +36,10 @@ namespace Individual
         }
         private static bool ConnectToDatabase()
         {
-            return Database.OpenConnection((dbConnection) =>
+            return Database.TryToRun((dbConnection) =>
             {
-                dbConnection.Open();
-            });
+                dbConnection.Close();
+            },"Do you want to try reconnecting with the Database ? [y/n]");
         }
         private static bool AddAdminUser()
         {

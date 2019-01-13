@@ -50,41 +50,61 @@ namespace Individual
         #region User  Insert Update Delete
         public bool Insert()
         {
-            UserId = Database.QueryFirst<int>("InsertUser", new
+            int UserId = 0;
+            Database.TryToRun((dbcon) =>
             {
-                userName = UserName,
-                firstName = FirstName,
-                lastName = LastName,
-                UserPassword = Password,
-                UserRole = Role.ToString()
-            });
+                UserId = Database.QueryFirst<int>(dbcon, "InsertUser", new
+                {
+                    userName = UserName,
+                    firstName = FirstName,
+                    lastName = LastName,
+                    UserPassword = Password,
+                    UserRole = Role.ToString()
+                });
+            }, "Do you want to try inserting user again ? [y/n] ");
+
             return UserId != 0;
         }
 
         public bool Update()
         {
+            int affectedRows = 0;
 
-            return Database.ExecuteProcedure("UpdateUser", new
+            Database.TryToRun((dbcon) =>
             {
-                userId = UserId,
-                userName = UserName,
-                firstName = FirstName,
-                lastName = LastName,
-                userPassword = Password,
-                userRole = Role.ToString()
-            }) == 1;
+                affectedRows = Database.ExecuteProcedure(dbcon, "UpdateUser", new
+                {
+                    userId = UserId,
+                    userName = UserName,
+                    firstName = FirstName,
+                    lastName = LastName,
+                    userPassword = Password,
+                    userRole = Role.ToString()
+                });
+            }, "Do you want to try inserting user again ? [y/n] ");
+
+            return affectedRows == 1;
+
         }
         public bool Delete(int superUserId)
         {
             if (!GlobalFunctions.GetPasswordIfNeeded(out string deletePassword, UserId, superUserId, "Delete Selected User"))
                 return false;
 
-            return Database.ExecuteProcedure("DeleteUser", new
+            int affectedRows = 0;
+
+            Database.TryToRun((dbcon) =>
             {
-                superUserId,
-                superUserPassword = deletePassword,
-                userId = UserId
-            }) == 1;
+                affectedRows = Database.ExecuteProcedure(dbcon,"DeleteUser", new
+                {
+                    superUserId,
+                    superUserPassword = deletePassword,
+                    userId = UserId
+                });
+            }, "Do you want to try deleting user again ? [y/n] ");
+
+            return affectedRows == 1;
+
         }
         #endregion
         public void LoadMainMenu(Menu menuController)
