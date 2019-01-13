@@ -6,20 +6,13 @@ using System.Threading.Tasks;
 
 namespace Individual.Menus
 {
-    class LoginMenu : Menu
+    class LoginFunctions
     {
-
-
-        public LoginMenu(string title) : base(title)
+        private Menu _menuController;
+        public LoginFunctions(Menu menuController)
         {
-            _menuItems = new Dictionary<ConsoleKey, MenuItem>() {
-                { ConsoleKey.D1, new MenuItem("1. Login", Login) },
-                { ConsoleKey.D2, new MenuItem("2. Sign Up", SignUp) },
-                { ConsoleKey.Escape, new MenuItem("[Esc] => Exit", MenuChoiceEscape) }
-            };
-
+            _menuController = menuController;
         }
-
         #region menu choices
         public void Login()
         {
@@ -49,7 +42,7 @@ namespace Individual.Menus
             {
                 User loggedUser = Database.GetUserBy(username);
 
-                _loadMenu = loggedUser.GetMainMenu(this);
+                loggedUser.LoadMainMenu(_menuController);
             }
             else
             {
@@ -57,6 +50,5 @@ namespace Individual.Menus
             }
         }
         #endregion
-
     }
 }

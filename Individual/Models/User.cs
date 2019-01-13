@@ -84,42 +84,61 @@ namespace Individual
             }) == 1;
         }
         #endregion
-
-        public Menu GetMainMenu(Menu previousMenu)
+        public void LoadMainMenu(Menu menuController)
         {
-            MainMenu mainMenu = new MainMenu($"Main Menu ({FullName})", this, previousMenu);
+            string title = $"{FullName} => Main Menu ";
+            MainFunctions mainMenu = new MainFunctions(this, menuController);
 
             if (IsAdmin())
             {
-                mainMenu.LoadMenus(new Dictionary<ConsoleKey, MenuItem>() {
+                menuController.LoadMenu(title, new Dictionary<ConsoleKey, MenuItem>() {
                     { ConsoleKey.D1, new MenuItem("1. Messages", mainMenu.MessagesMenu) },
                     { ConsoleKey.D2, new MenuItem("2. Messages (Other Users)", mainMenu.OthersMessagesMenu) },
                     { ConsoleKey.D3, new MenuItem("3. Accounts Managment", mainMenu.AccountManagmentMenu) },
                     { ConsoleKey.D4, new MenuItem("4. Current Account Edit", mainMenu.EditUser) },
-                    { ConsoleKey.Escape, new MenuItem("[Esc] => Logout", mainMenu.MenuChoiceEscape) }
+                    { ConsoleKey.Escape, new MenuItem("[Esc] => Logout", menuController.LoadPreviousMenu) }
                 });
             }
             else if (CanView())
             {
-                mainMenu.LoadMenus(new Dictionary<ConsoleKey, MenuItem>() {
+                menuController.LoadMenu(title, new Dictionary<ConsoleKey, MenuItem>() {
                     { ConsoleKey.D1, new MenuItem("1. Messages", mainMenu.MessagesMenu) },
                     { ConsoleKey.D2, new MenuItem("2. Messages (Other Users)", mainMenu.OthersMessagesMenu) },
                     { ConsoleKey.D3, new MenuItem("3. Current Account Edit", mainMenu.EditUser) },
-                    { ConsoleKey.Escape, new MenuItem("[Esc] => Logout", mainMenu.MenuChoiceEscape) }
+                    { ConsoleKey.Escape, new MenuItem("[Esc] => Logout", menuController.LoadPreviousMenu) }
                 });
             }
             else
             {
-                mainMenu.LoadMenus(new Dictionary<ConsoleKey, MenuItem>() {
+                menuController.LoadMenu(title, new Dictionary<ConsoleKey, MenuItem>() {
                     { ConsoleKey.D1, new MenuItem("1. Messages", mainMenu.MessagesMenu) },
                     { ConsoleKey.D2, new MenuItem("2. Current Account Edit", mainMenu.EditUser) },
-                    { ConsoleKey.Escape, new MenuItem("[Esc] => Logout", mainMenu.MenuChoiceEscape) }
+                    { ConsoleKey.Escape, new MenuItem("[Esc] => Logout", menuController.LoadPreviousMenu) }
                 });
             }
-            return mainMenu;
-
-
         }
+        public void LoadMessagesMenu(Menu menuController)
+        {
+            string title = $"{FullName} => Messages";
+            MessagesFunctions messagesMenu = new MessagesFunctions(this, this);
+            menuController.LoadMenu(title, new Dictionary<ConsoleKey, MenuItem>() {
+                { ConsoleKey.D1, new MenuItem("1. Send", messagesMenu.SendMessage) },
+                { ConsoleKey.D2, new MenuItem("2. Received", messagesMenu.ViewReceivedMessages) },
+                { ConsoleKey.D3, new MenuItem("3. Sent", messagesMenu.ViewSentMessages) },
+                { ConsoleKey.Escape, new MenuItem("[Esc] => Back", menuController.LoadPreviousMenu) }
+            });
+        }
+        public void LoadOthersMessagesMenu(Menu menuController, User messagesUser)
+        {
+            string title = $"{FullName} => {messagesUser.FullName} Messages ";
+            MessagesFunctions messagesMenu = new MessagesFunctions(messagesUser, this );
+            menuController.LoadMenu(title, new Dictionary<ConsoleKey, MenuItem>() {
+                { ConsoleKey.D1, new MenuItem("1. Received", messagesMenu.ViewReceivedMessages) },
+                { ConsoleKey.D2, new MenuItem("2. Sent", messagesMenu.ViewSentMessages) },
+                { ConsoleKey.Escape, new MenuItem("[Esc] => Back", menuController.LoadPreviousMenu) }
+            });
+        }
+        
         public void SendMessage(User toUser)
         {
             MessageForm viewMessageForm = new MessageForm(this, toUser);

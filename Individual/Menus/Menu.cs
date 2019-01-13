@@ -6,58 +6,57 @@ using System.Threading.Tasks;
 
 namespace Individual.Menus
 {
-    abstract class Menu
+    class Menu
     {
         private static string Line => new string('\x2500', Console.WindowWidth);
-        private readonly string _title;
+        private string _title;
+        private Dictionary<ConsoleKey, MenuItem> _menuItems;
+        private Stack<KeyValuePair<string, Dictionary<ConsoleKey, MenuItem>>> _previousMenus;
 
-        protected bool _exit;
-        protected Menu _previousMenu;
-        protected Menu _loadMenu;
-        protected Dictionary<ConsoleKey, MenuItem> _menuItems;
-
-        public Menu(string title)
+        public Menu()
         {
+            _previousMenus = new Stack<KeyValuePair<string, Dictionary<ConsoleKey, MenuItem>>>();
+        }
+        public void LoadMenu(string title, Dictionary<ConsoleKey, MenuItem> menuItems)
+        {
+            if (_title != null)
+            {
+                _previousMenus.Push(
+                    new KeyValuePair<string, Dictionary<ConsoleKey, MenuItem>>(_title, _menuItems));
+            }
+
+            _menuItems = menuItems;
             _title = title;
         }
-
-        public Menu(string title, Menu previousMenu) : this(title)
+        public void LoadPreviousMenu()
         {
-            _previousMenu = previousMenu;
-        }
-
-        public virtual void MenuChoiceEscape()
-        {
-            if (_previousMenu == null)
+            try
             {
-                _exit = true;
+                var titleWithMenuItems = _previousMenus.Pop();
+                _title = titleWithMenuItems.Key;
+                _menuItems = titleWithMenuItems.Value;
+
             }
-            else
+            catch (Exception)
             {
-                _loadMenu = _previousMenu;
+                _title = null;
+                _menuItems = null;
             }
         }
 
-
-        public Menu Run()
+        public void Run()
         {
-            _loadMenu = null;
-            _exit = false;
-
-            do
+            while (_menuItems!=null)
             {
                 Display();
 
                 ReadKey<MenuItem> readKey = new ReadKey<MenuItem>(_menuItems);
 
                 readKey.GetKey().Action();
-
-            } while (!_exit && _loadMenu == null);
-
-            return _loadMenu;
+            }
         }
 
-        public void Display()
+        private void Display()
         {
             Console.ResetColor();
             Console.Clear();

@@ -85,11 +85,11 @@
     <Compile Include="Forms\ReadKey.cs" />
     <Compile Include="Forms\TextBoxValidation.cs" />
     <Compile Include="GlobalFunctions.cs" />
-    <Compile Include="Menus\Menu.cs" />
-    <Compile Include="Menus\AccountManagmentMenu.cs" />
-    <Compile Include="Menus\ListMenu.cs" />
     <Compile Include="Menus\LoginMenu.cs" />
     <Compile Include="Menus\MainMenu.cs" />
+    <Compile Include="Menus\AccountsMenu.cs" />
+    <Compile Include="Menus\ListMenu.cs" />
+    <Compile Include="Menus\MenuController.cs" />
     <Compile Include="Menus\MenuItem.cs" />
     <Compile Include="Menus\MessagesMenu.cs" />
     <Compile Include="MessageToFile.cs" />

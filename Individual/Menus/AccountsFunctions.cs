@@ -6,17 +6,12 @@ using System.Threading.Tasks;
 
 namespace Individual.Menus
 {
-    class AccountManagmentMenu : Menu
+    class AccountsFunctions 
     {
         private User _loggedUser;
-        public AccountManagmentMenu(string title, User loggedUser, Menu previousMenu) : base(title, previousMenu)
+        public AccountsFunctions(User loggedUser)
         {
             _loggedUser = loggedUser;
-            _menuItems = new Dictionary<ConsoleKey, MenuItem>() {
-                { ConsoleKey.D1, new MenuItem("1. Create", CreateUser) },
-                { ConsoleKey.D2, new MenuItem("2. View/Edit/Delete", ViewEditDeleteMenu) },
-                { ConsoleKey.Escape, new MenuItem("[Esc] => Back", MenuChoiceEscape) }
-            };
         }
 
         #region menu choices

@@ -56,14 +56,22 @@ namespace Individual
         }
         private static void RunApplication()
         {
-            Menu menu = new LoginMenu("Login");
+            Menu menuController = new Menu();
+            LoadStartUpMenu(menuController);
 
-            while (menu != null)
-            {
-                menu = menu.Run();
-            }
+            menuController.Run();
+
         }
+        private static void LoadStartUpMenu(Menu menuController)
+        {
+            LoginFunctions loginMenu = new LoginFunctions(menuController);
 
+            menuController.LoadMenu("Start up Menu", new Dictionary<ConsoleKey, MenuItem>() {
+                { ConsoleKey.D1, new MenuItem("1. Login", loginMenu.Login) },
+                { ConsoleKey.D2, new MenuItem("2. Sign Up", loginMenu.SignUp) },
+                { ConsoleKey.Escape, new MenuItem("[Esc] => Exit From Application", menuController.LoadPreviousMenu) }
+            });
+        }
         private static void ClearOnExit()
         {
             Console.ResetColor();
