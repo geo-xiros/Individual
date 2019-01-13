@@ -87,6 +87,7 @@ namespace Individual
 
         private static IEnumerable<T> Query<T>(string procedure, object parameters)
         {
+
             try
             {
                 using (SqlConnection dbcon = new SqlConnection(ConnectionString()))

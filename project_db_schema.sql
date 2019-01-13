@@ -19,8 +19,6 @@ go
 create unique index ix_Users_Username on users (username)
 go
 
-
-
 create table messages (
 	  messageId int not null identity(1,1)
 	, senderUserId int not null 

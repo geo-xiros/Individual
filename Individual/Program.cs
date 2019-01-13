@@ -17,12 +17,11 @@ namespace Individual
 
             while (!ConnectToDatabase())
             {
-                ConnectionForm connectionForm = new ConnectionForm();
-                connectionForm.Open();
-                if (connectionForm.EscapePressed)
+                ConnectionForm connectionForm = new ConnectionForm()
                 {
-                    Environment.Exit(0);
-                }
+                    OnFormExit = () => Environment.Exit(0)
+                };
+                connectionForm.Open();
             }
 
             if (!AddAdminUser())
