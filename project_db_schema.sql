@@ -262,6 +262,11 @@ begin
 end
 go
 
+USE [project_db]
+GO
+
+
+
 create procedure GetMessages
 	  @messageId int
 	, @userId int
@@ -270,7 +275,9 @@ as
 begin
 	if @messageId<>0
 	begin
-		select messages.*, sender.userName as senderUserName, receiver.userName as receiverUserName
+		select messages.*
+		, concat(sender.[firstName],' ',sender.[lastName]) as senderUserName
+		, concat(receiver.[firstName],' ',receiver.[lastName]) as receiverUserName
 		from messages 
 			inner join users sender on messages.senderUserId = sender.userId 
 			inner join users receiver on messages.receiverUserId = receiver.userId 
@@ -278,7 +285,9 @@ begin
 	end
 	else
 	begin
-		select messages.*, sender.userName as senderUserName, receiver.userName as receiverUserName
+		select messages.*
+		, concat(sender.[firstName],' ',sender.[lastName]) as senderUserName
+		, concat(receiver.[firstName],' ',receiver.[lastName]) as receiverUserName
 		from messages 
 			inner join users sender on messages.senderUserId = sender.userId 
 			inner join users receiver on messages.receiverUserId = receiver.userId 
