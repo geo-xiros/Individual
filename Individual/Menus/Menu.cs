@@ -30,17 +30,16 @@ namespace Individual.Menus
         }
         public void LoadPreviousMenu()
         {
-            try
+            if (_previousMenus.Count() == 0)
+            {
+                _title = null;
+                _menuItems = null;
+            }
+            else
             {
                 var titleWithMenuItems = _previousMenus.Pop();
                 _title = titleWithMenuItems.Key;
                 _menuItems = titleWithMenuItems.Value;
-
-            }
-            catch (Exception)
-            {
-                _title = null;
-                _menuItems = null;
             }
         }
 

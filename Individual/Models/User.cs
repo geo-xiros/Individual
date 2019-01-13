@@ -6,6 +6,7 @@ namespace Individual
 {
     class User
     {
+        private Database _dbContext;
 
         public int UserId { get; set; }
         public string UserName { get; set; }
@@ -26,6 +27,7 @@ namespace Individual
 
         public User(string username, string firstname, string lastname)
         {
+            _dbContext = new Database();
             UserName = username;
             FirstName = firstname;
             LastName = lastname;
@@ -48,27 +50,42 @@ namespace Individual
         #region User  Insert Update Delete
         public bool Insert()
         {
-            UserId = Database.QueryFirst<int>("InsertUser", new
-            {
-                userName = UserName,
-                firstName = FirstName,
-                lastName = LastName,
-                UserPassword = Password,
-                UserRole = Role.ToString()
-            });
+            UserId = _dbContext.ExecuteProcedureWithRetry((sqlConnection) =>
+             {
+                 return _dbContext.QueryFirst2(sqlConnection,"InsertUser", new
+                 {
+                     userName = UserName,
+                     firstName = FirstName,
+                     lastName = LastName,
+                     UserPassword = Password,
+                     UserRole = Role.ToString()
+                 });
+             });
+
+            //UserId = Database.QueryFirst<int>("InsertUser", new
+            //{
+            //    userName = UserName,
+            //    firstName = FirstName,
+            //    lastName = LastName,
+            //    UserPassword = Password,
+            //    UserRole = Role.ToString()
+            //});
             return UserId != 0;
         }
 
         public bool Update()
         {
-            return Database.ExecuteProcedure("UpdateUser", new
+            return _dbContext.ExecuteProcedureWithRetry((sqlConnection) =>
             {
-                userId = UserId,
-                userName = UserName,
-                firstName = FirstName,
-                lastName = LastName,
-                userPassword = Password,
-                userRole = Role.ToString()
+                return _dbContext.ExecuteProcedure2(sqlConnection,"UpdateUser", new
+                {
+                    userId = UserId,
+                    userName = UserName,
+                    firstName = FirstName,
+                    lastName = LastName,
+                    userPassword = Password,
+                    userRole = Role.ToString()
+                });
             }) == 1;
         }
         public bool Delete(int superUserId)
@@ -76,11 +93,14 @@ namespace Individual
             if (!Database.GetPasswordIfNeeded(out string deletePassword, UserId, superUserId, "Delete Selected User"))
                 return false;
 
-            return Database.ExecuteProcedure("DeleteUser", new
+            return _dbContext.ExecuteProcedureWithRetry((sqlConnection) =>
             {
-                superUserId, //Application.LoggedUser.UserId,
-                superUserPassword = deletePassword,
-                userId = UserId
+                return _dbContext.ExecuteProcedure2(sqlConnection,"DeleteUser", new
+                {
+                    superUserId,
+                    superUserPassword = deletePassword,
+                    userId = UserId
+                });
             }) == 1;
         }
         #endregion
@@ -131,14 +151,14 @@ namespace Individual
         public void LoadOthersMessagesMenu(Menu menuController, User messagesUser)
         {
             string title = $"{FullName} => {messagesUser.FullName} Messages ";
-            MessagesFunctions messagesMenu = new MessagesFunctions(messagesUser, this );
+            MessagesFunctions messagesMenu = new MessagesFunctions(messagesUser, this);
             menuController.LoadMenu(title, new Dictionary<ConsoleKey, MenuItem>() {
                 { ConsoleKey.D1, new MenuItem("1. Received", messagesMenu.ViewReceivedMessages) },
                 { ConsoleKey.D2, new MenuItem("2. Sent", messagesMenu.ViewSentMessages) },
                 { ConsoleKey.Escape, new MenuItem("[Esc] => Back", menuController.LoadPreviousMenu) }
             });
         }
-        
+
         public void SendMessage(User toUser)
         {
             MessageForm viewMessageForm = new MessageForm(this, toUser);

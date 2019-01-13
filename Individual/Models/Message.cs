@@ -104,7 +104,7 @@ namespace Individual
 
             if (ReceiverUserId == realLoggedUser.UserId)
             {
-                Application.TryToRunAction<Message>(this, UpdateAsRead
+                GlobalFunctions.TryToRunAction<Message>(this, UpdateAsRead
                     , "Unable to update message as read, try again [y/n] "
                     , string.Empty
                     , "Unable to update message as read !!!");

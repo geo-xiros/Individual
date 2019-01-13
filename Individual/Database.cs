@@ -8,7 +8,7 @@ using System.Security.Cryptography;
 
 namespace Individual
 {
-    class Database
+    class Database : IDbUser
     {
         static string ConnectionString() => $"Server={Properties.Settings.Default.SqlServer};Database={Properties.Settings.Default.Database};User Id={Properties.Settings.Default.User};Password={Properties.Settings.Default.Pass}";
         public static bool DatabaseError { get; private set; }
@@ -28,10 +28,48 @@ namespace Individual
                     DatabaseError = true;
                     Alerts.Error(e.Message);
                 }
-                
+
             }
 
             return DatabaseError;
+        }
+        //private SqlConnection _sqlConnection;
+        public Database()//SqlConnection sqlConnection)
+        {
+            //_sqlConnection = sqlConnection;
+        }
+        public int ExecuteProcedureWithRetry(Func<SqlConnection, int> execute)
+        {
+            bool tryAgain = false;
+            do
+            {
+                try
+                {
+                    using (SqlConnection dbcon = new SqlConnection(ConnectionString()))
+                    {
+                        dbcon.Open();
+                        return execute(dbcon);
+                    }
+                }
+                catch (SqlException e)
+                {
+                    Alerts.Error(e.Message);
+                    Console.Clear();
+                    tryAgain = MessageBox.Show("Do you want to try again ? [y/n]") == MessageBox.MessageBoxResult.Yes;
+                }
+            } while (tryAgain);
+
+            return 0;
+        }
+        public int ExecuteProcedure2(SqlConnection sqlConnection, string procedure, object parameters)
+        {
+            return sqlConnection.Execute(procedure, parameters, commandType: CommandType.StoredProcedure);
+        }
+        public int QueryFirst2(SqlConnection sqlConnection, string procedure, object parameters)
+        {
+            return sqlConnection
+              .Query<int>(procedure, parameters, commandType: CommandType.StoredProcedure)
+              .FirstOrDefault();
         }
 
         public static int ExecuteProcedure(string procedure, object parameters)
