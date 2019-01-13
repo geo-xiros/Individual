@@ -10,13 +10,13 @@ namespace Individual.Menus
     {
         private User _loggedUser;
         private User _realLoggedUser;
+
         public MessagesFunctions(User loggedUser, User realLoggedUser)
         {
             _loggedUser = loggedUser;
             _realLoggedUser = realLoggedUser;
         }
-
-
+        
         #region menu choices
         public void SendMessage()
         {

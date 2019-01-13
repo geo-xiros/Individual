@@ -59,7 +59,7 @@ namespace Individual
 
         public bool Update(int loggedUserId)
         {
-            if (!Database.GetPasswordIfNeeded(out string updatePassword, SenderUserId, loggedUserId, "Update Selected Message"))
+            if (!GlobalFunctions.GetPasswordIfNeeded(out string updatePassword, SenderUserId, loggedUserId, "Update Selected Message"))
                 return false;
 
             return Database.ExecuteProcedure("UpdateMessage", new
@@ -74,7 +74,7 @@ namespace Individual
 
         public bool Delete(int loggedUserId)
         {
-            if (!Database.GetPasswordIfNeeded(out string deletePassword, SenderUserId, loggedUserId, "Delete Selected Message"))
+            if (!GlobalFunctions.GetPasswordIfNeeded(out string deletePassword, SenderUserId, loggedUserId, "Delete Selected Message"))
                 return false;
 
             return Database.ExecuteProcedure("DeleteMessage", new
@@ -104,20 +104,13 @@ namespace Individual
 
             if (ReceiverUserId == realLoggedUser.UserId)
             {
-                GlobalFunctions.TryToRunAction<Message>(this, UpdateAsRead
-                    , "Unable to update message as read, try again [y/n] "
-                    , string.Empty
-                    , "Unable to update message as read !!!");
+                Unread = false;
+                Database.ExecuteProcedure("UpdateMessageAsRead", new
+                {
+                    messageId = MessageId,
+                    unread = Unread
+                });
             }
-        }
-        private bool UpdateAsRead(Message message)
-        {
-            Unread = false;
-            return Database.ExecuteProcedure("UpdateMessageAsRead", new
-            {
-                messageId = message.MessageId,
-                unread = message.Unread
-            }) == 1;
         }
     }
 }

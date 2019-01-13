@@ -20,29 +20,6 @@ namespace Individual.Menus
         public void MessagesMenu()
         {
             _loggedUser.LoadMessagesMenu(_menuController);
-            //_menuController.LoadMenu("Messages Menu", )
-            //public MessagesMenu(string title, User loggedUser, Menu previousMenu)// : base(title, previousMenu)
-            //{
-            //    _loggedUser = loggedUser;
-            //    _realLoggedUser = loggedUser;
-            //    _menuItems = new Dictionary<ConsoleKey, MenuItem>() {
-            //    { ConsoleKey.D1, new MenuItem("1. Send", SendMessage) },
-            //    { ConsoleKey.D2, new MenuItem("2. Received", ViewReceivedMessages) },
-            //    { ConsoleKey.D3, new MenuItem("3. Sent", ViewSentMessages) },
-            //    { ConsoleKey.Escape, new MenuItem("[Esc] => Back", MenuChoiceEscape) }
-            //};
-            //}
-            //public MessagesMenu(string title, User loggedUser, User realLoggedUser, Menu previousMenu) //: base(title, previousMenu)
-            //{
-            //    _loggedUser = loggedUser;
-            //    _realLoggedUser = realLoggedUser;
-            //_menuItems = new Dictionary<ConsoleKey, MenuItem>() {
-            //    { ConsoleKey.D1, new MenuItem("1. Received", ViewReceivedMessages) },
-            //    { ConsoleKey.D2, new MenuItem("2. Sent", ViewSentMessages) },
-            //    { ConsoleKey.Escape, new MenuItem("[Esc] => Back", MenuChoiceEscape) }
-            //};
-            //}
-            //_loadMenu = new MessagesMenu("Messages Menu", _loggedUser, this);
         }
         public  void OthersMessagesMenu()
         {

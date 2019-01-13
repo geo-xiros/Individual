@@ -50,57 +50,40 @@ namespace Individual
         #region User  Insert Update Delete
         public bool Insert()
         {
-            UserId = _dbContext.ExecuteProcedureWithRetry((sqlConnection) =>
-             {
-                 return _dbContext.QueryFirst2(sqlConnection,"InsertUser", new
-                 {
-                     userName = UserName,
-                     firstName = FirstName,
-                     lastName = LastName,
-                     UserPassword = Password,
-                     UserRole = Role.ToString()
-                 });
-             });
-
-            //UserId = Database.QueryFirst<int>("InsertUser", new
-            //{
-            //    userName = UserName,
-            //    firstName = FirstName,
-            //    lastName = LastName,
-            //    UserPassword = Password,
-            //    UserRole = Role.ToString()
-            //});
+            UserId = Database.QueryFirst<int>("InsertUser", new
+            {
+                userName = UserName,
+                firstName = FirstName,
+                lastName = LastName,
+                UserPassword = Password,
+                UserRole = Role.ToString()
+            });
             return UserId != 0;
         }
 
         public bool Update()
         {
-            return _dbContext.ExecuteProcedureWithRetry((sqlConnection) =>
+
+            return Database.ExecuteProcedure("UpdateUser", new
             {
-                return _dbContext.ExecuteProcedure2(sqlConnection,"UpdateUser", new
-                {
-                    userId = UserId,
-                    userName = UserName,
-                    firstName = FirstName,
-                    lastName = LastName,
-                    userPassword = Password,
-                    userRole = Role.ToString()
-                });
+                userId = UserId,
+                userName = UserName,
+                firstName = FirstName,
+                lastName = LastName,
+                userPassword = Password,
+                userRole = Role.ToString()
             }) == 1;
         }
         public bool Delete(int superUserId)
         {
-            if (!Database.GetPasswordIfNeeded(out string deletePassword, UserId, superUserId, "Delete Selected User"))
+            if (!GlobalFunctions.GetPasswordIfNeeded(out string deletePassword, UserId, superUserId, "Delete Selected User"))
                 return false;
 
-            return _dbContext.ExecuteProcedureWithRetry((sqlConnection) =>
+            return Database.ExecuteProcedure("DeleteUser", new
             {
-                return _dbContext.ExecuteProcedure2(sqlConnection,"DeleteUser", new
-                {
-                    superUserId,
-                    superUserPassword = deletePassword,
-                    userId = UserId
-                });
+                superUserId,
+                superUserPassword = deletePassword,
+                userId = UserId
             }) == 1;
         }
         #endregion

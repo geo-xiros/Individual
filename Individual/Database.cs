@@ -8,7 +8,7 @@ using System.Security.Cryptography;
 
 namespace Individual
 {
-    class Database : IDbUser
+    class Database 
     {
         static string ConnectionString() => $"Server={Properties.Settings.Default.SqlServer};Database={Properties.Settings.Default.Database};User Id={Properties.Settings.Default.User};Password={Properties.Settings.Default.Pass}";
         public static bool DatabaseError { get; private set; }
@@ -33,69 +33,11 @@ namespace Individual
 
             return DatabaseError;
         }
-        //private SqlConnection _sqlConnection;
-        public Database()//SqlConnection sqlConnection)
-        {
-            //_sqlConnection = sqlConnection;
-        }
-        public int ExecuteProcedureWithRetry(Func<SqlConnection, int> execute)
-        {
-            bool tryAgain = false;
-            do
-            {
-                try
-                {
-                    using (SqlConnection dbcon = new SqlConnection(ConnectionString()))
-                    {
-                        dbcon.Open();
-                        return execute(dbcon);
-                    }
-                }
-                catch (SqlException e)
-                {
-                    Alerts.Error(e.Message);
-                    Console.Clear();
-                    tryAgain = MessageBox.Show("Do you want to try again ? [y/n]") == MessageBox.MessageBoxResult.Yes;
-                }
-            } while (tryAgain);
-
-            return 0;
-        }
-        public int ExecuteProcedure2(SqlConnection sqlConnection, string procedure, object parameters)
-        {
-            return sqlConnection.Execute(procedure, parameters, commandType: CommandType.StoredProcedure);
-        }
-        public int QueryFirst2(SqlConnection sqlConnection, string procedure, object parameters)
-        {
-            return sqlConnection
-              .Query<int>(procedure, parameters, commandType: CommandType.StoredProcedure)
-              .FirstOrDefault();
-        }
-
-        public static int ExecuteProcedure(string procedure, object parameters)
-        {
-            try
-            {
-                using (SqlConnection dbcon = new SqlConnection(ConnectionString()))
-                {
-                    dbcon.Open();
-                    return dbcon.Execute(procedure, parameters, commandType: CommandType.StoredProcedure);
-                }
-            }
-            catch (SqlException e)
-            {
-                throw new DatabaseException(e.Message, e);
-            }
-        }
+               
         #region UserFunctions
         public static IEnumerable<User> GetUsers()
         {
-            using (SqlConnection dbcon = new SqlConnection(ConnectionString()))
-            {
-                dbcon.Open();
-                return dbcon.Query<User>("Select * From Get_Users");
-            }
-            //return Query<User>("Get_Users").Where(filterPredicate);//, new { userId = 0, userName = "" });
+            return Query<User>("GetUsers", new { userId = 0, userName = "" });
         }
 
         public static User GetUserBy(int userId)
@@ -116,6 +58,7 @@ namespace Individual
             return QueryFirst<int>("Validate_User", new { userName = username, userPassword = password }) == 1;
         }
         #endregion
+
         #region Messages Functions
         public static Message GetMessageById(int messageId)
         {
@@ -126,6 +69,23 @@ namespace Individual
             return Query<Message>("GetMessages", new { messageId = 0, userId });
         }
         #endregion
+
+        public static int ExecuteProcedure(string procedure, object parameters)
+        {
+            try
+            {
+                using (SqlConnection dbcon = new SqlConnection(ConnectionString()))
+                {
+                    dbcon.Open();
+                    return dbcon.Execute(procedure, parameters, commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (SqlException e)
+            {
+                throw new DatabaseException(e.Message, e);
+            }
+        }
+
         private static IEnumerable<T> Query<T>(string procedure, object parameters)
         {
             try
@@ -133,7 +93,8 @@ namespace Individual
                 using (SqlConnection dbcon = new SqlConnection(ConnectionString()))
                 {
                     dbcon.Open();
-                    return dbcon.Query<T>(procedure, parameters, commandType: CommandType.StoredProcedure);
+                    return dbcon
+                        .Query<T>(procedure, parameters, commandType: CommandType.StoredProcedure);
                 }
             }
             catch (SqlException e)
@@ -159,23 +120,5 @@ namespace Individual
             }
         }
 
-
-
-        public static bool GetPasswordIfNeeded(out string returnPassword, int userId, int loggedUserId, string passwordForAction)
-        {
-            string password = "";
-
-            if (loggedUserId != userId)
-            {
-                PasswordForm passwordForm = new PasswordForm(passwordForAction);
-                passwordForm.OnFormFilled = () => password = passwordForm["Password"];
-                passwordForm.Open();
-            }
-
-            returnPassword = password;
-
-            return loggedUserId == userId
-                || password.Length != 0;
-        }
     }
 }

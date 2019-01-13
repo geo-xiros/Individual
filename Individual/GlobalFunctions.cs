@@ -24,6 +24,22 @@ namespace Individual
             } while (lm.Id != 0);
 
         }
+        public static bool GetPasswordIfNeeded(out string returnPassword, int userId, int loggedUserId, string passwordForAction)
+        {
+            string password = "";
+
+            if (loggedUserId != userId)
+            {
+                PasswordForm passwordForm = new PasswordForm(passwordForAction);
+                passwordForm.OnFormFilled = () => password = passwordForm["Password"];
+                passwordForm.Open();
+            }
+
+            returnPassword = password;
+
+            return loggedUserId == userId
+                || password.Length != 0;
+        }
         public static bool TryToRunAction<T>(T onObject, Func<T, bool> action, string questionMessage, string successMessage, string failMessage)
         {
             bool tryAgain = false;
