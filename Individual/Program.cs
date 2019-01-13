@@ -19,7 +19,7 @@ namespace Individual
             {
                 ConnectionForm connectionForm = new ConnectionForm();
                 connectionForm.Open();
-                if (!connectionForm.EscapePressed)
+                if (connectionForm.EscapePressed)
                 {
                     Environment.Exit(0);
                 }
@@ -37,7 +37,7 @@ namespace Individual
         }
         private static bool ConnectToDatabase()
         {
-            return !Database.OpenConnection((dbConnection) =>
+            return Database.OpenConnection((dbConnection) =>
             {
                 dbConnection.Open();
             });

@@ -8,7 +8,7 @@ using System.Security.Cryptography;
 
 namespace Individual
 {
-    class Database 
+    class Database
     {
         static string ConnectionString() => $"Server={Properties.Settings.Default.SqlServer};Database={Properties.Settings.Default.Database};User Id={Properties.Settings.Default.User};Password={Properties.Settings.Default.Pass}";
         public static bool DatabaseError { get; private set; }
@@ -16,24 +16,23 @@ namespace Individual
         public static bool OpenConnection(Action<SqlConnection> execute)
         {
             DatabaseError = false;
-
-            using (SqlConnection dbcon = new SqlConnection(ConnectionString()))
+            try
             {
-                try
+                using (SqlConnection dbcon = new SqlConnection(ConnectionString()))
                 {
                     execute(dbcon);
+                    return true;
                 }
-                catch (SqlException e)
-                {
-                    DatabaseError = true;
-                    Alerts.Error(e.Message);
-                }
-
+            }
+            catch (SqlException e)
+            {
+                DatabaseError = true;
+                Alerts.Error(e.Message);
             }
 
-            return DatabaseError;
+            return false;
         }
-               
+
         #region UserFunctions
         public static IEnumerable<User> GetUsers()
         {
