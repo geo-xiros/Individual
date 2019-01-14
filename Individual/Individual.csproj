@@ -77,7 +77,6 @@
     <Compile Include="Alerts.cs" />
     <Compile Include="ColoredConsole.cs" />
     <Compile Include="Database.cs" />
-    <Compile Include="DatabaseException.cs" />
     <Compile Include="Forms\ConnectionForm.cs" />
     <Compile Include="Forms\MessageBox.cs" />
     <Compile Include="Forms\MessageForm.cs" />

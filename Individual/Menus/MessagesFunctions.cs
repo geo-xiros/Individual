@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Individual.Menus
 {
-    class MessagesFunctions 
+    class MessagesFunctions
     {
         private User _loggedUser;
         private User _realLoggedUser;
@@ -16,7 +16,7 @@ namespace Individual.Menus
             _loggedUser = loggedUser;
             _realLoggedUser = realLoggedUser;
         }
-        
+
         #region menu choices
         public void SendMessage()
         {
@@ -61,8 +61,13 @@ namespace Individual.Menus
         }
         private void OnMessageSelection(int messageId)
         {
-            Database.GetMessageById(messageId)
-                .View(_loggedUser, _realLoggedUser);
+            Message message = Database.GetMessageById(messageId);
+
+            if (message != null)
+            {
+                message.View(_loggedUser, _realLoggedUser);
+            }
+
         }
 
         #endregion
