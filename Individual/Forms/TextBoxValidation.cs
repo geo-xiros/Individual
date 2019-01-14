@@ -2,7 +2,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 namespace Individual
 {
-     class TextBoxValidation
+    class TextBoxValidation
     {
 
         public static bool ValidLength(TextBox textBox)
@@ -17,9 +17,11 @@ namespace Individual
 
         public static bool ValidRole(TextBox textBox)
         {
-            if (Role.ParseRole(textBox.Text) == Role.Roles.None)
+            string[] validRoles = new string[] { "Super", "View", "ViewEdit", "ViewEditDelete", "Simple" };
+
+            if (!validRoles.Contains(textBox.Text, System.StringComparer.CurrentCultureIgnoreCase))
             {
-                textBox.ValidationError = $"Wrong Role Select from List (Simple, View, ViewEdit,ViewEditDelete, Super) !!!";
+                textBox.ValidationError = $"Wrong Role Select from List (Simple, View, ViewEdit, ViewEditDelete, Super) !!!";
                 return false;
             }
 

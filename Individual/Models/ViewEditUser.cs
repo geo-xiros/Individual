@@ -11,7 +11,7 @@ namespace Individual.Models
     {
         public ViewEditUser(int userID, string userName, string firstName, string lastName, string userRole) : base(userID, userName, firstName, lastName, userRole)
         {
-            Role = Individual.Role.ParseRole(userRole);
+            UserRole = userRole;
             UserId = userID;
         }
         public override bool CanEdit() => true;

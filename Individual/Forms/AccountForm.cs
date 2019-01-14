@@ -135,7 +135,7 @@ namespace Individual
             TextBoxes["Lastname"].Validate = TextBoxValidation.ValidLength;
             TextBoxes["Role"].Validate = TextBoxValidation.ValidRole;
             TextBoxes["Role"].Locked = !canEditRole;
-            this["Role"] = _user.Role.ToString();
+            this["Role"] = _user.UserRole;
         }
 
         private void UpdateUserFromTextBoxes()
@@ -144,7 +144,7 @@ namespace Individual
             _user.FirstName = this["Firstname"];
             _user.LastName = this["Lastname"];
             _user.Password = this["Password"];
-            _user.Role = Role.ParseRole(this["Role"]);
+            _user.UserRole = this["Role"];
         }
         private void UpdateTextBoxesFromUser()
         {

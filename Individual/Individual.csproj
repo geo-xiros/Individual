@@ -95,7 +95,7 @@
     <Compile Include="Models\ConnectionFields.cs" />
     <Compile Include="Models\Field.cs" />
     <Compile Include="Models\Message.cs" />
-    <Compile Include="Models\Role.cs" />
+    <Compile Include="Models\RoleChecker.cs" />
     <Compile Include="Models\SuperUser.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\UserFields.cs" />

@@ -13,16 +13,17 @@ namespace Individual
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Password { get; set; }
-        public Role.Roles Role { get; set; }
+        public string UserRole { get; set; }
 
         public User(string userName, string firstName, string lastName, string password, string userRole) : this(0, userName, firstName, lastName, userRole)
         {
             Password = password;
+            UserRole = userRole;
         }
         public User(int userID, string userName, string firstName, string lastName, string userRole) : this(userName, firstName, lastName)
         {
-            Role = Individual.Role.ParseRole(userRole);
             UserId = userID;
+            UserRole = userRole;
         }
 
         public User(string username, string firstname, string lastname)
@@ -32,8 +33,7 @@ namespace Individual
             FirstName = firstname;
             LastName = lastname;
             Password = string.Empty;
-
-            Role = Individual.Role.ParseRole("Simple");
+            UserRole = "Simple";
         }
 
         public string FullName => $"{FirstName} {LastName}";
@@ -59,7 +59,7 @@ namespace Individual
                     firstName = FirstName,
                     lastName = LastName,
                     UserPassword = Password,
-                    UserRole = Role.ToString()
+                    UserRole = UserRole
                 });
             }, "Do you want to try inserting user again ? [y/n] ");
 
@@ -79,7 +79,7 @@ namespace Individual
                     firstName = FirstName,
                     lastName = LastName,
                     userPassword = Password,
-                    userRole = Role.ToString()
+                    userRole = UserRole
                 });
             }, "Do you want to try inserting user again ? [y/n] ");
 

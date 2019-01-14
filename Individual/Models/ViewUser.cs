@@ -11,7 +11,7 @@ namespace Individual.Models
     {
         public ViewUser(int userID, string userName, string firstName, string lastName, string userRole) : base(userName, firstName, lastName)
         {
-            Role = Individual.Role.ParseRole(userRole);
+            UserRole = userRole;
             UserId = userID;
         }
         public override void LoadMainMenu(Menu menuController)
