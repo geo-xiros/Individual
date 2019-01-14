@@ -49,15 +49,15 @@ namespace Individual
                     .Query<dynamic>("GetUsers", new { userId = 0, userName }, commandType: CommandType.StoredProcedure)
                     .Select<dynamic, User>(u =>
                     {
-                        switch (u.userRole)
+                        switch (u.userRole.ToLower())
                         {
-                            case "Super":
-                                return new SuperUser((int)u.userId, (string)u.userName, (string)u.firstName, (string)u.lastName, (string)u.userRole);
-                            case "View":
+                            case "super":
+                                return new SuperUser(u.userId, u.userName, u.firstName, u.lastName, u.userRole);
+                            case "view":
                                 return new ViewUser(u.userId, u.userName, u.firstName, u.lastName, u.userRole);
-                            case "ViewEdit":
+                            case "viewedit":
                                 return new ViewEditUser(u.userId, u.userName, u.firstName, u.lastName, u.userRole);
-                            case "ViewEditDelete":
+                            case "vieweditdelete":
                                 return new ViewEditDeleteUser(u.userId, u.userName, u.firstName, u.lastName, u.userRole);
                             default:
                                 return new User(u.userId, u.userName, u.firstName, u.lastName, u.userRole);
