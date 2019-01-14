@@ -13,10 +13,10 @@ namespace Individual
         private readonly User _loggedUser;
         private readonly User _realLoggedUser;
         private readonly User _user;
-        private bool IsLoggedUserReceiver => _loggedUser.UserId == _message.ReceiverUserId;
+        private bool IsLoggedUserReceiver => _loggedUser.UserId == _message.SenderUserId;
         private bool VieweingOthersMessage => _realLoggedUser != _loggedUser;
 
-        public MessageForm(User LoggedUser, User user = null) : base($"Send Message to {user.UserName}")
+        public MessageForm(User LoggedUser, User user) : base($"Send Message to {user.UserName}")
         {
             _user = user;
             _realLoggedUser = _user;
@@ -32,7 +32,7 @@ namespace Individual
 
         }
 
-        public MessageForm(Message message, User loggedUser = null, User realLoggedUser = null) : base("View Message")// : base($"View Message {LoggedUser.FullName} Received")
+        public MessageForm(Message message, User loggedUser , User realLoggedUser ) : base("View Message")// : base($"View Message {LoggedUser.FullName} Received")
         {
             _loggedUser = loggedUser;
             _realLoggedUser = realLoggedUser;
