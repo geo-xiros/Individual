@@ -7,6 +7,8 @@ using System.Linq;
 using System.Reflection;
 using Individual.Menus;
 using System.Threading;
+using Individual.Models;
+
 namespace Individual
 {
     class Program
@@ -14,7 +16,6 @@ namespace Individual
 
         static void Main(string[] args)
         {
-
             while (!ConnectToDatabase())
             {
                 ConnectionForm connectionForm = new ConnectionForm()

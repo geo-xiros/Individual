@@ -5,6 +5,7 @@ using System.Data;
 using System.Data.SqlClient;
 using Dapper;
 using System.Security.Cryptography;
+using Individual.Models;
 
 namespace Individual
 {
@@ -44,7 +45,26 @@ namespace Individual
 
             Database.TryToRun((dbcon) =>
             {
-                user = QueryFirst<User>(dbcon, "GetUsers", new { userId = 0, userName });
+                user = dbcon
+                    .Query<dynamic>("GetUsers", new { userId = 0, userName }, commandType: CommandType.StoredProcedure)
+                    .Select<dynamic, User>(u =>
+                    {
+                        switch (u.userRole)
+                        {
+                            case "Super":
+                                return new SuperUser((int)u.userId, (string)u.userName, (string)u.firstName, (string)u.lastName, (string)u.userRole);
+                            case "View":
+                                return new ViewUser(u.userId, u.userName, u.firstName, u.lastName, u.userRole);
+                            case "ViewEdit":
+                                return new ViewEditUser(u.userId, u.userName, u.firstName, u.lastName, u.userRole);
+                            case "ViewEditDelete":
+                                return new ViewEditDeleteUser(u.userId, u.userName, u.firstName, u.lastName, u.userRole);
+                            default:
+                                return new User(u.userId, u.userName, u.firstName, u.lastName, u.userRole);
+                        }
+                    }).FirstOrDefault();
+
+                //user = QueryFirst<User>(dbcon, "GetUsers", new { userId = 0, userName });
             }, "Do you want to try again ? [y/n] ");
 
             return user;

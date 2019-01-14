@@ -38,10 +38,10 @@ namespace Individual
 
         public string FullName => $"{FirstName} {LastName}";
 
-        public bool IsAdmin() => (Role >= Individual.Role.Roles.Super);
-        public bool CanView() => (Role >= Individual.Role.Roles.View);
-        public bool CanEdit() => (Role >= Individual.Role.Roles.ViewEdit);
-        public bool CanDelete() => (Role >= Individual.Role.Roles.ViewEditDelete);
+        public virtual bool IsAdmin() => false;
+        public virtual bool CanView() => false;
+        public virtual bool CanEdit() => false;
+        public virtual bool CanDelete() => false;
 
         public override string ToString()
         {
@@ -95,7 +95,7 @@ namespace Individual
 
             Database.TryToRun((dbcon) =>
             {
-                affectedRows = Database.ExecuteProcedure(dbcon,"DeleteUser", new
+                affectedRows = Database.ExecuteProcedure(dbcon, "DeleteUser", new
                 {
                     superUserId,
                     superUserPassword = deletePassword,
@@ -107,38 +107,16 @@ namespace Individual
 
         }
         #endregion
-        public void LoadMainMenu(Menu menuController)
+        public virtual void LoadMainMenu(Menu menuController)
         {
             string title = $"{FullName} => Main Menu ";
             MainFunctions mainMenu = new MainFunctions(this, menuController);
 
-            if (IsAdmin())
-            {
-                menuController.LoadMenu(title, new Dictionary<ConsoleKey, MenuItem>() {
-                    { ConsoleKey.D1, new MenuItem("1. Messages", mainMenu.MessagesMenu) },
-                    { ConsoleKey.D2, new MenuItem("2. Messages (Other Users)", mainMenu.OthersMessagesMenu) },
-                    { ConsoleKey.D3, new MenuItem("3. Accounts Managment", mainMenu.AccountManagmentMenu) },
-                    { ConsoleKey.D4, new MenuItem("4. Current Account Edit", mainMenu.EditUser) },
-                    { ConsoleKey.Escape, new MenuItem("[Esc] => Logout", menuController.LoadPreviousMenu) }
-                });
-            }
-            else if (CanView())
-            {
-                menuController.LoadMenu(title, new Dictionary<ConsoleKey, MenuItem>() {
-                    { ConsoleKey.D1, new MenuItem("1. Messages", mainMenu.MessagesMenu) },
-                    { ConsoleKey.D2, new MenuItem("2. Messages (Other Users)", mainMenu.OthersMessagesMenu) },
-                    { ConsoleKey.D3, new MenuItem("3. Current Account Edit", mainMenu.EditUser) },
-                    { ConsoleKey.Escape, new MenuItem("[Esc] => Logout", menuController.LoadPreviousMenu) }
-                });
-            }
-            else
-            {
-                menuController.LoadMenu(title, new Dictionary<ConsoleKey, MenuItem>() {
-                    { ConsoleKey.D1, new MenuItem("1. Messages", mainMenu.MessagesMenu) },
-                    { ConsoleKey.D2, new MenuItem("2. Current Account Edit", mainMenu.EditUser) },
-                    { ConsoleKey.Escape, new MenuItem("[Esc] => Logout", menuController.LoadPreviousMenu) }
-                });
-            }
+            menuController.LoadMenu(title, new Dictionary<ConsoleKey, MenuItem>() {
+                { ConsoleKey.D1, new MenuItem("1. Messages", mainMenu.MessagesMenu) },
+                { ConsoleKey.D2, new MenuItem("2. Current Account Edit", mainMenu.EditUser) },
+                { ConsoleKey.Escape, new MenuItem("[Esc] => Logout", menuController.LoadPreviousMenu) }
+            });
         }
         public void LoadMessagesMenu(Menu menuController)
         {
@@ -151,15 +129,8 @@ namespace Individual
                 { ConsoleKey.Escape, new MenuItem("[Esc] => Back", menuController.LoadPreviousMenu) }
             });
         }
-        public void LoadOthersMessagesMenu(Menu menuController, User messagesUser)
+        public virtual void LoadOthersMessagesMenu(Menu menuController, User messagesUser)
         {
-            string title = $"{FullName} => {messagesUser.FullName} Messages ";
-            MessagesFunctions messagesMenu = new MessagesFunctions(messagesUser, this);
-            menuController.LoadMenu(title, new Dictionary<ConsoleKey, MenuItem>() {
-                { ConsoleKey.D1, new MenuItem("1. Received", messagesMenu.ViewReceivedMessages) },
-                { ConsoleKey.D2, new MenuItem("2. Sent", messagesMenu.ViewSentMessages) },
-                { ConsoleKey.Escape, new MenuItem("[Esc] => Back", menuController.LoadPreviousMenu) }
-            });
         }
 
         public void SendMessage(User toUser)
