@@ -75,10 +75,7 @@ namespace Individual
             {
                 Alerts.Warning("Unable to Update Account !!!");
             }
-            //Application.TryToRunAction<User>(_user, Database.Update
-            //    , "Unable to Update Account try again [y/n]"
-            //    , "Account Updated successfully !!!"
-            //    , "Unable to Create Account !!!");
+
         }
 
         private void AskAndInsert()
@@ -96,13 +93,7 @@ namespace Individual
             {
                 Alerts.Warning("Unable to Create Account !!!");
             }
-            //if (Application.TryToRunAction<User>(_user, Database.Insert
-            //    , "Unable to Create Account try again [y/n]"
-            //    , "Account Created successfully !!!"
-            //    , "Unable to Create Account !!!"))
-            //{
-            //    OnFormSaved?.Invoke();
-            //}
+
 
         }
         private void AskAndDelete()
@@ -119,10 +110,7 @@ namespace Individual
             {
                 Alerts.Warning("Unable to Delete Account !!!");
             }
-            //Application.TryToRunAction<User>(_user, Database.Delete
-            //    , "Unable to Delete Account try again [y/n]"
-            //    , "Account Delete successfully !!!"
-            //    , "Unable to Delete Account !!!");
+
 
         }
         private void InitTextBoxes(bool canEditRole)

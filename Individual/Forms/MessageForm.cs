@@ -126,13 +126,7 @@ namespace Individual
             {
                 Alerts.Warning("Unable to Update Message !!!");
             }
-            //if (Application.TryToRunAction<Message>(_message, Database.Update
-            //    , "Unable to Update Message try again [y/n]"
-            //    , "Message Updated successfully !!!"
-            //    , "Unable to Update Message !!!"))
-            //{
-            //    MessageToFile.Save(_message);
-            //}
+
         }
         private void AskAndInsert()
         {
@@ -150,13 +144,7 @@ namespace Individual
                 Alerts.Warning("Unable to Send Message !!!");
             }
 
-            //if (Application.TryToRunAction<Message>(_message, Database.Insert
-            //    , "Unable to Send Message try again [y/n]"
-            //    , "Message Sent successfully !!!"
-            //    , "Unable to Send Message !!!"))
-            //{
-            //    MessageToFile.Save(_message);
-            //}
+
 
         }
 
@@ -173,13 +161,7 @@ namespace Individual
             {
                 Alerts.Warning("Unable to delete Message !!!");
             }
-            //if (Application.TryToRunAction<Message>(_message, Database.Delete
-            //    , "Unable to delete Message try again [y/n]"
-            //    , "Message successfully Deleted !!!"
-            //    , "Unable to delete Message !!!"))
-            //{
-            //    MessageToFile.Delete(_message);
-            //}
+
         }
     }
 }
