@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
 using Individual.Menus;
+using Individual.Models;
 
 namespace Individual
 {
-    class User
+    class User: IPermissions
     {
         private Database _dbContext;
 
