@@ -9,23 +9,19 @@ namespace Individual
 {
     class Application
     {
-        private ProjectDb db;
+        private ProjectDb _db;
 
         public void Run()
         {
-            db = new ProjectDb();
-
-            DatabaseConnectionChecker databaseConnectionChecker = new DatabaseConnectionChecker(db);
+            _db = new ProjectDb();
 
             if (!databaseConnectionChecker.CheckDbConnection())
             {
                 return;
             }
-
         }
-
-
     }
+
     class DatabaseConnectionChecker
     {
 
@@ -58,7 +54,14 @@ namespace Individual
             sqlConnection.Open();
         }
     }
-    class DatabaseConnectionString
+    interface IConnectionString
+    {
+        string GetConnectionString();
+        void SetConnectionString(string server, string database, string user, string password);
+
+    }
+    class DatabaseConnectionString : IConnectionString
+
     {
         public string ConnectionString => $"Server={_Server};Database={_Database};User Id={_User};Password={_Password}";
         private string _Server;
@@ -74,6 +77,8 @@ namespace Individual
             _Password = Properties.Settings.Default.Pass;
 
         }
+        public string GetConnectionString() => $"Server={_Server};Database={_Database};User Id={_User};Password={_Password}";
+
         public void SetConnectionString(string server, string database, string user, string password)
         {
             Properties.Settings.Default.SqlServer = server;
@@ -82,39 +87,50 @@ namespace Individual
             Properties.Settings.Default.Pass = password;
             Properties.Settings.Default.Save();
         }
-
     }
-    class ProjectDb
+    class ProjectDb : IConnectionString
     {
+
         private DatabaseConnectionString _databaseConnectionString;
-        public string ConnectionString => _databaseConnectionString.ConnectionString;
 
         public ProjectDb()
         {
             _databaseConnectionString = new DatabaseConnectionString();
         }
+
+        public string ConnectionString()
+        {
+            return _databaseConnectionString.ConnectionString;
+        }
+
         public void SetConnectionString(string server, string database, string user, string password)
         {
             _databaseConnectionString.SetConnectionString(server, database, user, password);
         }
+
         public bool TryToRun(Action<SqlConnection> execute)
         {
             bool Success = false;
-            try
+
+            using (SqlConnection sqlConnection = new SqlConnection(_databaseConnectionString.ConnectionString))
             {
-                using (SqlConnection sqlConnection = new SqlConnection(_databaseConnectionString.ConnectionString))
+                try
                 {
                     execute(sqlConnection);
                     Success = true;
                 }
+                catch (SqlException e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+            }
 
-            }
-            catch (SqlException e)
-            {
-                Console.WriteLine(e.Message);
-            }
             return Success;
         }
 
+        public string GetConnectionString()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
