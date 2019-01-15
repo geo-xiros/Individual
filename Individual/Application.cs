@@ -15,6 +15,8 @@ namespace Individual
         {
             _db = new ProjectDb();
 
+            DatabaseConnectionChecker databaseConnectionChecker = new DatabaseConnectionChecker(_db);
+
             if (!databaseConnectionChecker.CheckDbConnection())
             {
                 return;
