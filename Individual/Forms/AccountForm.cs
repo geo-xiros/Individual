@@ -122,7 +122,7 @@ namespace Individual
             TextBoxes["Firstname"].Validate = TextBoxValidation.ValidLength;
             TextBoxes["Lastname"].Validate = TextBoxValidation.ValidLength;
             TextBoxes["Role"].Validate = TextBoxValidation.ValidRole;
-            TextBoxes["Role"].Locked = !canEditRole;
+            TextBoxes["Role"].Locked = _loggedUser.IsAdmin();
             this["Role"] = _user.UserRole;
         }
 

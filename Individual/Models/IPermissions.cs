@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace Individual.Models
 {
-    class IPermissions
+    interface IPermissions
     {
+        bool IsAdmin();
+        bool CanView();
+        bool CanEdit();
+        bool CanDelete();
     }
 }
