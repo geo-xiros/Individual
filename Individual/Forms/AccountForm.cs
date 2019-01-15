@@ -8,10 +8,11 @@ namespace Individual
     {
         private User _user;
         private User _loggedUser;
-        public AccountForm(string title,bool canEditRole = false) : base(title)
+        public AccountForm(string title, User loggedUser) : base(title)
         {
             _user = new User(string.Empty, string.Empty, string.Empty);
-            InitTextBoxes(canEditRole);
+            _loggedUser = loggedUser;
+            InitTextBoxes();
             OnFormFilled = AskAndInsert;
         }
 
@@ -19,7 +20,7 @@ namespace Individual
         {
             _user = user;
             _loggedUser = loggedUser;
-            InitTextBoxes(loggedUser.IsAdmin());
+            InitTextBoxes();
             UpdateTextBoxesFromUser();
 
             OnFormFilled = AskAndUpdate;
@@ -113,7 +114,7 @@ namespace Individual
 
 
         }
-        private void InitTextBoxes(bool canEditRole)
+        private void InitTextBoxes()
         {
             TextBoxValidation textBoxValidation = new TextBoxValidation();
             AddTextBoxes(UserFields.Fields);
@@ -122,7 +123,7 @@ namespace Individual
             TextBoxes["Firstname"].Validate = TextBoxValidation.ValidLength;
             TextBoxes["Lastname"].Validate = TextBoxValidation.ValidLength;
             TextBoxes["Role"].Validate = TextBoxValidation.ValidRole;
-            TextBoxes["Role"].Locked = _loggedUser.IsAdmin();
+            TextBoxes["Role"].Locked = !_loggedUser.IsAdmin();
             this["Role"] = _user.UserRole;
         }
 

@@ -26,7 +26,7 @@ namespace Individual.Menus
 
         public void SignUp()
         {
-            AccountForm signUpForm = new AccountForm("Sign Up");
+            AccountForm signUpForm = new AccountForm("Sign Up", new User(string.Empty, string.Empty, string.Empty));
             signUpForm.OnFormSaved = () =>
             {
                 Login(signUpForm["Username"], signUpForm["Password"]);

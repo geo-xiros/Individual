@@ -16,6 +16,7 @@ namespace Individual
 
         static void Main(string[] args)
         {
+
             while (!ConnectToDatabase())
             {
                 ConnectionForm connectionForm = new ConnectionForm()

@@ -17,7 +17,7 @@ namespace Individual.Menus
         #region menu choices
         public void CreateUser()
         {
-            AccountForm createAccountScreen = new AccountForm("Create Account", true);
+            AccountForm createAccountScreen = new AccountForm("Create Account", _loggedUser);
             createAccountScreen.Open();
         }
         public void ViewEditDeleteMenu()
