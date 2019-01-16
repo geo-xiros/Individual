@@ -22,7 +22,7 @@ namespace Individual
             Database.TryToRun((dbcon) =>
             {
                 users = Query<User>(dbcon, "GetUsers", new { userId = 0, userName = "" });
-            }, "Do you want to try get message again ? [y/n] ");
+            }, "Do you want to try get getting user again ? [y/n] ");
 
             return users;
         }
@@ -34,7 +34,7 @@ namespace Individual
             Database.TryToRun((dbcon) =>
             {
                 user = QueryFirst<User>(dbcon, "GetUsers", new { userId, userName = "" });
-            }, "Do you want to try again ? [y/n] ");
+            }, "Do you want to try getting user again ? [y/n] ");
 
             return user;
         }
@@ -64,8 +64,7 @@ namespace Individual
                         }
                     }).FirstOrDefault();
 
-                //user = QueryFirst<User>(dbcon, "GetUsers", new { userId = 0, userName });
-            }, "Do you want to try again ? [y/n] ");
+            }, "Do you want to try getting user again ? [y/n] ");
 
             return user;
         }
@@ -105,7 +104,7 @@ namespace Individual
             Database.TryToRun((dbcon) =>
             {
                 messages = Query<Message>(dbcon, "GetMessages", new { messageId = 0, userId });
-            }, "Do you want to try get message again ? [y/n] ");
+            }, "Do you want to try get messages again ? [y/n] ");
 
             return messages;
 
