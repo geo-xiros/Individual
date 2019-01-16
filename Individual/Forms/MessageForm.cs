@@ -120,6 +120,7 @@ namespace Individual
             if (_message.Update(_RealLoggedUser.UserId))
             {
                 Alerts.Success("Message Updated successfully !!!");
+                MessageToFile.Save(_message);
             }
             else
             {
@@ -137,13 +138,12 @@ namespace Individual
             if (_message.Insert())
             {
                 Alerts.Success("Message Sent successfully !!!");
+                MessageToFile.Save(_message);
             }
             else
             {
                 Alerts.Warning("Unable to Send Message !!!");
             }
-
-
 
         }
 
@@ -155,6 +155,7 @@ namespace Individual
             if (_message.Delete(_RealLoggedUser.UserId))
             {
                 Alerts.Success("Message deleted successfully !!!");
+                MessageToFile.Delete(_message);
             }
             else
             {

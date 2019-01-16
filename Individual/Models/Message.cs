@@ -47,7 +47,6 @@ namespace Individual
         #region Message Insert Update Delete
         public bool Insert()
         {
-            int MessageId = 0;
 
             Database.TryToRun((dbCon) =>
             {
