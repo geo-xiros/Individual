@@ -42,7 +42,7 @@ namespace Individual.Menus
             {
                 User loggedUser = Database.GetUserBy(username);
 
-                loggedUser.LoadMainMenu(_menuController);
+                loggedUser?.LoadMainMenu(_menuController);
             }
             else
             {
