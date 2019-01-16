@@ -39,7 +39,15 @@ namespace Individual.Menus
 
         private List<KeyValuePair<int, string>> ListOfUsers(Func<User, bool> messageFilter)
         {
-            return Database.GetUsers()
+
+            var users = Database.GetUsers();
+
+            if ((users?.Count() ?? 0) == 0)
+            {
+                return new List<KeyValuePair<int, string>>();
+            }
+
+            return users
                 .Where(messageFilter)
                 .OrderBy(u => u.LastName)
                 .Select(u => new KeyValuePair<int, string>(u.UserId, u.ToString()))
