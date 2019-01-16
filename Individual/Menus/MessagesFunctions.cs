@@ -21,11 +21,7 @@ namespace Individual.Menus
         public void SendMessage()
         {
             GlobalFunctions.SelectFromList(
-              () => Database.GetUsers()
-                .Where(u => u.UserId != _loggedUser.UserId)
-                .OrderBy(u => u.LastName)
-                .Select(u => new KeyValuePair<int, string>(u.UserId, u.ToString()))
-                .ToList()
+              () => GetUsersWithoutLoggedUser()
             , (id) => _loggedUser.SendMessage(Database.GetUsers().Where(u => u.UserId == id).First())
             , "Select User"
             , string.Format("A/A\x2502{0,-50}\x2502{1,-50}", "Lastname", "Firstname"));
@@ -50,14 +46,36 @@ namespace Individual.Menus
         #endregion
 
         #region help functions
+        private List<KeyValuePair<int, string>> GetUsersWithoutLoggedUser()
+        {
+
+            var users = Database.GetUsers();
+
+            if ((users?.Count() ?? 0) == 0)
+            {
+                return new List<KeyValuePair<int, string>>();
+            }
+
+            return users
+                .Where(u => u.UserId != _loggedUser.UserId)
+                .OrderBy(u => u.LastName)
+                .Select(u => new KeyValuePair<int, string>(u.UserId, u.ToString()))
+                .ToList();
+        }
         private List<KeyValuePair<int, string>> ListOfMessages(Func<Message, bool> messageFilter)
         {
-            return Database
-                .GetUserMessages(_loggedUser.UserId)
+            var messages = Database.GetUserMessages(_loggedUser.UserId);
+
+            if ((messages?.Count() ?? 0) == 0)
+            {
+                return new List<KeyValuePair<int, string>>();
+            }
+            return messages
                 .Where(messageFilter)
                 .OrderByDescending(m => m.SendAt)
                 .Select(m => new KeyValuePair<int, string>(m.MessageId, m.ToString(_loggedUser)))
                 .ToList();
+
         }
         private void OnMessageSelection(int messageId)
         {
