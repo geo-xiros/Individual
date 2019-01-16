@@ -10,17 +10,13 @@ namespace Individual
     class MessageForm : Form
     {
         private Message _message;
-        private readonly User _loggedUser;
         private readonly User _realLoggedUser;
-        private readonly User _user;
-        private bool IsLoggedUserSender => _loggedUser.UserId == _message.SenderUserId;
-        private bool VieweingOthersMessage => _realLoggedUser != _loggedUser;
+        private bool IsLoggedUserSender;
+        private bool VieweingOthersMessage;
 
-        public MessageForm(User LoggedUser, User user) : base($"Send Message to {user.UserName}")
+        public MessageForm(User sender, User receiver) : base($"Send Message to {receiver.UserName}")
         {
-            _user = user;
-            _realLoggedUser = _user;
-            _message = new Message(LoggedUser, _user, DateTime.Today);
+            _message = new Message(sender, receiver, DateTime.Today);
             TextBoxes = new Dictionary<string, TextBox>()
               {
                   {"Date" , new TextBox("Date", 3, 5, 250) { Locked=true, Text = _message.SendAt.ToLongDateString() } }
@@ -34,9 +30,12 @@ namespace Individual
 
         public MessageForm(Message message, User loggedUser , User realLoggedUser ) : base("View Message")// : base($"View Message {LoggedUser.FullName} Received")
         {
-            _loggedUser = loggedUser;
             _realLoggedUser = realLoggedUser;
             _message = message;
+
+            VieweingOthersMessage = realLoggedUser != loggedUser;
+            IsLoggedUserSender = loggedUser.UserId == message.SenderUserId;
+
             TextBoxes = new Dictionary<string, TextBox>()
               {
                   {"Date" , new TextBox("Date", 3, 5, 250) { Locked=true, Text = _message.SendAt.ToLongDateString() } }
