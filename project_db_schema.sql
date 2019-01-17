@@ -262,9 +262,6 @@ begin
 end
 go
 
-USE [project_db]
-GO
-
 
 
 create procedure GetMessages

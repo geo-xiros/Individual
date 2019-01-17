@@ -23,6 +23,7 @@ namespace Individual
             Properties.Settings.Default.Pass = password;
             Properties.Settings.Default.Save();
         }
+
         #region UserFunctions
         public static IEnumerable<User> GetUsers()
         {
