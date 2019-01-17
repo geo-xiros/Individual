@@ -24,7 +24,7 @@ namespace Individual.Models
                 { ConsoleKey.D2, new MenuItem("2. Messages (Other Users)", mainMenu.OthersMessagesMenu) },
                 { ConsoleKey.D3, new MenuItem("3. Accounts Managment", mainMenu.AccountManagmentMenu) },
                 { ConsoleKey.D4, new MenuItem("4. Current Account Edit", mainMenu.EditUser) },
-                { ConsoleKey.Escape, new MenuItem("[Esc] => Logout", menuController.LoadPreviousMenu) }
+                { ConsoleKey.Escape, new MenuItem("[Esc] => Logout", mainMenu.Loggout) }
             });
         }
         public override bool IsAdmin() => true;

@@ -70,6 +70,14 @@ namespace Individual.Menus
             AccountForm editAccount = new AccountForm("Edit Account", _loggedUser, _loggedUser);
             editAccount.Edit();
         }
+        public void Loggout()
+        {
+            if (MessageBox.Show("Do you really want to log out ? [y/n]") == MessageBox.MessageBoxResult.No)
+            {
+                return;
+            }
+            _menuController.LoadPreviousMenu();
+        }
         #endregion
 
     }

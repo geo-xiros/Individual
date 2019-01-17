@@ -116,7 +116,7 @@ namespace Individual
             menuController.LoadMenu(title, new Dictionary<ConsoleKey, MenuItem>() {
                 { ConsoleKey.D1, new MenuItem("1. Messages", mainMenu.MessagesMenu) },
                 { ConsoleKey.D2, new MenuItem("2. Current Account Edit", mainMenu.EditUser) },
-                { ConsoleKey.Escape, new MenuItem("[Esc] => Logout", menuController.LoadPreviousMenu) }
+                { ConsoleKey.Escape, new MenuItem("[Esc] => Logout", mainMenu.Loggout) }
             });
         }
         public void LoadMessagesMenu(Menu menuController)
