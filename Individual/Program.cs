@@ -18,10 +18,17 @@ namespace Individual
         {
             if (args.Length != 0)
             {
-                if (args[0] == "/connection")
+                if ((args[0] == "/connection") && (args.Count()==5))
                 {
                     Database.SaveConnection(args[1], args[2], args[3], args[4]);
+                    
                 }
+                else
+                {
+                    Console.WriteLine("/connection parameter needs the following parameters:");
+                    Console.WriteLine("\tServer Database User Password");
+                }
+                Environment.Exit(0);
             }
 
             while (!ConnectToDatabase())
