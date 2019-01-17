@@ -79,7 +79,12 @@ namespace Individual
             }
 
             ColoredConsole.Write(new string('\x2500', Console.WindowWidth), ConsoleColor.White);
-            ColoredConsole.WriteLine($"\n      [Esc] => Back\n  [Page Up] => Previous Set\n[Page Down] => Next Set", ConsoleColor.DarkGray);
+
+            int totalpages = (_allMenuChoices.Count() / _MaxItemsPerPage) + 1;
+            int currentPage = (_menuSkip / _MaxItemsPerPage) + 1;
+
+            ColoredConsole.Write(string.Format("{0," + (Console.WindowWidth - 1) + "}\r", $"Page [{currentPage}/{totalpages}]"), ConsoleColor.Yellow);
+            ColoredConsole.WriteLine($"\n      [Esc] => Back\n  [Page Up] => Previous Page\n[Page Down] => Next Page", ConsoleColor.DarkGray);
 
         }
         private void GeneratePageMenuChoices()
