@@ -27,11 +27,7 @@ namespace Individual
 
         private void SaveSettings()
         {
-            Properties.Settings.Default.SqlServer = this["Sql Server"];
-            Properties.Settings.Default.Database = this["Database Name"];
-            Properties.Settings.Default.User = this["User"];
-            Properties.Settings.Default.Pass = this["Password"];
-            Properties.Settings.Default.Save();
+            Database.SaveConnection(this["Sql Server"], this["Database Name"], this["User"], this["Password"]);
         }
 
     }

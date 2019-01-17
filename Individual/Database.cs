@@ -6,6 +6,8 @@ using System.Data.SqlClient;
 using Dapper;
 using System.Security.Cryptography;
 using Individual.Models;
+using System.IO;
+using System.Text;
 
 namespace Individual
 {
@@ -13,7 +15,31 @@ namespace Individual
     {
         static string ConnectionString() => $"Server={Properties.Settings.Default.SqlServer};Database={Properties.Settings.Default.Database};User Id={Properties.Settings.Default.User};Password={Properties.Settings.Default.Pass}";
         public static bool DatabaseError { get; private set; }
+        public static void SaveConnection(string sqlServer, string database, string user, string password)
+        {
+            Properties.Settings.Default.SqlServer = sqlServer;
+            Properties.Settings.Default.Database = database;
+            Properties.Settings.Default.User = user;
+            Properties.Settings.Default.Pass = password;
+            Properties.Settings.Default.Save();
+        }
+        public static void CreateDb(string schemaFileName)
+        {
+            string fullPath = Path.Combine(Environment.CurrentDirectory, schemaFileName);
+            string[] schemaLines = File.ReadAllLines(fullPath);
 
+            Database.TryToRun((dbCon) => {
+                StringBuilder sb = new StringBuilder();
+
+                foreach (string line in schemaLines)
+                {
+
+                    dbCon.Execute();
+                }
+            },"Failed to Create Database.");
+
+
+        }
         #region UserFunctions
         public static IEnumerable<User> GetUsers()
         {

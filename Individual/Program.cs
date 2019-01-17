@@ -16,6 +16,23 @@ namespace Individual
 
         static void Main(string[] args)
         {
+            if (args.Length != 0)
+            {
+                switch (args[0])
+                {
+                    case "/connection":
+                        Database.SaveConnection(args[1], args[2], args[3], args[4]);
+                        break;
+                    case "/create":
+                        Database.CreateDb(args[1]);
+                        break;
+                    case "/update":
+                        break;
+
+                }
+                Environment.Exit(0);
+
+            }
 
             while (!ConnectToDatabase())
             {
