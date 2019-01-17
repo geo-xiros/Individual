@@ -319,17 +319,4 @@ end
 GO
 
 
-execute InsertUser 'admin', 'admin', 'Admin', 'Super', 'Super'
-go
 
-execute InsertUser 's', '1234', 'User', 'simple', 'Simple'
-go
-
-execute InsertUser 'v', '1234', 'User', 'View', 'View'
-go
-
-execute InsertUser 've', '1234', 'User', 'ViewEdit', 'ViewEdit'
-go
-
-execute InsertUser 'ved', '1234', 'User', 'ViewEditDelete', 'ViewEditDelete'
-go

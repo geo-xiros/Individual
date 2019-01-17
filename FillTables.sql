@@ -46,4 +46,7 @@ print @VEDId
 INSERT INTO messages ([senderUserId], [receiverUserId], [sendAt], [subject], [body]) VALUES 
  (@VEDId, @AdminId, '2019-01-01 12:30', 'Need View Edit Delete Permissions', 'For testing purpose...')
 ,(@AdminId, @VEDId, '2019-01-01 12:35', 'Cant do that', 'For Administrator security purpose...')
+,(@VEDId, @AdminId, '2019-01-01 12:40', 'I am your Boss...', 'Do it now!!!')
+,(@AdminId, @VEDId, '2019-01-01 12:41', 'Done!!!', null)
+
 
