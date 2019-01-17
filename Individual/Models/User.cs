@@ -37,7 +37,7 @@ namespace Individual
             UserRole = "Simple";
         }
 
-        public string FullName => $"{FirstName} {LastName}";
+        public string FullName => $"{LastName} {FirstName}";
 
         public virtual bool IsAdmin() => false;
         public virtual bool CanView() => false;

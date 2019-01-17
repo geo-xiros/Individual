@@ -16,7 +16,7 @@ namespace Individual.Models
         }
         public override void LoadMainMenu(Menu menuController)
         {
-            string title = $"{FullName}$\\Main Menu ";
+            string title = $"{FullName}$\\Main Menu";
             MainFunctions mainMenu = new MainFunctions(this, menuController);
 
             menuController.LoadMenu(title, new Dictionary<ConsoleKey, MenuItem>() {

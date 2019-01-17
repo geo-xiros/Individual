@@ -15,7 +15,7 @@ namespace Individual
         private bool _viewingOwnedMessages;
         private User _RealLoggedUser;
 
-        public MessageForm(User sender, User receiver) : base($"Send Message to {receiver.UserName}")
+        public MessageForm(User sender, User receiver) : base($"Send Message to {receiver.FullName}")
         {
             _message = new Message(sender, receiver, DateTime.Today);
             TextBoxes = new Dictionary<string, TextBox>()
