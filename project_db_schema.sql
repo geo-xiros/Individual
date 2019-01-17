@@ -276,8 +276,8 @@ begin
 	if @messageId<>0
 	begin
 		select messages.*
-		, concat(sender.[firstName],' ',sender.[lastName]) as senderUserName
-		, concat(receiver.[firstName],' ',receiver.[lastName]) as receiverUserName
+		, concat(sender.[lastName],' ',sender.firstName) as senderUserName
+		, concat(receiver.[lastName],' ',receiver.firstName) as receiverUserName
 		from messages 
 			inner join users sender on messages.senderUserId = sender.userId 
 			inner join users receiver on messages.receiverUserId = receiver.userId 
@@ -286,8 +286,8 @@ begin
 	else
 	begin
 		select messages.*
-		, concat(sender.[firstName],' ',sender.[lastName]) as senderUserName
-		, concat(receiver.[firstName],' ',receiver.[lastName]) as receiverUserName
+		, concat(sender.[lastName],' ',sender.firstName) as senderUserName
+		, concat(receiver.[lastName],' ',receiver.firstName) as receiverUserName
 		from messages 
 			inner join users sender on messages.senderUserId = sender.userId 
 			inner join users receiver on messages.receiverUserId = receiver.userId 
@@ -319,16 +319,17 @@ end
 GO
 
 
---CREATE TRIGGER [dbo].[T_users_DTrigxx] ON [dbo].[users] FOR DELETE AS
---SET NOCOUNT ON
---	rollback
---GO
+execute InsertUser 'admin', 'admin', 'Admin', 'Super', 'Super'
+go
 
---create unique index ix_Users_firstName on users (firstName)
---go
+execute InsertUser 's', '1234', 'User', 'simple', 'Simple'
+go
 
---drop trigger[dbo].[T_users_DTrigxx]
---go
+execute InsertUser 'v', '1234', 'User', 'View', 'View'
+go
 
---drop index users.ix_Users_firstName
---go
+execute InsertUser 've', '1234', 'User', 'ViewEdit', 'ViewEdit'
+go
+
+execute InsertUser 'ved', '1234', 'User', 'ViewEditDelete', 'ViewEditDelete'
+go
