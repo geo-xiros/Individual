@@ -110,7 +110,7 @@ namespace Individual
         #endregion
         public virtual void LoadMainMenu(Menu menuController)
         {
-            string title = $"{FullName}$\\Main Menu ";
+            string title = $"{FullName}$\\Main Menu";
             MainFunctions mainMenu = new MainFunctions(this, menuController);
 
             menuController.LoadMenu(title, new Dictionary<ConsoleKey, MenuItem>() {
@@ -121,7 +121,7 @@ namespace Individual
         }
         public void LoadMessagesMenu(Menu menuController)
         {
-            string title = $"{FullName}$\\Main Menu\\Messages";
+            string title = $"{menuController.Title}\\Messages";
             MessagesFunctions messagesMenu = new MessagesFunctions(this, this);
             menuController.LoadMenu(title, new Dictionary<ConsoleKey, MenuItem>() {
                 { ConsoleKey.D1, new MenuItem("1. Send", messagesMenu.SendMessage) },

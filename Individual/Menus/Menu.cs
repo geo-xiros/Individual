@@ -9,7 +9,7 @@ namespace Individual.Menus
     class Menu
     {
         private static string Line => new string('\x2500', Console.WindowWidth);
-        private string _title;
+        public string Title { get; set; }
         private Dictionary<ConsoleKey, MenuItem> _menuItems;
         private Stack<KeyValuePair<string, Dictionary<ConsoleKey, MenuItem>>> _previousMenus;
 
@@ -19,26 +19,26 @@ namespace Individual.Menus
         }
         public void LoadMenu(string title, Dictionary<ConsoleKey, MenuItem> menuItems)
         {
-            if (_title != null)
+            if (Title != null)
             {
                 _previousMenus.Push(
-                    new KeyValuePair<string, Dictionary<ConsoleKey, MenuItem>>(_title, _menuItems));
+                    new KeyValuePair<string, Dictionary<ConsoleKey, MenuItem>>(Title, _menuItems));
             }
 
             _menuItems = menuItems;
-            _title = title;
+            Title = title;
         }
         public void LoadPreviousMenu()
         {
             if (_previousMenus.Count() == 0)
             {
-                _title = null;
+                Title = null;
                 _menuItems = null;
             }
             else
             {
                 var titleWithMenuItems = _previousMenus.Pop();
-                _title = titleWithMenuItems.Key;
+                Title = titleWithMenuItems.Key;
                 _menuItems = titleWithMenuItems.Value;
             }
         }
@@ -60,7 +60,7 @@ namespace Individual.Menus
             Console.ResetColor();
             Console.Clear();
             Console.CursorVisible = false;
-            ColoredConsole.WriteLine(_title, ConsoleColor.Yellow);
+            ColoredConsole.WriteLine(Title, ConsoleColor.Yellow);
             ColoredConsole.WriteLine(Line, ConsoleColor.White);
 
             foreach (var item in _menuItems)

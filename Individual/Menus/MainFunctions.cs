@@ -59,7 +59,7 @@ namespace Individual.Menus
         {
             AccountsFunctions accountsMenu = new AccountsFunctions(_loggedUser);
 
-            _menuController.LoadMenu($"{_loggedUser.FullName}$\\Main Menu\\Accounts Managment", new Dictionary<ConsoleKey, MenuItem>() {
+            _menuController.LoadMenu($"{_menuController.Title}\\Accounts Managment", new Dictionary<ConsoleKey, MenuItem>() {
                 { ConsoleKey.D1, new MenuItem("1. Create", accountsMenu.CreateUser) },
                 { ConsoleKey.D2, new MenuItem("2. View/Edit/Delete", accountsMenu.ViewEditDeleteMenu) },
                 { ConsoleKey.Escape, new MenuItem("[Esc] => Back", _menuController.LoadPreviousMenu) }

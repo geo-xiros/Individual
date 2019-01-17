@@ -29,7 +29,7 @@ namespace Individual.Models
         }
         public override void LoadOthersMessagesMenu(Menu menuController, User messagesUser)
         {
-            string title = $"{FullName}$\\Main Menu\\{messagesUser.FullName}$\\Messages ";
+            string title = $"{menuController.Title}\\{messagesUser.FullName}$\\Messages";
             MessagesFunctions messagesMenu = new MessagesFunctions(messagesUser, this);
             menuController.LoadMenu(title, new Dictionary<ConsoleKey, MenuItem>() {
                 { ConsoleKey.D1, new MenuItem("1. Received", messagesMenu.ViewReceivedMessages) },
