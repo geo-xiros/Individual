@@ -63,10 +63,16 @@ namespace Individual
 
         private void Show()
         {
+            int totalpages = (_allMenuChoices.Count() / _MaxItemsPerPage) + 1;
+            int currentPage = (_menuSkip / _MaxItemsPerPage) + 1;
+
             Console.CursorVisible = false;
             Console.ResetColor();
             Console.Clear();
-            ColoredConsole.Write(string.Format("{0," + (Console.WindowWidth - 1) + "}\r", $"Total List Rows : {_allMenuChoices.Count()} "), ConsoleColor.Green);
+            if (totalpages > 1)
+            {
+                ColoredConsole.Write(string.Format("{0," + (Console.WindowWidth - 1) + "}\r", $"Page [{currentPage}/{totalpages}]"), ConsoleColor.Yellow);
+            }
             ColoredConsole.WriteLine($"{_menu}", ConsoleColor.Yellow);
             ColoredConsole.Write(new string('\x2500', Console.WindowWidth), ConsoleColor.White);
             ColoredConsole.WriteLine(_titles, ConsoleColor.White);
@@ -80,11 +86,13 @@ namespace Individual
 
             ColoredConsole.Write(new string('\x2500', Console.WindowWidth), ConsoleColor.White);
 
-            int totalpages = (_allMenuChoices.Count() / _MaxItemsPerPage) + 1;
-            int currentPage = (_menuSkip / _MaxItemsPerPage) + 1;
 
-            ColoredConsole.Write(string.Format("{0," + (Console.WindowWidth - 1) + "}\r", $"Page [{currentPage}/{totalpages}]"), ConsoleColor.Yellow);
-            ColoredConsole.WriteLine($"\n      [Esc] => Back\n  [Page Up] => Previous Page\n[Page Down] => Next Page", ConsoleColor.DarkGray);
+            ColoredConsole.Write(string.Format("{0," + (Console.WindowWidth - 1) + "}\r", $"Total List Rows : {_allMenuChoices.Count()} "), ConsoleColor.Green);
+            ColoredConsole.WriteLine($"      [Esc] => Back", ConsoleColor.DarkGray);
+            if (totalpages>1)
+            {
+                ColoredConsole.WriteLine($"  [Page Up] => Previous Page\n[Page Down] => Next Page", ConsoleColor.DarkGray);
+            }
 
         }
         private void GeneratePageMenuChoices()

@@ -8,7 +8,7 @@ namespace Individual.Menus
 {
     class Menu
     {
-        private static string Line => new string('\x2500', Console.WindowWidth);
+        private static string Line => new string('\x2500', Console.WindowWidth-1);
         public string Title { get; set; }
         private Dictionary<ConsoleKey, MenuItem> _menuItems;
         private Stack<KeyValuePair<string, Dictionary<ConsoleKey, MenuItem>>> _previousMenus;
@@ -61,7 +61,7 @@ namespace Individual.Menus
             Console.Clear();
             Console.CursorVisible = false;
             ColoredConsole.WriteLine(Title, ConsoleColor.Yellow);
-            ColoredConsole.WriteLine(Line, ConsoleColor.White);
+            ColoredConsole.WriteLine($"{Line}\n", ConsoleColor.White);
 
             foreach (var item in _menuItems)
             {
