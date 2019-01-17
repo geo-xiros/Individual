@@ -23,23 +23,6 @@ namespace Individual
             Properties.Settings.Default.Pass = password;
             Properties.Settings.Default.Save();
         }
-        public static void CreateDb(string schemaFileName)
-        {
-            string fullPath = Path.Combine(Environment.CurrentDirectory, schemaFileName);
-            string[] schemaLines = File.ReadAllLines(fullPath);
-
-            Database.TryToRun((dbCon) => {
-                StringBuilder sb = new StringBuilder();
-
-                foreach (string line in schemaLines)
-                {
-
-                    dbCon.Execute();
-                }
-            },"Failed to Create Database.");
-
-
-        }
         #region UserFunctions
         public static IEnumerable<User> GetUsers()
         {

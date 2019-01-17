@@ -18,20 +18,10 @@ namespace Individual
         {
             if (args.Length != 0)
             {
-                switch (args[0])
+                if (args[0] == "/connection")
                 {
-                    case "/connection":
-                        Database.SaveConnection(args[1], args[2], args[3], args[4]);
-                        break;
-                    case "/create":
-                        Database.CreateDb(args[1]);
-                        break;
-                    case "/update":
-                        break;
-
+                    Database.SaveConnection(args[1], args[2], args[3], args[4]);
                 }
-                Environment.Exit(0);
-
             }
 
             while (!ConnectToDatabase())
@@ -58,7 +48,7 @@ namespace Individual
             return Database.TryToRun((dbConnection) =>
             {
                 dbConnection.Close();
-            },"Do you want to try reconnecting with the Database ? [y/n]");
+            }, "Do you want to try reconnecting with the Database ? [y/n]");
         }
         private static bool AddAdminUser()
         {
@@ -74,6 +64,8 @@ namespace Individual
         }
         private static void RunApplication()
         {
+            Console.Title = "Console app";
+
             Menu menu = new Menu();
             LoadStartUpMenu(menu);
 
