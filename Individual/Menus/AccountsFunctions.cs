@@ -25,7 +25,7 @@ namespace Individual.Menus
             GlobalFunctions.SelectFromList(
                 () => ListOfUsers(u => u.UserId != _loggedUser.UserId)
               , OnUserSelection
-              , "Select User"
+              , "Select User to edit"
               , string.Format("A/A\x2502{0,-50}\x2502{1,-50}", "Lastname", "Firstname"));
         }
         #endregion

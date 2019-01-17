@@ -23,7 +23,7 @@ namespace Individual.Menus
             GlobalFunctions.SelectFromList(
               () => GetUsersWithoutLoggedUser()
             , (id) => _loggedUser.SendMessage(Database.GetUsers().Where(u => u.UserId == id).First())
-            , "Select User"
+            , "Select User to send message"
             , string.Format("A/A\x2502{0,-50}\x2502{1,-50}", "Lastname", "Firstname"));
         }
         public void ViewReceivedMessages()

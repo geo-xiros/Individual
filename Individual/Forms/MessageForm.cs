@@ -45,12 +45,12 @@ namespace Individual
 
             if (_isSender)
             {
-                Title = $"View Message {_message.SenderUserName} Sent";
+                Title = $"{_message.SenderUserName} Sent Message";
                 TextBoxes.Add("To", new TextBox("To", 3, 3, 80) { Locked = true, Text = _message.ReceiverUserName });
             }
             else
             {
-                Title = $"View Message {_message.ReceiverUserName} Received";
+                Title = $"{_message.ReceiverUserName} Received Message";
                 TextBoxes.Add("From", new TextBox("From", 3, 3, 80) { Locked = true, Text = _message.SenderUserName });
             }
 
