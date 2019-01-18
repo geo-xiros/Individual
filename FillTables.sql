@@ -47,7 +47,8 @@ declare @SUId int
 declare @VId int
 declare @VEId int
 declare @VEDId int
-
+declare @afdempkstr int 
+declare @gpasp int 
 
 declare @fId int
 declare @lId int
@@ -60,6 +61,9 @@ select @lId = userId from users where users.userName= 'geo.lyb'
 select @kId = userId from users where users.userName= 'geo.kal'
 select @xId = userId from users where users.userName= 'geo.xiros'
 select @dId = userId from users where users.userName= 'nick.diak'
+select @afdempkstr = userId from users where users.userName= 'afdempkstr'
+select @gpasp = userId from users where users.userName= 'geo.pasp'
+
 
 select @AdminId = userId from users where users.userName= 'admin'
 select @SUId = userId from users where users.userName= 's'
@@ -104,6 +108,18 @@ INSERT INTO messages ([senderUserId], [receiverUserId], [sendAt], [subject], [bo
 ,(@dId, @xId, '2019-01-17 21:48', 'μετα το μαθημα με τον πασπαρακη τι εχεις να πεις ???', null)
 ,(@xId, @dId, '2019-01-17 21:49', 'Refactoring Database big time!!!', 'χιχιχι')
 
+,(@afdempkstr,@fId, '2019-01-15 18:00', 'Συμβουλη για το project!!!', 'keep it simple')
+,(@afdempkstr,@fId, '2019-01-15 18:00', 'Συμβουλη για το project!!!', 'keep it simple')
+,(@afdempkstr,@fId, '2019-01-15 18:00', 'Συμβουλη για το project!!!', 'keep it simple')
+,(@afdempkstr,@fId, '2019-01-15 18:00', 'Συμβουλη για το project!!!', 'keep it simple')
+,(@afdempkstr,@fId, '2019-01-15 18:00', 'Συμβουλη για το project!!!', 'keep it simple')
+,(@afdempkstr,@fId, '2019-01-15 18:00', 'Συμβουλη για το project!!!', 'keep it simple')
+,(@afdempkstr,@fId, '2019-01-15 18:00', 'Συμβουλη για το project!!!', 'keep it simple')
 
+,(@afdempkstr,@gpasp, '2019-01-18 10:00', 'Καλημερα πως πηγε η ομαδα χθες ???', null)
+,(@gpasp,@afdempkstr, '2019-01-18 10:05', 'Πετάει.... στα συννεφα !!!', null)
 
+,(@afdempkstr,@gpasp, '2019-01-18 10:06', 'ουπς ...', null)
+,(@gpasp,@afdempkstr, '2019-01-18 10:07', 'Πλακα κανω οι C#δες τα σπανε...!!!', null)
+,(@afdempkstr,@gpasp, '2019-01-18 10:08', 'Ειπα κι εγω... εχει μαλλιασει η γλωσσα μου !!!', null)
 

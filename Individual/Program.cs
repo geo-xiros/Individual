@@ -8,6 +8,7 @@ using System.Reflection;
 using Individual.Menus;
 using System.Threading;
 using Individual.Models;
+using Dapper;
 
 namespace Individual
 {
@@ -169,7 +170,12 @@ namespace Individual
         {
             return Database.TryToRun((dbConnection) =>
             {
-                dbConnection.Close();
+                using (SqlCommand command = new SqlCommand("exec ('USE ' + @dbname)", dbConnection))
+                {
+                    command.Parameters.AddWithValue("@dbname", Properties.Settings.Default.Database);
+                    command.ExecuteNonQuery();
+                    dbConnection.Close();
+                }
             }, "Do you want to try reconnecting with the Database ? [y/n]");
         }
         private static bool AddAdminUser()
