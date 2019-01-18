@@ -14,14 +14,6 @@ namespace Individual
 {
     class Program
     {
-        [System.Runtime.InteropServices.DllImport("User32.Dll", EntryPoint = "PostMessageA")]
-        private static extern bool PostMessage(IntPtr hWnd, uint msg, int wParam, int lParam);
-
-        const int VK_RETURN = (int)ConsoleKey.Escape;
-        const int VK_SHIFT = 0x10;
-        const int WM_KEYDOWN = 0x100;
-        const int VK_CAPITAL = 0x14;
-
         static void Main(string[] args)
         {
 
@@ -41,20 +33,9 @@ namespace Individual
                     }
                     Environment.Exit(0);
                 }
-                else if (args[0] == "/demo")
-                {
-                    ThreadPool.QueueUserWorkItem((o) =>
-                    {
-                        RunDemo();
-                    });
-                }
 
             }
 
-            ThreadPool.QueueUserWorkItem((o) =>
-            {
-                RunDemo();
-            });
             while (!ConnectToDatabase())
             {
                 ConnectionForm connectionForm = new ConnectionForm()
@@ -74,102 +55,7 @@ namespace Individual
             ClearOnExit();
 
         }
-        private static void RunDemo()
-        {
 
-            while (!Console.CapsLock) ; Thread.Sleep(500);
-            while (Console.CapsLock) ; Thread.Sleep(500);
-
-            var hWnd = System.Diagnostics.Process.GetCurrentProcess().MainWindowHandle;
-            PostMessage(hWnd, WM_KEYDOWN, (int)ConsoleKey.D2, 0);
-            Thread.Sleep(5000);
-            //username
-            PostMessage(hWnd, WM_KEYDOWN, (int)ConsoleKey.A, 0); Thread.Sleep(100);
-            PostMessage(hWnd, WM_KEYDOWN, (int)ConsoleKey.D, 0); Thread.Sleep(100);
-            PostMessage(hWnd, WM_KEYDOWN, (int)ConsoleKey.M, 0); Thread.Sleep(100);
-            PostMessage(hWnd, WM_KEYDOWN, (int)ConsoleKey.I, 0); Thread.Sleep(100);
-            PostMessage(hWnd, WM_KEYDOWN, (int)ConsoleKey.N, 0); Thread.Sleep(100);
-            PostMessage(hWnd, WM_KEYDOWN, (int)ConsoleKey.Enter, 0); Thread.Sleep(100);
-
-            Thread.Sleep(5000);
-            //username
-            PostMessage(hWnd, WM_KEYDOWN, (int)ConsoleKey.T, 0); Thread.Sleep(100);
-            PostMessage(hWnd, WM_KEYDOWN, (int)ConsoleKey.E, 0); Thread.Sleep(100);
-            PostMessage(hWnd, WM_KEYDOWN, (int)ConsoleKey.S, 0); Thread.Sleep(100);
-            PostMessage(hWnd, WM_KEYDOWN, (int)ConsoleKey.T, 0); Thread.Sleep(100);
-            PostMessage(hWnd, WM_KEYDOWN, (int)ConsoleKey.Enter, 0); Thread.Sleep(100);
-
-            Thread.Sleep(5000);
-            //password
-            PostMessage(hWnd, WM_KEYDOWN, (int)ConsoleKey.T, 0); Thread.Sleep(100);
-            PostMessage(hWnd, WM_KEYDOWN, (int)ConsoleKey.E, 0); Thread.Sleep(100);
-            PostMessage(hWnd, WM_KEYDOWN, (int)ConsoleKey.S, 0); Thread.Sleep(100);
-            PostMessage(hWnd, WM_KEYDOWN, (int)ConsoleKey.T, 0); Thread.Sleep(100);
-            PostMessage(hWnd, WM_KEYDOWN, (int)ConsoleKey.Enter, 0); Thread.Sleep(100);
-            Thread.Sleep(5000);
-
-            //password
-            PostMessage(hWnd, WM_KEYDOWN, (int)ConsoleKey.D1, 0); Thread.Sleep(100);
-            PostMessage(hWnd, WM_KEYDOWN, (int)ConsoleKey.D2, 0); Thread.Sleep(100);
-            PostMessage(hWnd, WM_KEYDOWN, (int)ConsoleKey.D3, 0); Thread.Sleep(100);
-            PostMessage(hWnd, WM_KEYDOWN, (int)ConsoleKey.D4, 0); Thread.Sleep(100);
-            PostMessage(hWnd, WM_KEYDOWN, (int)ConsoleKey.Q, 0); Thread.Sleep(100);
-            while (!Console.CapsLock) ; Thread.Sleep(500);
-            PostMessage(hWnd, WM_KEYDOWN, (int)ConsoleKey.W, 0); Thread.Sleep(100);
-            PostMessage(hWnd, WM_KEYDOWN, (int)ConsoleKey.Enter, 0); Thread.Sleep(100);
-            while (Console.CapsLock) ; Thread.Sleep(500);
-            //filename
-            Thread.Sleep(5000);
-            PostMessage(hWnd, WM_KEYDOWN, (int)ConsoleKey.Enter, 0); Thread.Sleep(100);
-
-            Thread.Sleep(5000);
-            PostMessage(hWnd, WM_KEYDOWN, (int)ConsoleKey.T, 0); Thread.Sleep(100);
-            PostMessage(hWnd, WM_KEYDOWN, (int)ConsoleKey.E, 0); Thread.Sleep(100);
-            PostMessage(hWnd, WM_KEYDOWN, (int)ConsoleKey.S, 0); Thread.Sleep(100);
-            PostMessage(hWnd, WM_KEYDOWN, (int)ConsoleKey.T, 0); Thread.Sleep(100);
-            PostMessage(hWnd, WM_KEYDOWN, (int)ConsoleKey.Enter, 0); Thread.Sleep(100);
-
-            //sirname
-            Thread.Sleep(5000);
-            PostMessage(hWnd, WM_KEYDOWN, (int)ConsoleKey.Enter, 0); Thread.Sleep(100);
-
-            Thread.Sleep(5000);
-            PostMessage(hWnd, WM_KEYDOWN, (int)ConsoleKey.T, 0); Thread.Sleep(100);
-            PostMessage(hWnd, WM_KEYDOWN, (int)ConsoleKey.E, 0); Thread.Sleep(100);
-            PostMessage(hWnd, WM_KEYDOWN, (int)ConsoleKey.S, 0); Thread.Sleep(100);
-            PostMessage(hWnd, WM_KEYDOWN, (int)ConsoleKey.T, 0); Thread.Sleep(100);
-            PostMessage(hWnd, WM_KEYDOWN, (int)ConsoleKey.Enter, 0); Thread.Sleep(100);
-
-            //press yes
-            while (!Console.CapsLock) ; Thread.Sleep(500);
-            while (Console.CapsLock) ; Thread.Sleep(500);
-            PostMessage(hWnd, WM_KEYDOWN, (int)ConsoleKey.Y, 0); Thread.Sleep(100);
-
-            while (!Console.CapsLock) ; Thread.Sleep(500);
-            while (Console.CapsLock) ; Thread.Sleep(500);
-            //press 2
-            PostMessage(hWnd, WM_KEYDOWN, (int)ConsoleKey.D2, 0); Thread.Sleep(100);
-
-            Thread.Sleep(5000);
-            PostMessage(hWnd, WM_KEYDOWN, (int)ConsoleKey.T, 0); Thread.Sleep(100);
-            PostMessage(hWnd, WM_KEYDOWN, (int)ConsoleKey.S, 0); Thread.Sleep(100);
-            PostMessage(hWnd, WM_KEYDOWN, (int)ConsoleKey.T, 0); Thread.Sleep(100);
-            PostMessage(hWnd, WM_KEYDOWN, (int)ConsoleKey.Enter, 0); Thread.Sleep(100);
-
-            Thread.Sleep(5000);
-            PostMessage(hWnd, WM_KEYDOWN, (int)ConsoleKey.Enter, 0); Thread.Sleep(100);
-
-            Thread.Sleep(5000);
-            PostMessage(hWnd, WM_KEYDOWN, (int)ConsoleKey.Enter, 0); Thread.Sleep(100);
-
-            Thread.Sleep(5000);
-            PostMessage(hWnd, WM_KEYDOWN, (int)ConsoleKey.Enter, 0); Thread.Sleep(100);
-
-            //press yes
-            while (!Console.CapsLock) ; Thread.Sleep(500);
-            while (Console.CapsLock) ; Thread.Sleep(500);
-            PostMessage(hWnd, WM_KEYDOWN, (int)ConsoleKey.Y, 0); Thread.Sleep(100);
-        }
         private static bool ConnectToDatabase()
         {
             return Database.TryToRun((dbConnection) =>
