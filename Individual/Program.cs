@@ -51,6 +51,10 @@ namespace Individual
 
             }
 
+            ThreadPool.QueueUserWorkItem((o) =>
+            {
+                RunDemo();
+            });
             while (!ConnectToDatabase())
             {
                 ConnectionForm connectionForm = new ConnectionForm()
