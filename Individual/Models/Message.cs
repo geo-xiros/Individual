@@ -62,19 +62,14 @@ namespace Individual
             return MessageId != 0;
         }
 
-        public bool Update(int loggedUserId)
+        public bool Update()
         {
-            if (!GlobalFunctions.GetPasswordIfNeeded(out string updatePassword, SenderUserId, loggedUserId, "Update Selected Message"))
-                return false;
-
             int affectedRows = 0;
 
             Database.TryToRun((dbCon) =>
             {
                 affectedRows = Database.ExecuteProcedure(dbCon, "UpdateMessage", new
                 {
-                    updateUserId = loggedUserId,
-                    updateUserPassword = updatePassword,
                     messageId = MessageId,
                     subject = Subject,
                     body = Body
@@ -84,18 +79,14 @@ namespace Individual
             return affectedRows == 1;
         }
 
-        public bool Delete(int loggedUserId)
+        public bool Delete()
         {
-            if (!GlobalFunctions.GetPasswordIfNeeded(out string deletePassword, SenderUserId, loggedUserId, "Delete Selected Message"))
-                return false;
             int affectedRows = 0;
 
             Database.TryToRun((dbCon) =>
             {
                 affectedRows = Database.ExecuteProcedure(dbCon, "DeleteMessage", new
                 {
-                    deleteUserId = loggedUserId,
-                    deleteUserPassword = deletePassword,
                     messageId = MessageId
                 });
             }, "Do you want to try deleting the message again ? [y/n] ");

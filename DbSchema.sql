@@ -201,53 +201,24 @@ end
 go
 
 create procedure DeleteMessage
-	  @deleteUserId int
-	, @deleteUserPassword varchar(30) 
-	, @messageId int
-
+	@messageId int
 as 
 begin
-	declare @okToDelete bit;
-	--ok to delete without delete permission only owned messages
-	select @okToDelete=count(*) from messages where messageId=@messageId and senderUserId=@deleteUserId
-
-
-	if @okToDelete=0
-		--allow deletion when user has delete permission
-		select @okToDelete = count(*)
-		from users 
-		where  userPassword = HASHBYTES('SHA2_512', @deleteUserPassword+CAST(salt AS NVARCHAR(36)))
-	  	   and userId = @deleteUserId and userRole like'%Delete%' or userRole ='Super'
-	
-	if @okToDelete=1
-		delete from messages where messageId=@messageId
+	delete from messages where messageId=@messageId
 	
 end
 go
 
 create procedure UpdateMessage
-	  @updateUserId int
-	, @updateUserPassword varchar(30) 
-	, @messageId int
+	  @messageId int
 	, @subject varchar(80)
 	, @body varchar(255) 
 as 
 begin
-	declare @okToDelete bit;
-	select @okToDelete=count(*) from messages where messageId=@messageId and senderUserId=@updateUserId
-
-	if @okToDelete=0
-		select @okToDelete = count(*)
-		from users 
-		where  userPassword = HASHBYTES('SHA2_512', @updateUserPassword+CAST(salt AS NVARCHAR(36)))
-	  	    and userId = @updateUserId and userRole like'%Edit%' or userRole ='Super'
-	
-	if @okToDelete=1
 		update messages set
 		  [subject] = @subject
 		, [body] = @body
 		where messageId=@messageId
-	
 end
 go
 
@@ -261,11 +232,6 @@ begin
 	
 end
 go
-
-USE [project_db]
-GO
-
-
 
 create procedure GetMessages
 	  @messageId int

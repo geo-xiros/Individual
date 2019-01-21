@@ -117,7 +117,7 @@ namespace Individual
             _message.Subject = this["Subject"];
             _message.Body = this["Body"];
 
-            if (_message.Update(_RealLoggedUser.UserId))
+            if (_message.Update())
             {
                 Alerts.Success("Message Updated successfully !!!");
                 MessageToFile.Save(_message);
@@ -152,7 +152,7 @@ namespace Individual
             if (MessageBox.Show("Delete Selected Message ? [y/n] ") == MessageBox.MessageBoxResult.No)
                 return;
 
-            if (_message.Delete(_RealLoggedUser.UserId))
+            if (_message.Delete())
             {
                 Alerts.Success("Message deleted successfully !!!");
                 MessageToFile.Delete(_message);
