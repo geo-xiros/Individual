@@ -19,7 +19,7 @@ namespace Individual
         {
             _message = new Message(sender, receiver, DateTime.Now);
 
-            AddTextBoxes(FieldsInfo.Fields(typeof(Message)));
+            AddTextBoxes(FieldsInfo.Fields(typeof(Message), (f) => !(f.Name =="From" || f.Name=="To") ));
 
             TextBoxes["Date"].Text = _message.SendAtDate;
             TextBoxes["Time"].Text = _message.SendAtTime;

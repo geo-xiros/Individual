@@ -18,7 +18,9 @@ namespace Individual
         public int SenderUserId { get; set; }
         public int ReceiverUserId { get; set; }
 
+        [PropertyInfo("From", "From", 50, 1)]
         public string SenderUserName { get; set; }
+        [PropertyInfo("To", "To", 50, 2)]
         public string ReceiverUserName { get; set; }
 
         public DateTime SendAt { get; set; }
