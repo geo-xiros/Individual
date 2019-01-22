@@ -1,19 +1,25 @@
 using System;
+using System.Reflection;
 using System.Collections.Generic;
 using Individual.Menus;
 using Individual.Models;
 
 namespace Individual
 {
-    class User: IPermissions
+    class User : IPermissions
     {
-        private Database _dbContext;
 
         public int UserId { get; set; }
+
+        [Individual.Models.PropertyInfo("Username", "User Name", 30, 1)]
         public string UserName { get; set; }
+        [Individual.Models.PropertyInfo("Firstname", "First name", 50, 3)]
         public string FirstName { get; set; }
+        [Individual.Models.PropertyInfo("Lastname", "Last name", 40, 4)]
         public string LastName { get; set; }
+        [Individual.Models.PropertyInfo("Password", "Password", 30, 2, true)]
         public string Password { get; set; }
+        [Individual.Models.PropertyInfo("Role", "Role", 30, 5)]
         public string UserRole { get; set; }
 
         public User(string userName, string firstName, string lastName, string password, string userRole) : this(0, userName, firstName, lastName, userRole)
@@ -29,13 +35,17 @@ namespace Individual
 
         public User(string username, string firstname, string lastname)
         {
-            _dbContext = new Database();
             UserName = username;
             FirstName = firstname;
             LastName = lastname;
             Password = string.Empty;
             UserRole = "Simple";
         }
+
+        //public static Individual.Models.PropertyInfo GetPropertyInfo(string property)
+        //{
+        //    return typeof(User).GetProperty(property).GetCustomAttribute<Individual.Models.PropertyInfo>();
+        //}
 
         public string FullName => $"{LastName} {FirstName}";
 

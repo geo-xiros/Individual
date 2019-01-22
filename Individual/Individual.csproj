@@ -91,8 +91,8 @@
     <Compile Include="Menus\MenuItem.cs" />
     <Compile Include="Menus\MessagesFunctions.cs" />
     <Compile Include="MessageToFile.cs" />
-    <Compile Include="Models\ConnectionFields.cs" />
-    <Compile Include="Models\Field.cs" />
+    <Compile Include="Models\Connection.cs" />
+    <Compile Include="Models\PropertyInfo.cs" />
     <Compile Include="Models\IPermissions.cs" />
     <Compile Include="Models\Message.cs" />
     <Compile Include="Models\SuperUser.cs" />

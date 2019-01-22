@@ -3,22 +3,29 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Individual.Models;
+using System.Reflection;
 
 namespace Individual
 {
-    public static class UserFields
+    public static class FieldsInfo
     {
-        public static List<Field> Fields { get; }
-        static UserFields()
+        public static List<Individual.Models.PropertyInfo> Fields(Type obj)
         {
-            Fields = new List<Field>()
+            List<Individual.Models.PropertyInfo> fields = new List<Individual.Models.PropertyInfo>();
+
+            foreach (var propertyInfo in obj.GetProperties())
+            {
+
+                foreach (var fieldInfo in propertyInfo.GetCustomAttributes<Individual.Models.PropertyInfo>())
                 {
-                    new Field("Username", 30 ),
-                    new Field("Password", 30, '*' ),
-                    new Field("Firstname", 50 ),
-                    new Field("Lastname", 50 ),
-                    new Field("Role", 30 )
-                };
+
+                    fields.Add(fieldInfo);
+                }
+
+            }
+            return fields.OrderBy(i => i.Order).ToList();
+
         }
 
     }

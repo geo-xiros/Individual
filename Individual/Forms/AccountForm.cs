@@ -117,7 +117,7 @@ namespace Individual
         private void InitTextBoxes()
         {
             TextBoxValidation textBoxValidation = new TextBoxValidation();
-            AddTextBoxes(UserFields.Fields);
+            AddTextBoxes(FieldsInfo.Fields(typeof(User)));
             TextBoxes["Username"].Validate = textBoxValidation.ValidUserName;
             TextBoxes["Password"].Validate = TextBoxValidation.ValidPassword;
             TextBoxes["Firstname"].Validate = TextBoxValidation.ValidLength;

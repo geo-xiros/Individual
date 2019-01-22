@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using Individual.Models;
 namespace Individual
 {
     class ConnectionForm : Form
@@ -11,7 +11,7 @@ namespace Individual
 
         public ConnectionForm( ) : base("Connect to Database" )
         {
-            AddTextBoxes(ConnectionFields.Fields);
+            AddTextBoxes(FieldsInfo.Fields(typeof(Connection)));
             this["Sql Server"] = Properties.Settings.Default.SqlServer;
             this["Database Name"] = Properties.Settings.Default.Database;
             this["User"] = Properties.Settings.Default.User;

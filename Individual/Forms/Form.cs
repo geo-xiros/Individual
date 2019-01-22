@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using Individual.Models;
 
 namespace Individual
 {
@@ -87,7 +87,7 @@ namespace Individual
         public Action OnFormSaved = () => { };
         public Action OnFormExit = () => { };
 
-        protected void AddTextBoxes(List<Field> fields)
+        protected void AddTextBoxes(List<PropertyInfo> fields)
         {
             int pos = 3;
 
@@ -95,7 +95,7 @@ namespace Individual
 
             foreach (var field in fields)
             {
-                TextBoxes.Add(field.Name, new TextBox(field.Name, 3, pos, field.Size, field.PasswordChar));
+                TextBoxes.Add(field.Name, new TextBox(field.Label, 3, pos, field.Size, field.PasswordChar));
                 pos += 2;
             }
         }

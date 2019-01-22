@@ -10,7 +10,7 @@ namespace Individual
     {
         public LoginForm() : base("Login")
         {
-            AddTextBoxes(UserFields.Fields.Where(f => f.Name == "Password" || f.Name == "Username").ToList());
+            AddTextBoxes(FieldsInfo.Fields(typeof(User)).Where(f => f.Name == "Password" || f.Name == "Username").ToList());
         }
 
         public override void Open()

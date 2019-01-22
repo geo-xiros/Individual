@@ -10,7 +10,7 @@ namespace Individual
     {
         public PasswordForm(string passwordForAction) : base("Super User Password to " + passwordForAction)
         {
-            AddTextBoxes(UserFields.Fields.Where(uf => uf.Name == "Password").ToList());
+            AddTextBoxes(FieldsInfo.Fields(typeof(User)).Where(uf => uf.Name == "Password").ToList());
         }
 
         public override void Open()
