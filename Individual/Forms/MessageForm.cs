@@ -17,18 +17,20 @@ namespace Individual
 
         public MessageForm(User sender, User receiver) : base($"Send Message to {receiver.FullName}")
         {
-            _message = new Message(sender, receiver, DateTime.Today);
-            TextBoxes = new Dictionary<string, TextBox>()
-              {
-                  {"Date" , new TextBox("Date", 3, 5, 250) { Locked=true, Text = _message.SendAt.ToLongDateString() } }
-                , {"Time" , new TextBox("Time", 3, 7, 250) { Locked=true, Text = _message.SendAt.ToLongTimeString() } }
-                , {"Subject", new TextBox("Subject", 3, 9, 80) {Validate = TextBoxValidation.ValidLength} }
-                , {"Body" , new TextBox("Body", 3, 11, 250) }
-              };
+            _message = new Message(sender, receiver, DateTime.Now);
+
+            AddTextBoxes(FieldsInfo.Fields(typeof(Message)));
+
+            TextBoxes["Date"].Text = _message.SendAtDate;
+            TextBoxes["Time"].Text = _message.SendAtTime;
+            TextBoxes["Date"].Locked = true;
+            TextBoxes["Time"].Locked = true;
+            TextBoxes["Subject"].Validate = TextBoxValidation.ValidLength;
+
             OnFormFilled = AskAndInsert;
 
         }
-        public MessageForm(Message message, User loggedUser, User realLoggedUser) : base("View Message")// : base($"View Message {LoggedUser.FullName} Received")
+        public MessageForm(Message message, User loggedUser, User realLoggedUser) : base("View Message")
         {
             _message = message;
             _isSender = _message.SenderUserId == loggedUser.UserId;

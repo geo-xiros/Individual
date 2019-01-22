@@ -1,20 +1,41 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Individual.Models;
 
 namespace Individual
 {
     class Message
     {
+//                  {"Date" , new TextBox("Date", 3, 5, 250) { Locked = true, Text = _message.SendAt.ToLongDateString() }
+//    }
+//                , {"Time" , new TextBox("Time", 3, 7, 250) { Locked = true, Text = _message.SendAt.ToLongTimeString() }
+//}
+//                , {"Subject", new TextBox("Subject", 3, 9, 80) { Validate = TextBoxValidation.ValidLength} }
+//                , {"Body" , new TextBox("Body", 3, 11, 250) }
+        
         public int MessageId { get; set; }
         public int SenderUserId { get; set; }
         public int ReceiverUserId { get; set; }
-        public DateTime SendAt { get; set; }
-        public string Subject { get; set; }
-        public string Body { get; set; }
-        public bool Unread { get; set; }
+
         public string SenderUserName { get; set; }
         public string ReceiverUserName { get; set; }
+
+        public DateTime SendAt { get; set; }
+
+        [PropertyInfo("Date", "Date", 10, 3)]
+        public string SendAtDate => SendAt.ToLongDateString();
+
+        [PropertyInfo("Time", "Time",10,4)]
+        public string SendAtTime => SendAt.ToLongTimeString();
+
+        [PropertyInfo("Subject", "Subject", 80, 5)]
+        public string Subject { get; set; }
+
+        [PropertyInfo("Body", "Body", 250, 6)]
+        public string Body { get; set; }
+
+        public bool Unread { get; set; }
         public Message(User senderUser, User receiverUser, DateTime sendAt)
         {
             SenderUserId = senderUser.UserId;
