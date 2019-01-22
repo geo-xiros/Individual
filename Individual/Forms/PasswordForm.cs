@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Individual.Models;
 
 namespace Individual
 {
@@ -10,7 +11,7 @@ namespace Individual
     {
         public PasswordForm(string passwordForAction) : base("Super User Password to " + passwordForAction)
         {
-            AddTextBoxes(FieldsInfo.Fields(typeof(User), (f) => f.Name=="Password"));
+            AddTextBoxes(PropertyInfo.Fields(typeof(User), (f) => f.Name=="Password"));
         }
 
         public override void Open()

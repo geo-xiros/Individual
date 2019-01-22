@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using Individual.Models;
 
 namespace Individual
 {
@@ -117,7 +118,7 @@ namespace Individual
         private void InitTextBoxes()
         {
             TextBoxValidation textBoxValidation = new TextBoxValidation();
-            AddTextBoxes(FieldsInfo.Fields(typeof(User)));
+            AddTextBoxes(PropertyInfo.Fields(typeof(User)));
             TextBoxes["Username"].Validate = textBoxValidation.ValidUserName;
             TextBoxes["Password"].Validate = TextBoxValidation.ValidPassword;
             TextBoxes["Firstname"].Validate = TextBoxValidation.ValidLength;

@@ -19,7 +19,7 @@ namespace Individual
         {
             _message = new Message(sender, receiver, DateTime.Now);
 
-            AddTextBoxes(FieldsInfo.Fields(typeof(Message), (f) => !(f.Name =="From" || f.Name=="To") ));
+            AddTextBoxes(PropertyInfo.Fields(typeof(Message), (f) => !(f.Name =="From" || f.Name=="To") ));
 
             TextBoxes["Date"].Text = _message.SendAtDate;
             TextBoxes["Time"].Text = _message.SendAtTime;
@@ -37,24 +37,29 @@ namespace Individual
             _viewingOwnedMessages = loggedUser == realLoggedUser;
             _RealLoggedUser = realLoggedUser;
 
-            TextBoxes = new Dictionary<string, TextBox>()
-              {
-                  {"Date" , new TextBox("Date", 3, 5, 250) { Locked=true, Text = _message.SendAt.ToLongDateString() } }
-                , {"Time" , new TextBox("Time", 3, 7, 250) { Locked=true, Text = _message.SendAt.ToLongTimeString() } }
-                , {"Subject", new TextBox("Subject", 3, 9, 80) {Text = _message.Subject} }
-                , {"Body" , new TextBox("Body", 3, 11, 250) { Text = _message.Body } }
-              };
-
             if (_isSender)
             {
                 Title = $"{_message.SenderUserName} Sent Message";
-                TextBoxes.Add("To", new TextBox("To", 3, 3, 80) { Locked = true, Text = _message.ReceiverUserName });
+                AddTextBoxes(PropertyInfo.Fields(typeof(Message), (f) => f.Name != "From"));
+                TextBoxes["To"].Text = _message.ReceiverUserName;
+                TextBoxes["To"].Locked = true;
             }
             else
             {
                 Title = $"{_message.ReceiverUserName} Received Message";
-                TextBoxes.Add("From", new TextBox("From", 3, 3, 80) { Locked = true, Text = _message.SenderUserName });
+                AddTextBoxes(PropertyInfo.Fields(typeof(Message), (f) => f.Name != "To"));
+                TextBoxes["From"].Text = _message.SenderUserName;
+                TextBoxes["From"].Locked = true;
             }
+
+            TextBoxes["Date"].Text = _message.SendAtDate;
+            TextBoxes["Time"].Text = _message.SendAtTime;
+            TextBoxes["Subject"].Text = _message.Subject;
+            TextBoxes["Body"].Text = _message.Body;
+            TextBoxes["Date"].Locked = true;
+            TextBoxes["Time"].Locked = true;
+
+            TextBoxes["Subject"].Validate = TextBoxValidation.ValidLength;
 
             OnFormFilled = AskAndUpdate;
         }

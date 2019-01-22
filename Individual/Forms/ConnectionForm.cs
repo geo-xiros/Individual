@@ -11,7 +11,7 @@ namespace Individual
 
         public ConnectionForm( ) : base("Connect to Database" )
         {
-            AddTextBoxes(FieldsInfo.Fields(typeof(Connection)));
+            AddTextBoxes(PropertyInfo.Fields(typeof(Connection)));
             this["Sql Server"] = Properties.Settings.Default.SqlServer;
             this["Database Name"] = Properties.Settings.Default.Database;
             this["User"] = Properties.Settings.Default.User;

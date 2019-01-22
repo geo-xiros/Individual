@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
+using System.Linq;
 
 namespace Individual.Models
 {
@@ -21,6 +24,26 @@ namespace Individual.Models
             Label = label;
             Size = size;
             Order = order;
+        }
+        public static List<PropertyInfo> Fields(Type obj, Func<PropertyInfo, bool> fieldsCreteria = null)
+        {
+            List<PropertyInfo> fields = new List<PropertyInfo>();
+            foreach (var propertyInfo in obj.GetProperties())
+            {
+
+                foreach (var fieldInfo in propertyInfo.GetCustomAttributes<PropertyInfo>().Where(fieldsCreteria ?? AllFields))
+                {
+
+                    fields.Add(fieldInfo);
+
+                }
+
+            }
+            return fields.OrderBy(i => i.Order).ToList();
+        }
+        public static bool AllFields(Individual.Models.PropertyInfo getField)
+        {
+            return true;
         }
     }
 }

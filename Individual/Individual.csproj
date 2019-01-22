@@ -97,7 +97,6 @@
     <Compile Include="Models\Message.cs" />
     <Compile Include="Models\SuperUser.cs" />
     <Compile Include="Models\User.cs" />
-    <Compile Include="Models\UserFields.cs" />
     <Compile Include="Models\ViewUser.cs" />
     <Compile Include="Models\ViewEditUser.cs" />
     <Compile Include="Models\ViewEditDeleteUser.cs" />
