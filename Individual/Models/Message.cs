@@ -6,14 +6,7 @@ using Individual.Models;
 namespace Individual
 {
     class Message
-    {
-//                  {"Date" , new TextBox("Date", 3, 5, 250) { Locked = true, Text = _message.SendAt.ToLongDateString() }
-//    }
-//                , {"Time" , new TextBox("Time", 3, 7, 250) { Locked = true, Text = _message.SendAt.ToLongTimeString() }
-//}
-//                , {"Subject", new TextBox("Subject", 3, 9, 80) { Validate = TextBoxValidation.ValidLength} }
-//                , {"Body" , new TextBox("Body", 3, 11, 250) }
-        
+    {        
         public int MessageId { get; set; }
         public int SenderUserId { get; set; }
         public int ReceiverUserId { get; set; }
@@ -150,7 +143,6 @@ namespace Individual
                     unread = Unread
                 });
             }, "Do you want to try updating as read the message again ? [y/n] ");
-
 
         }
     }
