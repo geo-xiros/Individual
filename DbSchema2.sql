@@ -36,6 +36,7 @@ create table usersMessages (
 	, constraint pk_usersMessages primary key (messageId, UserId, SenderOrReceiver)
 )
 go
+
 create view messages as 
 select m.messageId, sender.UserId as senderUserId, receiver.UserId as receiverUserId, m.sendAt, m.subject, m.body, m.unread
 from message m 
@@ -43,18 +44,6 @@ from message m
 	inner join usersMessages receiver on m.messageId = receiver.messageId and receiver.SenderOrReceiver=2 
 
 go
---create table messages (
---	  messageId int not null identity(1,1)
---	, senderUserId int not null 
---	, receiverUserId int not null
---	, sendAt datetime not null
---	, subject varchar(80) not null
---	, body varchar(250) null
---	, unread bit not null default(1)
---	, constraint pk_messages primary key (messageId)
---)
---go
-
 
 
 create procedure Validate_User
@@ -105,33 +94,6 @@ begin
 end
 go
 
---create procedure UpdateUser 
---	  @userId int
---	, @userName varchar(30)
---	, @userPassword varchar(30) 
---	, @firstName varchar(50)
---	, @lastName varchar(50) 
---	, @userRole varchar(30) 
---as 
---begin
-	--when userPassword is empty then dont update userpassword
-	--if (@userPassword = '')
-	--	update Users set 
-	--		  userName = @userName
-	--		, firstName = @firstName 
-	--		, lastName = @lastName 
-	--		, userRole = @userRole
-	--	where userId = @userId 
-	--else
-	--	update Users set 
-	--		  userName = @userName
-	--		, userPassword = HASHBYTES('SHA2_512', @userPassword+CAST(salt AS NVARCHAR(36)))
-	--		, firstName = @firstName 
-	--		, lastName = @lastName 
-	--		, userRole = @userRole
-	--	where userId = @userId 
---end
---go
 
 
 create procedure InsertMessage
@@ -155,48 +117,20 @@ end
 go
 
 create procedure DeleteMessage
-	  @deleteUserId int
-	, @deleteUserPassword varchar(30) 
-	, @messageId int
+	  @messageId int
 
 as 
 begin
-	declare @okToDelete bit;
-	--ok to delete without delete permission only owned messages
-	select @okToDelete=count(*) from messages where messageId=@messageId and senderUserId=@deleteUserId
-
-
-	if @okToDelete=0
-		--allow deletion when user has delete permission
-		select @okToDelete = count(*)
-		from users 
-		where  userPassword = HASHBYTES('SHA2_512', @deleteUserPassword+CAST(salt AS NVARCHAR(36)))
-	  	   and userId = @deleteUserId and userRole like'%Delete%' or userRole ='Super'
-	
-	if @okToDelete=1
-		delete from messages where messageId=@messageId
-	
+	delete from messages where messageId=@messageId
 end
 go
 
 create procedure UpdateMessage
-	  @updateUserId int
-	, @updateUserPassword varchar(30) 
-	, @messageId int
+	  @messageId int
 	, @subject varchar(80)
 	, @body varchar(255) 
 as 
 begin
-	declare @okToDelete bit;
-	select @okToDelete=count(*) from messages where messageId=@messageId and senderUserId=@updateUserId
-
-	if @okToDelete=0
-		select @okToDelete = count(*)
-		from users 
-		where  userPassword = HASHBYTES('SHA2_512', @updateUserPassword+CAST(salt AS NVARCHAR(36)))
-	  	    and userId = @updateUserId and userRole like'%Edit%' or userRole ='Super'
-	
-	if @okToDelete=1
 		update messages set
 		  [subject] = @subject
 		, [body] = @body
@@ -215,10 +149,6 @@ begin
 	
 end
 go
-
-
-
-exec GetMessages 0,2
 
 create procedure GetMessages
 	  @messageId int
