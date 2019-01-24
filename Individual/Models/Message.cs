@@ -6,7 +6,7 @@ using Individual.Models;
 namespace Individual
 {
     class Message
-    {        
+    {
         public int MessageId { get; set; }
         public int SenderUserId { get; set; }
         public int ReceiverUserId { get; set; }
@@ -21,7 +21,7 @@ namespace Individual
         [PropertyInfo("Date", "Date", 10, 3)]
         public string SendAtDate => SendAt.ToLongDateString();
 
-        [PropertyInfo("Time", "Time",10,4)]
+        [PropertyInfo("Time", "Time", 10, 4)]
         public string SendAtTime => SendAt.ToLongTimeString();
 
         [PropertyInfo("Subject", "Subject", 80, 5)]
@@ -95,7 +95,7 @@ namespace Individual
             return affectedRows == 1;
         }
 
-        public bool Delete()
+        public bool Delete(bool _isSender)
         {
             int affectedRows = 0;
 
@@ -103,6 +103,9 @@ namespace Individual
             {
                 affectedRows = Database.ExecuteProcedure(dbCon, "DeleteMessage", new
                 {
+
+                    userId = _isSender ? SenderUserId : ReceiverUserId,
+                    SenderOrReceiver = _isSender ? 1 : 2,
                     messageId = MessageId
                 });
             }, "Do you want to try deleting the message again ? [y/n] ");

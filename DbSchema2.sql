@@ -118,10 +118,15 @@ go
 
 create procedure DeleteMessage
 	  @messageId int
+	  , @userId int
+	  , @SenderOrReceiver int
 
 as 
 begin
-	delete from messages where messageId=@messageId
+	delete from usersMessages where messageId=@messageId and UserId = @userId and SenderOrReceiver = @SenderOrReceiver 
+--	delete from messages where messageId=@messageId
+
+
 end
 go
 
@@ -200,3 +205,31 @@ end
 
 
 GO
+
+create procedure UpdateUser 
+	  @userId int
+	, @userName varchar(30)
+	, @userPassword varchar(30) 
+	, @firstName varchar(50)
+	, @lastName varchar(50) 
+	, @userRole varchar(30) 
+as 
+begin
+	--when userPassword is empty then dont update userpassword
+	if (@userPassword = '')
+		update Users set 
+			  userName = @userName
+			, firstName = @firstName 
+			, lastName = @lastName 
+			, userRole = @userRole
+		where userId = @userId 
+	else
+		update Users set 
+			  userName = @userName
+			, userPassword = HASHBYTES('SHA2_512', @userPassword+CAST(salt AS NVARCHAR(36)))
+			, firstName = @firstName 
+			, lastName = @lastName 
+			, userRole = @userRole
+		where userId = @userId 
+end
+go

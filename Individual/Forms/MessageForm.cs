@@ -19,7 +19,7 @@ namespace Individual
         {
             _message = new Message(sender, receiver, DateTime.Now);
 
-            AddTextBoxes(PropertyInfo.Fields(typeof(Message), (f) => !(f.Name =="From" || f.Name=="To") ));
+            AddTextBoxes(PropertyInfo.Fields(typeof(Message), (f) => !(f.Name == "From" || f.Name == "To")));
 
             TextBoxes["Date"].Text = _message.SendAtDate;
             TextBoxes["Time"].Text = _message.SendAtTime;
@@ -159,7 +159,7 @@ namespace Individual
             if (MessageBox.Show("Delete Selected Message ? [y/n] ") == MessageBox.MessageBoxResult.No)
                 return;
 
-            if (_message.Delete())
+            if (_message.Delete(_isSender))
             {
                 Alerts.Success("Message deleted successfully !!!");
                 MessageToFile.Delete(_message);
