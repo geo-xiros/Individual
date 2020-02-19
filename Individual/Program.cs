@@ -16,44 +16,71 @@ namespace Individual
     {
         static void Main(string[] args)
         {
-
-
-            if (args.Length != 0)
+            using (IColoredConsole coloredConsole = new ConsoleWithColor())
             {
-                if ((args[0] == "/connection"))
+                if (args.Length == 0)
                 {
-                    if (args.Count() == 5)
-                    {
-                        Database.SaveConnection(args[1], args[2], args[3], args[4]);
-                    }
-                    else
-                    {
-                        Console.WriteLine("/connection parameter needs the following parameters:");
-                        Console.WriteLine("\tServer Database User Password");
-                    }
-                    Environment.Exit(0);
+                    Run(coloredConsole);
                 }
-
-            }
-
-            while (!ConnectToDatabase())
-            {
-                ConnectionForm connectionForm = new ConnectionForm()
+                else
                 {
-                    OnFormExit = () => Environment.Exit(0)
-                };
-                connectionForm.Open();
+                    RunWithArguments(args, coloredConsole);
+                }
             }
 
-            if (!AddAdminUser())
+        }
+
+        private static void RunWithArguments(string[] args, IColoredConsole coloredConsole)
+        {
+            if (args[0].Equals("/connection") &&
+                     args.Length == 5)
             {
-                Environment.Exit(0);
+                Database.SaveConnection(args[1], args[2], args[3], args[4]);
+                Run(coloredConsole);
+            }
+            else
+            {
+                coloredConsole.Write("Parameter ", ConsoleColor.DarkGray);
+                coloredConsole.Write("/connection", ConsoleColor.Yellow);
+                coloredConsole.WriteLine(" needs the following parameters:", ConsoleColor.DarkGray);
+                coloredConsole.WriteLine("\tServer Database User Password", ConsoleColor.Green);
+            }
+
+        }
+
+        private static void Run(IColoredConsole coloredConsole)
+        {
+            if (!ConnectedWithDatabase())
+            {
+                ClearOnExit();
+                return;
+            }
+
+            if (!AdminUserExists())
+            {
+                return;
             }
 
             RunApplication();
-
             ClearOnExit();
+        }
 
+        private static bool ConnectedWithDatabase()
+        {
+            bool Connected = false;
+            bool exit = false;
+
+            while (!exit && !(Connected = ConnectToDatabase()))
+            {
+                ConnectionForm connectionForm = new ConnectionForm()
+                {
+                    OnFormExit = () => exit = true
+                };
+
+                connectionForm.Open();
+            }
+
+            return Connected;
         }
 
         private static bool ConnectToDatabase()
@@ -68,7 +95,7 @@ namespace Individual
                 }
             }, "Do you want to try reconnecting with the Database ? [y/n]");
         }
-        private static bool AddAdminUser()
+        private static bool AdminUserExists()
         {
             if (Database.Exists("admin"))
             {
