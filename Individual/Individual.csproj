@@ -63,6 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Alerts.cs" />
+    <Compile Include="Application.cs" />
     <Compile Include="ColoredConsole.cs" />
     <Compile Include="Database.cs" />
     <Compile Include="Forms\ConnectionForm.cs" />
