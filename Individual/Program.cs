@@ -17,23 +17,28 @@ namespace Individual
             {
                 var application = new Application(coloredConsole);
 
-                if (args.Length != 0)
+                if (args.Length == 0)
                 {
-                    if (ConnectionParameter(args))
-                    {
-                        application.UpdateConnectionString(args[1], args[2], args[3], args[4]);
-                    }
-                    else
-                    {
-                        coloredConsole.Write("Parameter ", ConsoleColor.DarkGray);
-                        coloredConsole.Write("--connection", ConsoleColor.Yellow);
-                        coloredConsole.WriteLine(" needs the following parameters:", ConsoleColor.DarkGray);
-                        coloredConsole.WriteLine("\tServer Database User Password", ConsoleColor.Green);
-                        return;
-                    }
+                    application.Run();
                 }
+                else if (ConnectionParameter(args))
+                {
+                    var connectionSettings = ConnectionSettings.Instance;
+                    connectionSettings.SqlServer = args[1];
+                    connectionSettings.Database = args[2];
+                    connectionSettings.User = args[3];
+                    connectionSettings.Password = args[4];
+                    connectionSettings.Save();
 
-                application.Run();
+                    application.Run();
+                }
+                else
+                {
+                    coloredConsole.Write("Parameter ", ConsoleColor.DarkGray);
+                    coloredConsole.Write("--connection", ConsoleColor.Yellow);
+                    coloredConsole.WriteLine(" needs the following parameters:", ConsoleColor.DarkGray);
+                    coloredConsole.WriteLine("\tServer Database User Password", ConsoleColor.Green);
+                }
             }
         }
         private static bool ConnectionParameter(string[] args)

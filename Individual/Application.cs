@@ -15,11 +15,6 @@ namespace Individual
             this.coloredConsole = coloredConsole;
         }
 
-        public void UpdateConnectionString(string sqlServer, string database, string user, string password)
-        {
-            Database.SaveConnection(sqlServer, database, user, password);
-        }
-
         public void Run()
         {
             if (!ConnectedWithDatabase())

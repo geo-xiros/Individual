@@ -11,18 +11,54 @@ using System.Text;
 
 namespace Individual
 {
+    public interface IConnectionSettings
+    {
+        string SqlServer { get; set; }
+        string Database { get; set; }
+        string User { get; set; }
+        string Password { get; set; }
+    }
+    public class ConnectionSettings : IConnectionSettings
+    {
+        private static ConnectionSettings instance;
+        public static ConnectionSettings Instance
+        {
+            get
+            {
+                if (instance == null)
+                {
+                    instance = new ConnectionSettings();
+                }
+                return instance;
+            }
+        }
+
+        public string SqlServer { get; set; }
+        public string Database { get; set; }
+        public string User { get; set; }
+        public string Password { get; set; }
+        public string ConnectionString => $"Server={SqlServer};Database={Database};User Id={User};Password={Password}";
+
+        public ConnectionSettings()
+        {
+            SqlServer = Properties.Settings.Default.SqlServer;
+            Database = Properties.Settings.Default.Database;
+            User = Properties.Settings.Default.User;
+            Password = Properties.Settings.Default.Pass;
+        }
+        
+        public void Save()
+        {
+            Properties.Settings.Default.SqlServer = SqlServer;
+            Properties.Settings.Default.Database = Database;
+            Properties.Settings.Default.User = User;
+            Properties.Settings.Default.Pass = Password;
+        }
+    }
+
     class Database
     {
-        static string ConnectionString() => $"Server={Properties.Settings.Default.SqlServer};Database={Properties.Settings.Default.Database};User Id={Properties.Settings.Default.User};Password={Properties.Settings.Default.Pass}";
         public static bool DatabaseError { get; private set; }
-        public static void SaveConnection(string sqlServer, string database, string user, string password)
-        {
-            Properties.Settings.Default.SqlServer = sqlServer;
-            Properties.Settings.Default.Database = database;
-            Properties.Settings.Default.User = user;
-            Properties.Settings.Default.Pass = password;
-            Properties.Settings.Default.Save();
-        }
 
         #region UserFunctions
         public static IEnumerable<User> GetUsers()
@@ -128,7 +164,7 @@ namespace Individual
             {
                 try
                 {
-                    using (SqlConnection dbcon = new SqlConnection(ConnectionString()))
+                    using (SqlConnection dbcon = new SqlConnection(ConnectionSettings.Instance.ConnectionString))
                     {
                         dbcon.Open();
                         execute(dbcon);

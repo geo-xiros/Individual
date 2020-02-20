@@ -27,7 +27,12 @@ namespace Individual
 
         private void SaveSettings()
         {
-            Database.SaveConnection(this["Sql Server"], this["Database Name"], this["User"], this["Password"]);
+            var connectionSettings = ConnectionSettings.Instance;
+            connectionSettings.SqlServer = this["Sql Server"];
+            connectionSettings.Database = this["Database Name"];
+            connectionSettings.User = this["User"];
+            connectionSettings.Password = this["Password"];
+            connectionSettings.Save();
         }
 
     }
